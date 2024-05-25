@@ -22,7 +22,7 @@ namespace lib2131
  * @param GearRatio Gear Ratio to sensor
  */
 trackingWheel::trackingWheel(pros::adi::Encoder *Encoder, float Diameter, float Offset,
-                             float GearRatio = 1)
+                             float GearRatio)
     : encoder(encoder), diameter(Diameter), offset(Offset), gearRatio(GearRatio)
 {
 }
@@ -36,7 +36,7 @@ trackingWheel::trackingWheel(pros::adi::Encoder *Encoder, float Diameter, float 
  * @param GearRatio Gear Ratio to sensor
  */
 trackingWheel::trackingWheel(pros::v5::Rotation *Encoder, float Diameter, float Offset,
-                             float GearRatio = 1)
+                             float GearRatio)
     : rotation(Encoder), diameter(Diameter), offset(Offset), gearRatio(GearRatio)
 {
 }
