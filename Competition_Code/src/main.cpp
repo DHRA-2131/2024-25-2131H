@@ -1,5 +1,7 @@
 #include "main.h"
 
+#include "main/api.hpp"
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
