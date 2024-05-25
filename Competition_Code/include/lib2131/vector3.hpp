@@ -11,6 +11,10 @@
 
 #pragma once
 // TODO: Make sure this throws an error when types don't match
+
+namespace lib2131
+{
+
 /**
  * @brief Stores three values
  *
@@ -132,3 +136,4 @@ struct Vector3
     return Vector3<X_Type, Y_Type, Z_Type>(this->x / B, this->y / B, this->z / B);
   }
 };
+}  // namespace lib2131

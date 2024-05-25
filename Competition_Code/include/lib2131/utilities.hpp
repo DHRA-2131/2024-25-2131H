@@ -13,6 +13,9 @@
 #include <cmath>
 #include <vector>
 
+namespace lib2131
+{
+
 /**
  * @brief Averages all values in a Vector
  *
@@ -46,48 +49,28 @@ class angle
    * @brief Construct a empty angle object
    *
    */
-  angle() : value(0), isDegrees(1) {}
+  angle();
   /**
    * @brief Construct a new angle object
    *
    * @param Value Value of Angle
    * @param IsDegrees Is the Angle Unit Degrees? False if Radians.
    */
-  angle(double Value, bool IsDegrees) : value(Value), isDegrees(IsDegrees) {}
+  angle(double Value, bool IsDegrees);
 
   /**
    * @brief Get the angle in Radians
    *
    * @return double Radians
    */
-  double getRadians()
-  {
-    if (this->isDegrees)
-    {
-      return this->value * M_PI / 180;
-    }
-    else
-    {
-      return this->value;
-    }
-  }
+  double getRadians();
 
   /**
    * @brief Get the angle in Degrees
    *
    * @return double Degrees
    */
-  double getDegrees()
-  {
-    if (this->isDegrees)
-    {
-      return this->value;
-    }
-    else
-    {
-      return this->value * 180 / M_PI;
-    }
-  }
+  double getDegrees();
 
   /**
    * @brief Set the new Theta of an Angle
@@ -95,11 +78,7 @@ class angle
    * @param newTheta New value of Angle.
    * @param isDegrees Is newTheta in Degrees; False if Radians.
    */
-  void setTheta(double newTheta, bool isDegrees)
-  {
-    this->value = newTheta;
-    this->isDegrees = isDegrees;
-  }
+  void setTheta(double newTheta, bool isDegrees);
 
   /**
    * @brief Addition of Two Angles
@@ -107,17 +86,7 @@ class angle
    * @param B Added Angle
    * @return angle Sum
    */
-  angle operator+(angle B)
-  {
-    if (isDegrees)
-    {
-      return angle(this->value + B.getDegrees(), true);
-    }
-    else
-    {
-      return angle(this->value + B.getRadians(), false);
-    }
-  }
+  angle operator+(angle B);
 
   /**
    * @brief Subtraction of Two Angles
@@ -125,17 +94,7 @@ class angle
    * @param B Subtracting Angle
    * @return angle Difference
    */
-  angle operator-(angle B)
-  {
-    if (isDegrees)
-    {
-      return angle(this->value - B.getDegrees(), true);
-    }
-    else
-    {
-      return angle(this->value - B.getRadians(), false);
-    }
-  }
+  angle operator-(angle B);
 
   /**
    * @brief Scale angle by an amount
@@ -143,17 +102,7 @@ class angle
    * @param B Scalar
    * @return angle Scaled_Angle
    */
-  angle operator*(double B)
-  {
-    if (isDegrees)
-    {
-      return angle(this->value * B, true);
-    }
-    else
-    {
-      return angle(this->value * B, false);
-    }
-  }
+  angle operator*(double B);
 
   /**
    * @brief Scale angle by amount
@@ -161,83 +110,34 @@ class angle
    * @param B Scalar
    * @return angle Scaled_Angle
    */
-  angle operator/(double B)
-  {
-    if (isDegrees)
-    {
-      return angle(this->value / B, true);
-    }
-    else
-    {
-      return angle(this->value / B, false);
-    }
-  }
+  angle operator/(double B);
 
   /**
    * @brief Add to Angle
    *
    * @param B Added Angle
    */
-  void operator+=(angle B)
-  {
-    if (isDegrees)
-    {
-      this->value += B.getDegrees();
-    }
-    else
-    {
-      this->value += B.getRadians();
-    }
-  }
+  void operator+=(angle B);
 
   /**
    * @brief Subtract from Angle
    *
    * @param B Subtracting Angle
    */
-  void operator-=(angle B)
-  {
-    if (isDegrees)
-    {
-      this->value -= B.getDegrees();
-    }
-    else
-    {
-      this->value -= B.getRadians();
-    }
-  }
+  void operator-=(angle B);
 
   /**
    * @brief Scale Angle
    *
    * @param B Scalar
    */
-  void operator*=(double B)
-  {
-    if (isDegrees)
-    {
-      this->value *= B;
-    }
-    else
-    {
-      this->value *= B;
-    }
-  }
+  void operator*=(double B);
 
   /**
    * @brief Scale Angle
    *
    * @param B
    */
-  void operator/=(double B)
-  {
-    if (isDegrees)
-    {
-      this->value /= B;
-    }
-    else
-    {
-      this->value /= B;
-    }
-  }
+  void operator/=(double B);
 };
+}  // namespace lib2131
