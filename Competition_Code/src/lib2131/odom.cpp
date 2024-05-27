@@ -22,31 +22,21 @@ namespace lib2131
  * @param RearWheel Pointer to Rear trackingWheel object
  */
 odometry::odometry(trackingWheel* LeftWheel, trackingWheel* RightWheel,
-                   trackingWheel* RearWheel)
-    : leftWheel(LeftWheel), rightWheel(RightWheel), rearWheel(RearWheel), currentState()
+                   trackingWheel* RearWheel, pros::v5::IMU* Inertial)
+    : leftWheel(LeftWheel),
+      rightWheel(RightWheel),
+      rearWheel(RearWheel),
+      inertial(Inertial),
+      currentState()
 {
   leftExists = (leftWheel != nullptr);
   rightExists = (rightWheel != nullptr);
   rearExists = (rearWheel != nullptr);
-  inertialExists = (leftWheel != nullptr);
-}
+  inertialExists = (rearWheel != nullptr);
 
-/**
- * @brief Construct a new odometry object using 2 Wheels and a IMU, Put nullptr to
- * exclude a wheel.
- *
- * @param LeftWheel Pointer to Left trackingWheel object
- * @param RearWheel Pointer to Rear trackingWheel object
- * @param Inertial Pointer to a Pros::v5::IMU object
- */
-odometry::odometry(trackingWheel* LeftWheel, trackingWheel* RearWheel,
-                   pros::v5::IMU* Inertial)
-    : leftWheel(LeftWheel), rearWheel(RearWheel), inertial(Inertial), currentState()
-{
-  leftExists = (leftWheel != nullptr);
-  rightExists = (rightWheel != nullptr);
-  rearExists = (rearWheel != nullptr);
-  inertialExists = (leftWheel != nullptr);
+  if (leftExists) leftWheel->reset();
+  if (rightExists) rightWheel->reset();
+  if (rearExists) rearWheel->reset();
 }
 
 /**
@@ -69,26 +59,30 @@ void odometry::update(double dTime)
   if (rearExists) dRearDist = lastRearDist - rearWheel->getDistanceTraveled();
 
   // FINDING THETA
-  // Use Inertial for theta
-  if (inertialExists)
+  // Using Odom Wheels
+  if (leftExists && rightExists)
   {
-    Theta.setTheta(inertial->get_heading(), true);
-    dTheta = lastTheta - Theta;
-  }
-  else  // Use Odom Wheels
-  {
-    // Both wheels needed
-    if (leftExists && rightExists)
+    if (leftWheel->getOffset() - rightWheel->getOffset() == 0)
+    {
+      ;  // TODO: Set-up as error
+    }
+    else
     {
       dTheta.setTheta(
           (dLeftDist - dRightDist) / (leftWheel->getOffset() - rightWheel->getOffset()),
           false);
       Theta += dTheta;
     }
-    else  // This should never happen
-    {
-      ;  // TODO: Set-Up as error
-    }
+  }
+  // Use Inertial for theta
+  else if (inertialExists)
+  {
+    Theta.setTheta(inertial->get_heading(), true);
+    dTheta = lastTheta - Theta;
+  }
+  else  // This should never happen
+  {
+    ;  // TODO: Set-Up as error
   }
 
   // Local Change in X and Y
@@ -99,7 +93,7 @@ void odometry::update(double dTime)
     if (leftExists)
       localY = dLeftDist;
     else if (rightExists)
-      localY = dLeftDist;
+      localY = dRightDist;
     else
       ;  // TODO: Set-Up as error
   }
@@ -131,8 +125,8 @@ void odometry::update(double dTime)
 
   // Set Robot Actual Position
   Vector3<double, double, angle> dGlobalPosition(
-      localY * sin(dTheta.getRadians()) + localX * -cos(dTheta.getRadians()),
-      localY * cos(dTheta.getRadians()) + localX * sin(dTheta.getRadians()), dTheta);
+      localY * sin(Theta.getRadians()) + localX * -cos(Theta.getRadians()),
+      localY * cos(Theta.getRadians()) + localX * sin(Theta.getRadians()), dTheta);
 
   // Update Robot State
   currentState.position += dGlobalPosition;
@@ -142,8 +136,8 @@ void odometry::update(double dTime)
 
   // Update "Last" Data
   if (leftExists) lastLeftDist = leftWheel->getDistanceTraveled();
-  if (rightExists) lastLeftDist = leftWheel->getDistanceTraveled();
-  if (rearExists) lastLeftDist = leftWheel->getDistanceTraveled();
+  if (rightExists) lastRightDist = rightWheel->getDistanceTraveled();
+  if (rearExists) lastRearDist = rearWheel->getDistanceTraveled();
   lastTheta = Theta;
 }
 

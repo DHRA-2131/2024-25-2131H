@@ -55,17 +55,8 @@ class odometry
    * @param RightWheel Pointer to Right trackingWheel object
    * @param RearWheel Pointer to Rear trackingWheel object
    */
-  odometry(trackingWheel* LeftWheel, trackingWheel* RightWheel, trackingWheel* RearWheel);
+  odometry(trackingWheel* LeftWheel, trackingWheel* RightWheel, trackingWheel* RearWheel, pros::v5::IMU* Inertial);
 
-  /**
-   * @brief Construct a new odometry object using 2 Wheels and a IMU, Put nullptr to
-   * exclude a wheel.
-   *
-   * @param LeftWheel Pointer to Left trackingWheel object
-   * @param RearWheel Pointer to Rear trackingWheel object
-   * @param Inertial Pointer to a Pros::v5::IMU object
-   */
-  odometry(trackingWheel* LeftWheel, trackingWheel* RearWheel, pros::v5::IMU* Inertial);
 
   /**
    * @brief Get the Robot State object

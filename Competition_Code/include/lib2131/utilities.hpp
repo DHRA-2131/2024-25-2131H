@@ -11,6 +11,7 @@
 
 #pragma once
 #include <cmath>
+#include <ostream>
 #include <vector>
 
 namespace lib2131
@@ -139,5 +140,14 @@ class angle
    * @param B
    */
   void operator/=(double B);
+
+  /**
+   * @brief "Print" Angle to OStream
+   *
+   * @param os Output Stream
+   * @param B Angle
+   * @return std::ostream&
+   */
+  friend std::ostream &operator<<(std::ostream &os, const angle &B);
 };
 }  // namespace lib2131

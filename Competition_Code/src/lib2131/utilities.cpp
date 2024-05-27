@@ -210,4 +210,18 @@ void angle::operator/=(double B)
     this->value /= B;
   }
 }
+
+std::ostream &operator<<(std::ostream &os, const angle &B)
+{
+  if (B.isDegrees)
+  {
+    os << B.value << "°";
+  }
+  else
+  {
+    os << B.value << "rad";
+  }
+  return os;
+}
+
 }  // namespace lib2131

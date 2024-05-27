@@ -10,6 +10,7 @@
  */
 
 #pragma once
+#include <ostream>
 // TODO: Make sure this throws an error when types don't match
 
 namespace lib2131
@@ -134,6 +135,12 @@ struct Vector3
   Vector3<X_Type, Y_Type, Z_Type> operator/(const double B)
   {
     return Vector3<X_Type, Y_Type, Z_Type>(this->x / B, this->y / B, this->z / B);
+  }
+
+  friend std::ostream &operator<<(std::ostream &os, const Vector3 &B)
+  {
+    os << "{" << B.x << ", " << B.y << ", " << B.z << "}";
+    return os;
   }
 };
 }  // namespace lib2131

@@ -87,6 +87,7 @@ float trackingWheel::getDistanceTraveled()
   {
     // get distance traveled by each motor
     std::vector<pros::v5::MotorGears> gearsets = this->motors->get_gearing_all();
+    this->motors->set_encoder_units_all(pros::MotorEncoderUnits::degrees);
     std::vector<double> positions = this->motors->get_position_all();
     std::vector<float> distances;
     for (int i = 0; i < this->motors->size(); i++)
@@ -107,7 +108,7 @@ float trackingWheel::getDistanceTraveled()
           in = 200;
           break;
       }
-      distances.push_back(positions[i] * (diameter * M_PI) * (driveRpm / in));
+      distances.push_back(positions[i] / 360 * (diameter * M_PI) * (driveRpm / in));
     }
     return average(distances);
   }

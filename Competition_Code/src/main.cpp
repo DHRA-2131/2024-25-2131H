@@ -2,6 +2,38 @@
 
 #include "lib2131/api.hpp"
 
+// Motors + MotorGroups
+pros::Motor LeftFront(-4, pros::v5::MotorGearset::green);
+pros::Motor LeftMid(-1, pros::v5::MotorGearset::green);
+pros::Motor LeftRear(-3, pros::v5::MotorGearset::green);
+
+pros::Motor RightFront(5, pros::v5::MotorGearset::green);
+pros::Motor RightMid(8, pros::v5::MotorGearset::green);
+pros::Motor RightRear(6, pros::v5::MotorGearset::green);
+
+pros::v5::MotorGroup LeftDrive({-4, -1, -3}, pros::v5::MotorGearset::green);
+pros::v5::MotorGroup RightDrive({5, 8, 6}, pros::v5::MotorGearset::green);
+
+// Sensors
+pros::Rotation RearEncoder(-10);
+pros::Rotation LeftEncoder(-19);
+pros::Rotation RightEncoder(20);
+
+pros::IMU Inertial(21);
+
+// Tracking Wheels
+lib2131::trackingWheel RearWheel(&RearEncoder, 2.0, 5);
+lib2131::trackingWheel LeftDeadWheel(&LeftEncoder, 2.0, -7 / 2);
+lib2131::trackingWheel RightDeadWheel(&RightEncoder, 2.0, 7 / 2);
+
+// Drivetrain T-Wheels
+lib2131::trackingWheel LeftDriveWheel(&LeftDrive, 3.25, -12.75 / 2, 333);
+lib2131::trackingWheel RightDriveWheel(&RightDrive, 3.25, 12.75 / 2, 333);
+
+// Odometry
+lib2131::odometry TWheelOdom(&LeftDeadWheel, &RightDeadWheel, &RearWheel, nullptr);
+lib2131::odometry DriveOdom(&LeftDriveWheel, nullptr, &RearWheel, &Inertial);
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -54,4 +86,21 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {}
+void opcontrol()
+{
+  Inertial.reset();
+  while (Inertial.is_calibrating()) pros::delay(10);
+
+  while (true)
+  {
+    DriveOdom.update(10);
+    TWheelOdom.update(10);
+
+    // std::cout << LeftDriveWheel.getDistanceTraveled() << ", "
+    //           << RightDriveWheel.getDistanceTraveled() << "\n";
+
+    std::cout << DriveOdom.getRobotState().position << ", " << Inertial.get_heading()
+              << "\n";
+    pros::delay(10);
+  }
+}
