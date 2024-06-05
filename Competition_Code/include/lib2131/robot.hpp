@@ -254,6 +254,14 @@ class Robot
     }
   }
 
+  void update(int dTime)
+  {
+    for (size_t i = 0; i < m_Odometry.size(); i++)
+    {
+      m_Odometry[i].update(dTime);
+    }
+  }
+
  protected:
   /**
    * @brief Returns desired left and right Motor Voltage (mV) to turn the robot to a

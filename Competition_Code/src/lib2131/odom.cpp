@@ -78,19 +78,20 @@ void Odometry::update(double dTime)
       dTheta.setTheta(
           (dLeftDist - dRightDist) / (leftWheel->getOffset() - rightWheel->getOffset()),
           false);
-      Theta += dTheta;
     }
   }
   // Use Inertial for theta
   else if (inertialExists)
   {
-    Theta.setTheta(360 - inertial->get_heading(), true);
-    dTheta = lastTheta - Theta;
+    dTheta = lastTheta - Angle(360 - inertial->get_heading(), true);
   }
   else  // This should never happen
   {
     ;  // TODO: Set-Up as error
   }
+
+  Angle avgTheta = Theta - dTheta / 2;
+  Theta -= dTheta;
 
   // Local Change in X and Y
   double localX, localY;
@@ -132,8 +133,8 @@ void Odometry::update(double dTime)
 
   // Set Robot Actual Position
   Vector3<double, double, Angle> dGlobalPosition(
-      localY * sin(Theta.getRadians()) + localX * -cos(Theta.getRadians()),
-      localY * cos(Theta.getRadians()) + localX * sin(Theta.getRadians()), dTheta);
+      localY * sin(avgTheta.getRadians()) + localX * -cos(avgTheta.getRadians()),
+      localY * cos(avgTheta.getRadians()) + localX * sin(avgTheta.getRadians()), dTheta);
 
   // Update Robot State
   currentState.position += dGlobalPosition;

@@ -11,7 +11,7 @@ pros::Motor RightFront(5, pros::v5::MotorGearset::green);
 pros::Motor RightMid(8, pros::v5::MotorGearset::green);
 pros::Motor RightRear(6, pros::v5::MotorGearset::green);
 
-pros::v5::MotorGroup LeftDrive({-4, -1, -3}, pros::v5::MotorGearset::green);
+pros::v5::MotorGroup LeftDrive({-4, -1, -2}, pros::v5::MotorGearset::green);
 pros::v5::MotorGroup RightDrive({5, 8, 6}, pros::v5::MotorGearset::green);
 
 // Sensors
@@ -27,8 +27,8 @@ lib2131::TrackingWheel LeftDeadWheel(&LeftEncoder, 2.0, -7 / 2);
 lib2131::TrackingWheel RightDeadWheel(&RightEncoder, 2.0, 7 / 2);
 
 // Drivetrain T-Wheels
-lib2131::TrackingWheel LeftDriveWheel(&LeftDrive, 3.25, -12.75 / 2, 333);
-lib2131::TrackingWheel RightDriveWheel(&RightDrive, 3.25, 12.75 / 2, 333);
+lib2131::TrackingWheel LeftDriveWheel(&LeftDrive, 3.25, -12.75 / 2, 333 + (1 / 3));
+lib2131::TrackingWheel RightDriveWheel(&RightDrive, 3.25, 12.75 / 2, 333 + (1 / 3));
 
 // Odometry
 lib2131::Odometry TWheelOdom(&LeftDeadWheel, &RightDeadWheel, &RearWheel, nullptr);
@@ -44,6 +44,28 @@ lib2131::Robot Robot(9999.0, -9999.0, 56.68, {TWheelOdom, DriveOdom}, angularPID
 // Controller
 pros::Controller primary(pros::controller_id_e_t::E_CONTROLLER_MASTER);
 
+void Screen()
+{
+  pros::lcd::initialize();
+  while (true)
+  {
+    Robot.update(10);
+    auto position = Robot.getRobotState().position;
+    pros::lcd::print(1, "Position:");
+    pros::lcd::print(2, "DO: (%f, %f, %f)", position.x, position.y, position.z);
+    // pros::lcd::print(2, "DO: (%f, %f, %f)", DriveOdom.getRobotState().position.x,
+    //                  DriveOdom.getRobotState().position.y,
+    //                  DriveOdom.getRobotState().position.z);
+    // pros::lcd::print(3, "TO: (%f, %f, %f)", TWheelOdom.getRobotState().position.x,
+    //                  TWheelOdom.getRobotState().position.y,
+    //                  TWheelOdom.getRobotState().position.z);
+    pros::delay(10);
+  }
+};
+
+// Screen
+pros::Task screenTask(Screen, "SCREEN TASK");
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -52,8 +74,6 @@ pros::Controller primary(pros::controller_id_e_t::E_CONTROLLER_MASTER);
  */
 void initialize()
 {
-  pros::lcd::initialize();
-
   Inertial.reset();
   while (Inertial.is_calibrating()) pros::delay(10);
 }
@@ -97,10 +117,7 @@ void autonomous()
                                         {0, 0, lib2131::Angle(0, true)},
                                         {0, 0, lib2131::Angle(0, true)}));
 
-  Robot.moveToPose(lib2131::RobotState({10, 10, lib2131::Angle(45, true)},
-                                       {0, 0, lib2131::Angle(0, true)},
-                                       {0, 0, lib2131::Angle(0, true)}),
-                   100, false);
+  Robot.moveToPoint(12, 12, false);
   std::cout << "=================================" << "\n";
   std::cout << "AUTONOMOUS END" << std::endl;
   std::cout << "=================================" << "\n";
@@ -123,17 +140,6 @@ void opcontrol()
 {
   while (true)
   {
-    DriveOdom.update(10);
-    TWheelOdom.update(10);
-
-    pros::lcd::print(1, "Position:");
-    pros::lcd::print(2, "DO: (%f, %f, %f)", DriveOdom.getRobotState().position.x,
-                     DriveOdom.getRobotState().position.y,
-                     DriveOdom.getRobotState().position.z);
-    pros::lcd::print(3, "TO: (%f, %f, %f)", TWheelOdom.getRobotState().position.x,
-                     TWheelOdom.getRobotState().position.y,
-                     TWheelOdom.getRobotState().position.z);
-
     LeftDrive.move_voltage(
         (primary.get_analog(pros::controller_analog_e_t::E_CONTROLLER_ANALOG_LEFT_Y) /
          100) *
