@@ -15,24 +15,34 @@ pros::v5::MotorGroup LeftDrive({-4, -1, -3}, pros::v5::MotorGearset::green);
 pros::v5::MotorGroup RightDrive({5, 8, 6}, pros::v5::MotorGearset::green);
 
 // Sensors
-pros::Rotation RearEncoder(-10);
-pros::Rotation LeftEncoder(-19);
-pros::Rotation RightEncoder(20);
+pros::Rotation RearEncoder(10);
+pros::Rotation LeftEncoder(19);
+pros::Rotation RightEncoder(-20);
 
 pros::IMU Inertial(21);
 
 // Tracking Wheels
-lib2131::trackingWheel RearWheel(&RearEncoder, 2.0, 5);
-lib2131::trackingWheel LeftDeadWheel(&LeftEncoder, 2.0, -7 / 2);
-lib2131::trackingWheel RightDeadWheel(&RightEncoder, 2.0, 7 / 2);
+lib2131::TrackingWheel RearWheel(&RearEncoder, 2.0, 5);
+lib2131::TrackingWheel LeftDeadWheel(&LeftEncoder, 2.0, -7 / 2);
+lib2131::TrackingWheel RightDeadWheel(&RightEncoder, 2.0, 7 / 2);
 
 // Drivetrain T-Wheels
-lib2131::trackingWheel LeftDriveWheel(&LeftDrive, 3.25, -12.75 / 2, 333);
-lib2131::trackingWheel RightDriveWheel(&RightDrive, 3.25, 12.75 / 2, 333);
+lib2131::TrackingWheel LeftDriveWheel(&LeftDrive, 3.25, -12.75 / 2, 333);
+lib2131::TrackingWheel RightDriveWheel(&RightDrive, 3.25, 12.75 / 2, 333);
 
 // Odometry
-lib2131::odometry TWheelOdom(&LeftDeadWheel, &RightDeadWheel, &RearWheel, nullptr);
-lib2131::odometry DriveOdom(&LeftDriveWheel, nullptr, &RearWheel, &Inertial);
+lib2131::Odometry TWheelOdom(&LeftDeadWheel, &RightDeadWheel, &RearWheel, nullptr);
+lib2131::Odometry DriveOdom(&LeftDriveWheel, nullptr, &RearWheel, &Inertial);
+
+lib2131::PID linearPID(1, 0, 0);
+lib2131::PID angularPID(1, 0, 0);
+
+// Robot
+lib2131::Robot Robot(9999.0, -9999.0, 56.68, {TWheelOdom, DriveOdom}, angularPID,
+                     linearPID, &LeftDrive, &RightDrive);
+
+// Controller
+pros::Controller primary(pros::controller_id_e_t::E_CONTROLLER_MASTER);
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -40,7 +50,13 @@ lib2131::odometry DriveOdom(&LeftDriveWheel, nullptr, &RearWheel, &Inertial);
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() {}
+void initialize()
+{
+  pros::lcd::initialize();
+
+  Inertial.reset();
+  while (Inertial.is_calibrating()) pros::delay(10);
+}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -71,7 +87,24 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous()
+{
+  std::cout << "=================================\n"
+            << "AUTONOMOUS START" << "\n"
+            << "=================================" << std::endl;
+
+  Robot.setPosition(lib2131::RobotState({0, 0, lib2131::Angle(0, true)},
+                                        {0, 0, lib2131::Angle(0, true)},
+                                        {0, 0, lib2131::Angle(0, true)}));
+
+  Robot.moveToPose(lib2131::RobotState({10, 10, lib2131::Angle(45, true)},
+                                       {0, 0, lib2131::Angle(0, true)},
+                                       {0, 0, lib2131::Angle(0, true)}),
+                   100, false);
+  std::cout << "=================================" << "\n";
+  std::cout << "AUTONOMOUS END" << std::endl;
+  std::cout << "=================================" << "\n";
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -88,19 +121,28 @@ void autonomous() {}
  */
 void opcontrol()
 {
-  Inertial.reset();
-  while (Inertial.is_calibrating()) pros::delay(10);
-
   while (true)
   {
     DriveOdom.update(10);
     TWheelOdom.update(10);
 
-    // std::cout << LeftDriveWheel.getDistanceTraveled() << ", "
-    //           << RightDriveWheel.getDistanceTraveled() << "\n";
+    pros::lcd::print(1, "Position:");
+    pros::lcd::print(2, "DO: (%f, %f, %f)", DriveOdom.getRobotState().position.x,
+                     DriveOdom.getRobotState().position.y,
+                     DriveOdom.getRobotState().position.z);
+    pros::lcd::print(3, "TO: (%f, %f, %f)", TWheelOdom.getRobotState().position.x,
+                     TWheelOdom.getRobotState().position.y,
+                     TWheelOdom.getRobotState().position.z);
 
-    std::cout << DriveOdom.getRobotState().position << ", " << Inertial.get_heading()
-              << "\n";
+    LeftDrive.move_voltage(
+        (primary.get_analog(pros::controller_analog_e_t::E_CONTROLLER_ANALOG_LEFT_Y) /
+         100) *
+        12000);
+    RightDrive.move_voltage(
+        (primary.get_analog(pros::controller_analog_e_t::E_CONTROLLER_ANALOG_RIGHT_Y) /
+         100) *
+        12000);
+
     pros::delay(10);
   }
 }

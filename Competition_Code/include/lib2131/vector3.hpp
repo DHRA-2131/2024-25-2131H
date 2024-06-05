@@ -11,7 +11,6 @@
 
 #pragma once
 #include <ostream>
-// TODO: Make sure this throws an error when types don't match
 
 namespace lib2131
 {
@@ -23,6 +22,7 @@ namespace lib2131
  * @tparam Y_Type
  * @tparam Z_Type
  */
+// TODO: Make sure this throws an error when types don't match
 template <typename X_Type, typename Y_Type, typename Z_Type>
 struct Vector3
 {
@@ -99,7 +99,7 @@ struct Vector3
    * @param B Added Vector
    * @return Vector3<X_Type, Y_Type, Z_Type> Sum of Vectors
    */
-  Vector3<X_Type, Y_Type, Z_Type> operator+(const Vector3 &B)
+  Vector3<X_Type, Y_Type, Z_Type> operator+(Vector3 B)
   {
     return Vector3<X_Type, Y_Type, Z_Type>(this->x + B.x, this->y + B.y, this->z + B.z);
   }
@@ -110,7 +110,7 @@ struct Vector3
    * @param B Subtracting Vector
    * @return Vector3<X_Type, Y_Type, Z_Type> Difference of Vectors
    */
-  Vector3<X_Type, Y_Type, Z_Type> operator-(const Vector3 &B)
+  Vector3<X_Type, Y_Type, Z_Type> operator-(Vector3 B)
   {
     return Vector3<X_Type, Y_Type, Z_Type>(this->x - B.x, this->y - B.y, this->z - B.z);
   }
@@ -121,7 +121,7 @@ struct Vector3
    * @param B Scalar
    * @return Vector3<X_Type, Y_Type, Z_Type> Scaled Vector
    */
-  Vector3<X_Type, Y_Type, Z_Type> operator*(const double B)
+  Vector3<X_Type, Y_Type, Z_Type> operator*(double B)
   {
     return Vector3<X_Type, Y_Type, Z_Type>(this->x * B, this->y * B, this->z * B);
   }
@@ -132,7 +132,7 @@ struct Vector3
    * @param B Scalar
    * @return Vector3<X_Type, Y_Type, Z_Type> Scaled Vector
    */
-  Vector3<X_Type, Y_Type, Z_Type> operator/(const double B)
+  Vector3<X_Type, Y_Type, Z_Type> operator/(double B)
   {
     return Vector3<X_Type, Y_Type, Z_Type>(this->x / B, this->y / B, this->z / B);
   }

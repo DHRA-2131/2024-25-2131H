@@ -21,7 +21,7 @@ namespace lib2131
  * @param Offset Offset from Tracking Center
  * @param GearRatio Gear Ratio to sensor
  */
-trackingWheel::trackingWheel(pros::adi::Encoder *Encoder, float Diameter, float Offset,
+TrackingWheel::TrackingWheel(pros::adi::Encoder *Encoder, float Diameter, float Offset,
                              float GearRatio)
     : encoder(encoder), diameter(Diameter), offset(Offset), gearRatio(GearRatio)
 {
@@ -35,7 +35,7 @@ trackingWheel::trackingWheel(pros::adi::Encoder *Encoder, float Diameter, float 
  * @param Offset Offset from Tracking Center
  * @param GearRatio Gear Ratio to sensor
  */
-trackingWheel::trackingWheel(pros::v5::Rotation *Encoder, float Diameter, float Offset,
+TrackingWheel::TrackingWheel(pros::v5::Rotation *Encoder, float Diameter, float Offset,
                              float GearRatio)
     : rotation(Encoder), diameter(Diameter), offset(Offset), gearRatio(GearRatio)
 {
@@ -49,7 +49,7 @@ trackingWheel::trackingWheel(pros::v5::Rotation *Encoder, float Diameter, float 
  * @param Offset Offset from Tracking Center
  * @param DriveRpm RPM at the wheels on drive
  */
-trackingWheel::trackingWheel(pros::v5::MotorGroup *Motors, float Diameter, float Offset,
+TrackingWheel::TrackingWheel(pros::v5::MotorGroup *Motors, float Diameter, float Offset,
                              float DriveRpm)
     : motors(Motors), diameter(Diameter), offset(Offset), driveRpm(DriveRpm)
 {
@@ -59,7 +59,7 @@ trackingWheel::trackingWheel(pros::v5::MotorGroup *Motors, float Diameter, float
  * @brief Resets Odom Wheel
  *
  */
-void trackingWheel::reset()
+void TrackingWheel::reset()
 {
   if (this->encoder != nullptr) this->encoder->reset();
   if (this->rotation != nullptr) this->rotation->reset_position();
@@ -67,11 +67,11 @@ void trackingWheel::reset()
 }
 
 /**
- * @brief Get the Distance Traveled by trackingWheel
+ * @brief Get the Distance Traveled by TrackingWheel
  *
  * @return float Distance
  */
-float trackingWheel::getDistanceTraveled()
+float TrackingWheel::getDistanceTraveled()
 {
   if (this->encoder != nullptr)
   {
@@ -123,14 +123,14 @@ float trackingWheel::getDistanceTraveled()
  *
  * @return float Offset
  */
-float trackingWheel::getOffset() { return this->offset; }
+float TrackingWheel::getOffset() { return this->offset; }
 
 /**
  * @brief Get the Type of Odom
  *
  * @return bool isMotor?
  */
-bool trackingWheel::getType()
+bool TrackingWheel::getType()
 {
   if (this->motors != nullptr) return 1;
   return 0;

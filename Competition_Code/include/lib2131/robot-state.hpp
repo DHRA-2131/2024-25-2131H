@@ -10,8 +10,8 @@
  *
  */
 #pragma once
+#include "lib2131/angle.hpp"
 #include "lib2131/vector3.hpp"
-#include "utilities.hpp"
 
 namespace lib2131
 {
@@ -20,17 +20,17 @@ namespace lib2131
  * @brief robotState Struct. Defines Robot's Speed, Velocity, and Acceleration.
  *
  */
-struct robotState
+struct RobotState
 {
-  Vector3<double, double, angle> position;
-  Vector3<double, double, angle> velocity;
-  Vector3<double, double, angle> acceleration;
+  Vector3<double, double, Angle> position;
+  Vector3<double, double, Angle> velocity;
+  Vector3<double, double, Angle> acceleration;
 
   /**
    * @brief Construct a empty robot State object
    *
    */
-  robotState();
+  RobotState();
 
   /**
    * @brief Construct a new robot State object
@@ -39,8 +39,8 @@ struct robotState
    * @param Velocity X', Y', Theta' as Vector3 Object
    * @param Acceleration X'', Y'', Theta'' as Vector3 Object
    */
-  robotState(Vector3<double, double, angle> Position,
-             Vector3<double, double, angle> Velocity,
-             Vector3<double, double, angle> Acceleration);
+  RobotState(Vector3<double, double, Angle> Position,
+             Vector3<double, double, Angle> Velocity,
+             Vector3<double, double, Angle> Acceleration);
 };
 }  // namespace lib2131

@@ -14,15 +14,15 @@ namespace lib2131
 {
 
 /**
- * @brief Construct a new odometry object using 3 Wheels, Put nullptr to exclude a
+ * @brief Construct a new Odometry object using 3 Wheels, Put nullptr to exclude a
  * wheel.
  *
  * @param LeftWheel Pointer to Left trackingWheel object
  * @param RightWheel Pointer to Right trackingWheel object
  * @param RearWheel Pointer to Rear trackingWheel object
  */
-odometry::odometry(trackingWheel* LeftWheel, trackingWheel* RightWheel,
-                   trackingWheel* RearWheel, pros::v5::IMU* Inertial)
+Odometry::Odometry(TrackingWheel* LeftWheel, TrackingWheel* RightWheel,
+                   TrackingWheel* RearWheel, pros::v5::IMU* Inertial)
     : leftWheel(LeftWheel),
       rightWheel(RightWheel),
       rearWheel(RearWheel),
@@ -42,16 +42,23 @@ odometry::odometry(trackingWheel* LeftWheel, trackingWheel* RightWheel,
 /**
  * @brief Get the Robot State object
  *
- * @return robotState currentState
+ * @return RobotState currentState
  */
-robotState odometry::getRobotState() { return currentState; }
+RobotState Odometry::getRobotState() const { return currentState; }
+
+/**
+ * @brief Get the Robot State object
+ *
+ * @return RobotState currentState
+ */
+void Odometry::setRobotState(RobotState newState) { currentState = newState; }
 
 /**
  * @brief Update Odometry Class
  *
  * @param dTime Change in time between updates
  */
-void odometry::update(double dTime)
+void Odometry::update(double dTime)
 {
   // Get Deltas
   if (leftExists) dLeftDist = lastLeftDist - leftWheel->getDistanceTraveled();
@@ -77,7 +84,7 @@ void odometry::update(double dTime)
   // Use Inertial for theta
   else if (inertialExists)
   {
-    Theta.setTheta(inertial->get_heading(), true);
+    Theta.setTheta(360 - inertial->get_heading(), true);
     dTheta = lastTheta - Theta;
   }
   else  // This should never happen
@@ -121,10 +128,10 @@ void odometry::update(double dTime)
     }
   }
 
-  robotState lastState = currentState;
+  RobotState lastState = currentState;
 
   // Set Robot Actual Position
-  Vector3<double, double, angle> dGlobalPosition(
+  Vector3<double, double, Angle> dGlobalPosition(
       localY * sin(Theta.getRadians()) + localX * -cos(Theta.getRadians()),
       localY * cos(Theta.getRadians()) + localX * sin(Theta.getRadians()), dTheta);
 

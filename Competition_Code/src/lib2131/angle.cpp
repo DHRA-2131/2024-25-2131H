@@ -8,29 +8,30 @@
  * @copyright Copyright (c) 2024
  *
  */
-#include "lib2131/utilities.hpp"
+#include "lib2131/Angle.hpp"
+
 namespace lib2131
 {
 
 /**
- * @brief Construct a empty angle object
+ * @brief Construct a empty Angle object
  *
  */
-angle::angle() : value(0), isDegrees(1) {}
+Angle::Angle() : value(0), isDegrees(1) {}
 /**
- * @brief Construct a new angle object
+ * @brief Construct a new Angle object
  *
  * @param Value Value of Angle
  * @param IsDegrees Is the Angle Unit Degrees? False if Radians.
  */
-angle::angle(double Value, bool IsDegrees) : value(Value), isDegrees(IsDegrees) {}
+Angle::Angle(double Value, bool IsDegrees) : value(Value), isDegrees(IsDegrees) {}
 
 /**
- * @brief Get the angle in Radians
+ * @brief Get the Angle in Radians
  *
  * @return double Radians
  */
-double angle::getRadians()
+double Angle::getRadians()
 {
   if (this->isDegrees)
   {
@@ -43,11 +44,11 @@ double angle::getRadians()
 }
 
 /**
- * @brief Get the angle in Degrees
+ * @brief Get the Angle in Degrees
  *
  * @return double Degrees
  */
-double angle::getDegrees()
+double Angle::getDegrees()
 {
   if (this->isDegrees)
   {
@@ -65,7 +66,7 @@ double angle::getDegrees()
  * @param newTheta New value of Angle.
  * @param isDegrees Is newTheta in Degrees; False if Radians.
  */
-void angle::setTheta(double newTheta, bool isDegrees)
+void Angle::setTheta(double newTheta, bool isDegrees)
 {
   this->value = newTheta;
   this->isDegrees = isDegrees;
@@ -75,17 +76,17 @@ void angle::setTheta(double newTheta, bool isDegrees)
  * @brief Addition of Two Angles
  *
  * @param B Added Angle
- * @return angle Sum
+ * @return Angle Sum
  */
-angle angle::operator+(angle B)
+Angle Angle::operator+(Angle B)
 {
-  if (isDegrees)
+  if (this->isDegrees)
   {
-    return angle(this->value + B.getDegrees(), true);
+    return Angle(this->value + B.getDegrees(), true);
   }
   else
   {
-    return angle(this->value + B.getRadians(), false);
+    return Angle(this->value + B.getRadians(), false);
   }
 }
 
@@ -93,53 +94,53 @@ angle angle::operator+(angle B)
  * @brief Subtraction of Two Angles
  *
  * @param B Subtracting Angle
- * @return angle Difference
+ * @return Angle Difference
  */
-angle angle::operator-(angle B)
+Angle Angle::operator-(Angle B)
 {
-  if (isDegrees)
+  if (this->isDegrees)
   {
-    return angle(this->value - B.getDegrees(), true);
+    return Angle(this->value - B.getDegrees(), true);
   }
   else
   {
-    return angle(this->value - B.getRadians(), false);
+    return Angle(this->value - B.getRadians(), false);
   }
 }
 
 /**
- * @brief Scale angle by an amount
+ * @brief Scale Angle by an amount
  *
  * @param B Scalar
- * @return angle Scaled_Angle
+ * @return Angle Scaled_Angle
  */
-angle angle::operator*(double B)
+Angle Angle::operator*(double B)
 {
-  if (isDegrees)
+  if (this->isDegrees)
   {
-    return angle(this->value * B, true);
+    return Angle(this->value * B, true);
   }
   else
   {
-    return angle(this->value * B, false);
+    return Angle(this->value * B, false);
   }
 }
 
 /**
- * @brief Scale angle by amount
+ * @brief Scale Angle by amount
  *
  * @param B Scalar
- * @return angle Scaled_Angle
+ * @return Angle Scaled_Angle
  */
-angle angle::operator/(double B)
+Angle Angle::operator/(double B)
 {
-  if (isDegrees)
+  if (this->isDegrees)
   {
-    return angle(this->value / B, true);
+    return Angle(this->value / B, true);
   }
   else
   {
-    return angle(this->value / B, false);
+    return Angle(this->value / B, false);
   }
 }
 
@@ -148,9 +149,9 @@ angle angle::operator/(double B)
  *
  * @param B Added Angle
  */
-void angle::operator+=(angle B)
+void Angle::operator+=(Angle B)
 {
-  if (isDegrees)
+  if (this->isDegrees)
   {
     this->value += B.getDegrees();
   }
@@ -165,9 +166,9 @@ void angle::operator+=(angle B)
  *
  * @param B Subtracting Angle
  */
-void angle::operator-=(angle B)
+void Angle::operator-=(Angle B)
 {
-  if (isDegrees)
+  if (this->isDegrees)
   {
     this->value -= B.getDegrees();
   }
@@ -182,9 +183,9 @@ void angle::operator-=(angle B)
  *
  * @param B Scalar
  */
-void angle::operator*=(double B)
+void Angle::operator*=(double B)
 {
-  if (isDegrees)
+  if (this->isDegrees)
   {
     this->value *= B;
   }
@@ -199,9 +200,9 @@ void angle::operator*=(double B)
  *
  * @param B
  */
-void angle::operator/=(double B)
+void Angle::operator/=(double B)
 {
-  if (isDegrees)
+  if (this->isDegrees)
   {
     this->value /= B;
   }
@@ -211,7 +212,7 @@ void angle::operator/=(double B)
   }
 }
 
-std::ostream &operator<<(std::ostream &os, const angle &B)
+std::ostream &operator<<(std::ostream &os, const Angle &B)
 {
   if (B.isDegrees)
   {

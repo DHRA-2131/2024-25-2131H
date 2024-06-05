@@ -10,6 +10,7 @@
  */
 
 #pragma once
+#include "lib2131/Angle.hpp"
 #include "lib2131/robot-state.hpp"
 #include "lib2131/tracking-wheel.hpp"
 #include "pros/imu.hpp"
@@ -21,30 +22,30 @@ namespace lib2131
  * @brief Odometry Class. Provides full tracking of Robot.
  *
  */
-class odometry
+class Odometry
 {
  private:
-  trackingWheel* leftWheel = nullptr;
-  trackingWheel* rightWheel = nullptr;
-  trackingWheel* rearWheel = nullptr;
+  TrackingWheel* leftWheel = nullptr;
+  TrackingWheel* rightWheel = nullptr;
+  TrackingWheel* rearWheel = nullptr;
 
   pros::v5::IMU* inertial;
 
-  angle Theta;
+  Angle Theta;
 
   double lastLeftDist;
   double lastRightDist;
   double lastRearDist;
-  angle lastTheta;
+  Angle lastTheta;
 
   double dLeftDist;
   double dRightDist;
   double dRearDist;
-  angle dTheta;
+  Angle dTheta;
 
   bool leftExists, rightExists, rearExists, inertialExists;
 
-  robotState currentState;
+  RobotState currentState;
 
  public:
   /**
@@ -54,16 +55,24 @@ class odometry
    * @param LeftWheel Pointer to Left trackingWheel object
    * @param RightWheel Pointer to Right trackingWheel object
    * @param RearWheel Pointer to Rear trackingWheel object
+   * @param Inertial Pointer to Pros IMU object
    */
-  odometry(trackingWheel* LeftWheel, trackingWheel* RightWheel, trackingWheel* RearWheel, pros::v5::IMU* Inertial);
-
+  Odometry(TrackingWheel* LeftWheel, TrackingWheel* RightWheel, TrackingWheel* RearWheel,
+           pros::v5::IMU* Inertial);
 
   /**
    * @brief Get the Robot State object
    *
-   * @return robotState currentState
+   * @return RobotState currentState
    */
-  robotState getRobotState();
+  RobotState getRobotState() const;
+
+  /**
+   * @brief Set the RobotState of Odometry Object
+   *
+   * @param newState New RobotState of Odometry Object
+   */
+  void setRobotState(RobotState newState);
 
   /**
    * @brief Update Odometry Class

@@ -25,10 +25,10 @@ namespace lib2131
 {
 
 /**
- * @brief trackingWheel Class, Modified from LemLib
+ * @brief TrackingWheel Class, Modified from LemLib
  *
  */
-class trackingWheel
+class TrackingWheel
 {
  private:
   float diameter;
@@ -49,7 +49,7 @@ class trackingWheel
    * @param Offset Offset from Tracking Center
    * @param GearRatio Gear Ratio to sensor
    */
-  trackingWheel(pros::adi::Encoder *Encoder, float Diameter, float Offset,
+  TrackingWheel(pros::adi::Encoder *Encoder, float Diameter, float Offset,
                 float GearRatio = 1);
 
   /**
@@ -60,7 +60,7 @@ class trackingWheel
    * @param Offset Offset from Tracking Center
    * @param GearRatio Gear Ratio to sensor
    */
-  trackingWheel(pros::v5::Rotation *Encoder, float Diameter, float Offset,
+  TrackingWheel(pros::v5::Rotation *Encoder, float Diameter, float Offset,
                 float GearRatio = 1);
 
   /**
@@ -71,7 +71,7 @@ class trackingWheel
    * @param Offset Offset from Tracking Center
    * @param DriveRpm RPM at the wheels on drive
    */
-  trackingWheel(pros::v5::MotorGroup *Motors, float Diameter, float Offset,
+  TrackingWheel(pros::v5::MotorGroup *Motors, float Diameter, float Offset,
                 float DriveRpm);
 
   /**
@@ -81,7 +81,7 @@ class trackingWheel
   void reset();
 
   /**
-   * @brief Get the Distance Traveled by trackingWheel
+   * @brief Get the Distance Traveled by TrackingWheel
    *
    * @return float Distance
    */
