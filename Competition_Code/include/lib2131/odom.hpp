@@ -24,13 +24,16 @@ namespace lib2131
  */
 class Odometry
 {
- private:
+ private:  // Lib2131
   TrackingWheel* leftWheel = nullptr;
   TrackingWheel* rightWheel = nullptr;
   TrackingWheel* rearWheel = nullptr;
 
+ private:  // Pros
   pros::v5::IMU* inertial;
+  RobotState currentState;
 
+ private:  // Runtime Vars
   Angle Theta;
 
   double lastLeftDist;
@@ -43,9 +46,9 @@ class Odometry
   double dRearDist;
   Angle dTheta;
 
+ private:  // Constructed
   bool leftExists, rightExists, rearExists, inertialExists;
-
-  RobotState currentState;
+  bool calibrated;
 
  public:
   /**

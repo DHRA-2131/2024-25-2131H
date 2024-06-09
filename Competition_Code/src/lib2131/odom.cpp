@@ -27,16 +27,22 @@ Odometry::Odometry(TrackingWheel* LeftWheel, TrackingWheel* RightWheel,
       rightWheel(RightWheel),
       rearWheel(RearWheel),
       inertial(Inertial),
-      currentState()
+      currentState(),
+      Theta({0, Inertial == nullptr}),
+      lastTheta(0, Inertial == nullptr),
+      lastLeftDist(0),
+      lastRightDist(0),
+      lastRearDist(0),
+      calibrated(0),
+      leftExists(leftWheel != nullptr),
+      rightExists(rightWheel != nullptr),
+      rearExists(rearWheel != nullptr),
+      inertialExists(rearWheel != nullptr)
 {
-  leftExists = (leftWheel != nullptr);
-  rightExists = (rightWheel != nullptr);
-  rearExists = (rearWheel != nullptr);
-  inertialExists = (rearWheel != nullptr);
-
   if (leftExists) leftWheel->reset();
   if (rightExists) rightWheel->reset();
   if (rearExists) rearWheel->reset();
+  if (!inertialExists) calibrated = true;
 }
 
 /**
@@ -60,93 +66,99 @@ void Odometry::setRobotState(RobotState newState) { currentState = newState; }
  */
 void Odometry::update(double dTime)
 {
-  // Get Deltas
-  if (leftExists) dLeftDist = lastLeftDist - leftWheel->getDistanceTraveled();
-  if (rightExists) dRightDist = lastRightDist - rightWheel->getDistanceTraveled();
-  if (rearExists) dRearDist = lastRearDist - rearWheel->getDistanceTraveled();
+  // // Get Deltas
+  // if (!calibrated)
+  // {
+  //   inertial->reset(true);
+  //   calibrated = true;
+  // }
+  // if (leftExists) dLeftDist = lastLeftDist - leftWheel->getDistanceTraveled();
+  // if (rightExists) dRightDist = lastRightDist - rightWheel->getDistanceTraveled();
+  // if (rearExists) dRearDist = lastRearDist - rearWheel->getDistanceTraveled();
 
-  // FINDING THETA
-  // Using Odom Wheels
-  if (leftExists && rightExists)
-  {
-    if (leftWheel->getOffset() - rightWheel->getOffset() == 0)
-    {
-      ;  // TODO: Set-up as error
-    }
-    else
-    {
-      dTheta.setTheta(
-          (dLeftDist - dRightDist) / (leftWheel->getOffset() - rightWheel->getOffset()),
-          false);
-    }
-  }
-  // Use Inertial for theta
-  else if (inertialExists)
-  {
-    dTheta = lastTheta - Angle(360 - inertial->get_heading(), true);
-  }
-  else  // This should never happen
-  {
-    ;  // TODO: Set-Up as error
-  }
+  // // FINDING THETA
+  // // Using Odom Wheels
+  // if (leftExists && rightExists)
+  // {
+  //   if (leftWheel->getOffset() - rightWheel->getOffset() == 0)
+  //   {
+  //     ;  // TODO: Set-up as error
+  //   }
+  //   else
+  //   {
+  //     dTheta.setTheta(
+  //         (dLeftDist - dRightDist) / (leftWheel->getOffset() -
+  //         rightWheel->getOffset()), false);
+  //   }
+  // }
+  // // Use Inertial for theta
+  // else if (inertialExists)
+  // {
+  //   dTheta = lastTheta - Angle(360 - inertial->get_heading(), true);
+  // }
+  // else  // This should never happen
+  // {
+  //   ;  // TODO: Set-Up as error
+  // }
 
-  Angle avgTheta = Theta - dTheta / 2;
-  Theta -= dTheta;
+  // Angle avgTheta = Theta - dTheta / 2;
+  // Theta -= dTheta;
 
-  // Local Change in X and Y
-  double localX, localY;
-  if (dTheta.getRadians() == 0)
-  {
-    localX = dRearDist;
-    if (leftExists)
-      localY = dLeftDist;
-    else if (rightExists)
-      localY = dRightDist;
-    else
-      ;  // TODO: Set-Up as error
-  }
-  else
-  {
-    if (leftExists)
-    {
-      localY = 2 * sin(dTheta.getRadians() / 2) *
-               (dLeftDist / dTheta.getRadians() + leftWheel->getOffset());
-    }
-    else if (rightExists)
-    {
-      localY = 2 * sin(dTheta.getRadians() / 2) *
-               (dLeftDist / dTheta.getRadians() + rightWheel->getOffset());
-    }
-    else
-    {
-      // TODO: Set-Up as error
-    }
+  // // Local Change in X and Y
+  // double localX, localY;
+  // if (dTheta.getRadians() == 0)
+  // {
+  //   localX = dRearDist;
+  //   if (leftExists)
+  //     localY = dLeftDist;
+  //   else if (rightExists)
+  //     localY = dRightDist;
+  //   else
+  //     ;  // TODO: Set-Up as error
+  // }
+  // else
+  // {
+  //   if (leftExists)
+  //   {
+  //     localY = 2 * sin(dTheta.getRadians() / 2) *
+  //              (dLeftDist / dTheta.getRadians() + leftWheel->getOffset());
+  //   }
+  //   else if (rightExists)
+  //   {
+  //     localY = 2 * sin(dTheta.getRadians() / 2) *
+  //              (dLeftDist / dTheta.getRadians() + rightWheel->getOffset());
+  //   }
+  //   else
+  //   {
+  //     // TODO: Set-Up as error
+  //   }
 
-    if (rearExists)
-    {
-      localX = 2 * sin(dTheta.getRadians() / 2) *
-               (dRearDist / dTheta.getRadians() + rearWheel->getOffset());
-    }
-  }
+  //   if (rearExists)
+  //   {
+  //     localX = 2 * sin(dTheta.getRadians() / 2) *
+  //              (dRearDist / dTheta.getRadians() + rearWheel->getOffset());
+  //   }
+  // }
 
-  RobotState lastState = currentState;
+  // RobotState lastState = currentState;
 
-  // Set Robot Actual Position
-  Vector3<double, double, Angle> dGlobalPosition(
-      localY * sin(avgTheta.getRadians()) + localX * -cos(avgTheta.getRadians()),
-      localY * cos(avgTheta.getRadians()) + localX * sin(avgTheta.getRadians()), dTheta);
+  // // Set Robot Actual Position
+  // Vector3<double, double, Angle> dGlobalPosition(
+  //     localY * sin(avgTheta.getRadians()) + localX * -cos(avgTheta.getRadians()),
+  //     localY * cos(avgTheta.getRadians()) + localX * sin(avgTheta.getRadians()),
+  //     dTheta);
 
-  // Update Robot State
-  currentState.position += dGlobalPosition;
-  currentState.velocity = (currentState.position - lastState.position) * (1000 / dTime);
-  currentState.acceleration =
-      (currentState.velocity - lastState.velocity) * (1000 / dTime);
+  // // Update Robot State
+  // currentState.position += dGlobalPosition;
+  // currentState.velocity = (currentState.position - lastState.position) * (1000 /
+  // dTime); currentState.acceleration =
+  //     (currentState.velocity - lastState.velocity) * (1000 / dTime);
 
-  // Update "Last" Data
-  if (leftExists) lastLeftDist = leftWheel->getDistanceTraveled();
-  if (rightExists) lastRightDist = rightWheel->getDistanceTraveled();
-  if (rearExists) lastRearDist = rearWheel->getDistanceTraveled();
-  lastTheta = Theta;
+  // // Update "Last" Data
+  // if (leftExists) lastLeftDist = leftWheel->getDistanceTraveled();
+  // if (rightExists) lastRightDist = rightWheel->getDistanceTraveled();
+  // if (rearExists) lastRearDist = rearWheel->getDistanceTraveled();
+  // lastTheta = Theta;
 }
 
 }  // namespace lib2131

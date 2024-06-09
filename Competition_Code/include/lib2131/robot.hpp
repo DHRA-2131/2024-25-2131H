@@ -34,7 +34,7 @@ class Robot
 
  private:
   // Odometry
-  std::vector<Odometry> m_Odometry;
+  std::vector<Odometry *> m_Odometry;
 
   // Distance PIDs
   PID m_AngularPID;
@@ -42,7 +42,7 @@ class Robot
 
  public:
   Robot(double maxAccel, double maxDecel, double maxVelocity,
-        std::vector<Odometry> odometry, PID angularPID, PID linearPID,
+        std::vector<Odometry *> odometry, PID angularPID, PID linearPID,
         pros::MotorGroup *leftDrive, pros::MotorGroup *rightDrive)
       : m_MaxAccel(maxAccel),
         m_MaxDecel(maxDecel),
@@ -57,8 +57,48 @@ class Robot
 
   RobotState getRobotState()
   {
-    return m_Odometry[0].getRobotState();
+    return m_Odometry[0]->getRobotState();
     // TODO: Kolman Filters on m_DeadOdom and m_DrivenOdom, (IMU???)
+  }
+
+  Vector3<double, double, Angle> getPosition() { return getRobotState().position; }
+  Vector3<double, double, Angle> getVelocity() { return getRobotState().velocity; }
+  Vector3<double, double, Angle> getAcceleration()
+  {
+    return getRobotState().acceleration;
+  }
+
+  void setPosition(Vector3<double, double, Angle> newPosition)
+  {
+    // Update all Odometry Objects
+    for (std::size_t i = 0; i < m_Odometry.size(); i++)
+    {
+      m_Odometry[i]->setRobotState({newPosition, {}, {}});
+    }
+  }
+  void setRobotState(RobotState newState)
+  {
+    for (std::size_t i = 0; i < m_Odometry.size(); i++)
+    {
+      m_Odometry[i]->setRobotState(newState);
+    }
+  }
+
+  void update(int dTime)
+  {
+    for (std::size_t i = 0; i < m_Odometry.size(); i++)
+    {
+      m_Odometry[i]->update(dTime);
+    }
+  }
+
+  void brake(pros::MotorBrake brakeType)
+  {
+    m_LeftDrive->set_brake_mode_all(brakeType);
+    m_RightDrive->set_brake_mode_all(brakeType);
+
+    m_LeftDrive->brake();
+    m_RightDrive->brake();
   }
 
   void moveDistance(double inches, bool async)
@@ -236,29 +276,6 @@ class Robot
 
       pros::delay(10);
       // }
-    }
-  }
-
-  void brake(pros::MotorBrake brakeType)
-  {
-    m_LeftDrive->set_brake_mode_all(brakeType);
-    m_RightDrive->set_brake_mode_all(brakeType);
-  }
-
-  void setPosition(RobotState newState)
-  {
-    // Update all Odometry Objects
-    for (std::size_t i = 0; i < m_Odometry.size(); i++)
-    {
-      m_Odometry[i].setRobotState(newState);
-    }
-  }
-
-  void update(int dTime)
-  {
-    for (size_t i = 0; i < m_Odometry.size(); i++)
-    {
-      m_Odometry[i].update(dTime);
     }
   }
 

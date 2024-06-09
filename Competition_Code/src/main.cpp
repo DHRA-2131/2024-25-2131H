@@ -38,7 +38,7 @@ lib2131::PID linearPID(1, 0, 0);
 lib2131::PID angularPID(1, 0, 0);
 
 // Robot
-lib2131::Robot Robot(9999.0, -9999.0, 56.68, {TWheelOdom, DriveOdom}, angularPID,
+lib2131::Robot Robot(9999.0, -9999.0, 56.68, {&TWheelOdom, &DriveOdom}, angularPID,
                      linearPID, &LeftDrive, &RightDrive);
 
 // Controller
@@ -49,16 +49,25 @@ void Screen()
   pros::lcd::initialize();
   while (true)
   {
-    Robot.update(10);
-    auto position = Robot.getRobotState().position;
+    // auto position = Robot.getRobotState().position;
     pros::lcd::print(1, "Position:");
-    pros::lcd::print(2, "DO: (%f, %f, %f)", position.x, position.y, position.z);
-    // pros::lcd::print(2, "DO: (%f, %f, %f)", DriveOdom.getRobotState().position.x,
-    //                  DriveOdom.getRobotState().position.y,
-    //                  DriveOdom.getRobotState().position.z);
-    // pros::lcd::print(3, "TO: (%f, %f, %f)", TWheelOdom.getRobotState().position.x,
-    //                  TWheelOdom.getRobotState().position.y,
-    //                  TWheelOdom.getRobotState().position.z);
+    // pros::lcd::print(2, "DO: (%f, %f, %f)", position.x, position.y, position.z);
+    pros::lcd::print(2, "DRIVE ODOM: ");
+    pros::lcd::print(3, "(LR): (%f, %f, %f)", LeftDriveWheel.getDistanceTraveled(),
+                     RightDriveWheel.getDistanceTraveled(), Inertial.get_heading());
+    pros::lcd::print(4, "POSE: (%f, %f, %f)", DriveOdom.getRobotState().position.x,
+                     DriveOdom.getRobotState().position.y,
+                     DriveOdom.getRobotState().position.z);
+
+    pros::lcd::print(5, "TRACKING ODOM: ");
+    pros::lcd::print(6, "(LR): (%f, %f, %f)", LeftDeadWheel.getDistanceTraveled(),
+                     RightDeadWheel.getDistanceTraveled(),
+                     RearWheel.getDistanceTraveled());
+
+    pros::lcd::print(7, "POSE: (%f, %f, %f)", TWheelOdom.getRobotState().position.x,
+                     TWheelOdom.getRobotState().position.y,
+                     TWheelOdom.getRobotState().position.z);
+
     pros::delay(10);
   }
 };
@@ -72,11 +81,7 @@ pros::Task screenTask(Screen, "SCREEN TASK");
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize()
-{
-  Inertial.reset();
-  while (Inertial.is_calibrating()) pros::delay(10);
-}
+void initialize() { Robot.setPosition({0, 0, {0, true}}); }
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -113,10 +118,6 @@ void autonomous()
             << "AUTONOMOUS START" << "\n"
             << "=================================" << std::endl;
 
-  Robot.setPosition(lib2131::RobotState({0, 0, lib2131::Angle(0, true)},
-                                        {0, 0, lib2131::Angle(0, true)},
-                                        {0, 0, lib2131::Angle(0, true)}));
-
   Robot.moveToPoint(12, 12, false);
   std::cout << "=================================" << "\n";
   std::cout << "AUTONOMOUS END" << std::endl;
@@ -138,6 +139,8 @@ void autonomous()
  */
 void opcontrol()
 {
+  Robot.update(10);
+
   while (true)
   {
     LeftDrive.move_voltage(
