@@ -22,7 +22,6 @@ namespace lib2131
  * @tparam Y_Type
  * @tparam Z_Type
  */
-// TODO: Make sure this throws an error when types don't match
 template <typename X_Type, typename Y_Type, typename Z_Type>
 struct Vector3
 {
@@ -137,6 +136,13 @@ struct Vector3
     return Vector3<X_Type, Y_Type, Z_Type>(this->x / B, this->y / B, this->z / B);
   }
 
+  /**
+   * @brief Print a Vector3 to an Ostream
+   *
+   * @param os Output Stream
+   * @param B Vector3
+   * @return std::ostream& os
+   */
   friend std::ostream &operator<<(std::ostream &os, const Vector3 &B)
   {
     os << "{" << B.x << ", " << B.y << ", " << B.z << "}";

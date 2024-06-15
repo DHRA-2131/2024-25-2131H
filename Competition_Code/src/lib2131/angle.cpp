@@ -1,228 +1,168 @@
 /**
- * @file utilities.hpp
+ * @file angle.cpp
  * @author Andrew Hilton (2131H)
- * @brief Source code for lib2131's Utility Functions.
- * @version 0.1
- * @date 2024-05-25
+ * @brief Angle Class Src File
+ * @version 0.2
+ * @date 2024-06-02
  *
  * @copyright Copyright (c) 2024
  *
  */
-#include "lib2131/Angle.hpp"
+
+#include "lib2131/angle.hpp"
 
 namespace lib2131
 {
-
 /**
  * @brief Construct a empty Angle object
- *
+ * @note Is defaulted to Radians with value of 0
  */
-Angle::Angle() : value(0), isDegrees(1) {}
-/**
- * @brief Construct a new Angle object
- *
- * @param Value Value of Angle
- * @param IsDegrees Is the Angle Unit Degrees? False if Radians.
- */
-Angle::Angle(double Value, bool IsDegrees) : value(Value), isDegrees(IsDegrees) {}
+Angle::Angle() : m_isDegrees(0) {}
 
 /**
- * @brief Get the Angle in Radians
+ * @brief Construct a new Angle object
+ * @note isDegrees Defaults to true
+ * @param value Value of Angle
+ * @param isDegrees Is Angle in Degrees?
+ */
+Angle::Angle(double value, bool isDegrees) : m_value(value), m_isDegrees(isDegrees) {}
+
+/**
+ * @brief Get the [Radian] Measure of Angle
  *
  * @return double Radians
  */
 double Angle::getRadians()
 {
-  if (this->isDegrees)
-  {
-    return this->value * M_PI / 180;
-  }
-  else
-  {
-    return this->value;
-  }
+  if (m_isDegrees) { return m_value * M_PI / 180; }
+  else { return m_value; };
 }
 
 /**
- * @brief Get the Angle in Degrees
+ * @brief Get the [Degree] Measure of Angle
  *
  * @return double Degrees
  */
 double Angle::getDegrees()
 {
-  if (this->isDegrees)
-  {
-    return this->value;
-  }
-  else
-  {
-    return this->value * 180 / M_PI;
-  }
+  if (m_isDegrees) { return m_value; }
+  else { return m_value * 180 / M_PI; }
 }
 
 /**
- * @brief Set the new Theta of an Angle
+ * @brief Get the [Raw] Measure of Angle
  *
- * @param newTheta New value of Angle.
- * @param isDegrees Is newTheta in Degrees; False if Radians.
+ * @return double m_value
  */
-void Angle::setTheta(double newTheta, bool isDegrees)
-{
-  this->value = newTheta;
-  this->isDegrees = isDegrees;
-}
+double Angle::getRawValue() { return m_value; }
 
 /**
- * @brief Addition of Two Angles
+ * @brief Addition Operator
  *
  * @param B Added Angle
- * @return Angle Sum
+ * @return Angle Sum of Angles
  */
 Angle Angle::operator+(Angle B)
 {
-  if (this->isDegrees)
+  // If Angles have the same Unit
+  if ((this->m_isDegrees && B.m_isDegrees) || (!this->m_isDegrees && !B.m_isDegrees))
   {
-    return Angle(this->value + B.getDegrees(), true);
+    return Angle(this->m_value + B.m_value, m_isDegrees);
   }
-  else
-  {
-    return Angle(this->value + B.getRadians(), false);
-  }
+  // Else Convert Angle B to match unit
+  else if (this->m_isDegrees) { return Angle(this->m_value + B.getDegrees(), true); }
+  else { return Angle(this->m_value + B.getRadians(), false); }
 }
-
 /**
- * @brief Subtraction of Two Angles
+ * @brief Subtraction Operator
  *
  * @param B Subtracting Angle
- * @return Angle Difference
+ * @return Angle Difference of Angles
  */
 Angle Angle::operator-(Angle B)
 {
-  if (this->isDegrees)
+  // If Angles have the same Unit
+  if ((this->m_isDegrees && B.m_isDegrees) || (!this->m_isDegrees && !B.m_isDegrees))
   {
-    return Angle(this->value - B.getDegrees(), true);
+    return Angle(this->m_value - B.m_value, m_isDegrees);
   }
-  else
-  {
-    return Angle(this->value - B.getRadians(), false);
-  }
+  // Else Convert Angle B to match unit
+  else if (this->m_isDegrees) { return Angle(this->m_value - B.getDegrees(), true); }
+  else { return Angle(this->m_value - B.getRadians(), false); }
 }
-
 /**
- * @brief Scale Angle by an amount
+ * @brief Multiplication Operator
  *
  * @param B Scalar
- * @return Angle Scaled_Angle
+ * @return Angle Scaled Angle
  */
-Angle Angle::operator*(double B)
-{
-  if (this->isDegrees)
-  {
-    return Angle(this->value * B, true);
-  }
-  else
-  {
-    return Angle(this->value * B, false);
-  }
-}
+Angle Angle::operator*(double B) { return Angle(m_value * B, m_isDegrees); }
 
 /**
- * @brief Scale Angle by amount
+ * @brief Division Operator
  *
  * @param B Scalar
- * @return Angle Scaled_Angle
+ * @return Angle Scaled Angle
  */
-Angle Angle::operator/(double B)
-{
-  if (this->isDegrees)
-  {
-    return Angle(this->value / B, true);
-  }
-  else
-  {
-    return Angle(this->value / B, false);
-  }
-}
+Angle Angle::operator/(double B) { return Angle(m_value / B, m_isDegrees); }
 
 /**
- * @brief Add to Angle
- *
+ * @brief Addition Assignment
+ * @note Adds to Parent Angle
  * @param B Added Angle
  */
 void Angle::operator+=(Angle B)
 {
-  if (this->isDegrees)
+  // If Angles have the same Unit
+  if ((this->m_isDegrees && B.m_isDegrees) || (!this->m_isDegrees && !B.m_isDegrees))
   {
-    this->value += B.getDegrees();
+    this->m_value += B.m_value;
   }
-  else
-  {
-    this->value += B.getRadians();
-  }
+  // Else convert Angle B to match unit
+  else if (this->m_isDegrees) { this->m_value += B.getDegrees(); }
+  else { this->m_value += B.getRadians(); }
 }
 
 /**
- * @brief Subtract from Angle
- *
+ * @brief Subtraction Assignment
+ * @note Subtracts from Parent Angle
  * @param B Subtracting Angle
  */
 void Angle::operator-=(Angle B)
 {
-  if (this->isDegrees)
+  if ((this->m_isDegrees && B.m_isDegrees) || (!this->m_isDegrees && !B.m_isDegrees))
   {
-    this->value -= B.getDegrees();
+    this->m_value -= B.m_value;
   }
-  else
-  {
-    this->value -= B.getRadians();
-  }
+  else if (this->m_isDegrees) { this->m_value -= B.getDegrees(); }
+  else { this->m_value -= B.getRadians(); }
 }
 
 /**
- * @brief Scale Angle
- *
+ * @brief Multiplication Assignment
+ * @note Scales Parent Angle
  * @param B Scalar
  */
-void Angle::operator*=(double B)
-{
-  if (this->isDegrees)
-  {
-    this->value *= B;
-  }
-  else
-  {
-    this->value *= B;
-  }
-}
+void Angle::operator*=(double B) { this->m_value *= B; }
 
 /**
- * @brief Scale Angle
- *
- * @param B
+ * @brief Division Assignment
+ * @note Scales Parent Angle
+ * @param B Scalar
  */
-void Angle::operator/=(double B)
-{
-  if (this->isDegrees)
-  {
-    this->value /= B;
-  }
-  else
-  {
-    this->value /= B;
-  }
-}
+void Angle::operator/=(double B) { this->m_value /= B; }
 
-std::ostream &operator<<(std::ostream &os, const Angle &B)
+/**
+ * @brief Print an Angle to an std::Ostream
+ *
+ * @param os Output Stream
+ * @param B Angle
+ * @return std::ostream& os
+ */
+std::ostream& operator<<(std::ostream& os, const Angle& B)
 {
-  if (B.isDegrees)
-  {
-    os << B.value << "°";
-  }
-  else
-  {
-    os << B.value << "rad";
-  }
+  os << B.m_value;
+  B.m_isDegrees ? os << "°" : os << "rad";
   return os;
 }
-
-}  // namespace lib2131
+};  // namespace lib2131

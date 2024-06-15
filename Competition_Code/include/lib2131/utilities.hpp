@@ -11,8 +11,8 @@
 
 #pragma once
 #include <cmath>
-#include <ostream>
 #include <vector>
+
 
 namespace lib2131
 {
@@ -35,6 +35,16 @@ T average(std::vector<T> B)
   return Total / B.size();  // Divide by total Elements
 }
 
+/**
+ * @brief Return distance between Point ant Point
+ *
+ * @tparam T Return Type
+ * @param x0 P0 X
+ * @param y0 P0 Y
+ * @param x1 P1 X
+ * @param y1 P1 Y
+ * @return T Distance
+ */
 template <typename T>
 T distance(T x0, T y0, T x1, T y1)
 {

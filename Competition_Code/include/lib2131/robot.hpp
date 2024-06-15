@@ -1,5 +1,5 @@
 
-#include <memory>
+
 #include <utility>
 #include <vector>
 
@@ -7,14 +7,13 @@
 #include "lib2131/odom.hpp"
 #include "lib2131/pid.hpp"
 #include "lib2131/robot-state.hpp"
-#include "lib2131/spline.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/rtos.hpp"
 
 namespace lib2131
 {
 #define MAX_VOLTAGE 12000
-#define T_LOOK_AHEAD 5
+#define T_LOOK_AHEAD 5.0
 
 class Robot
 {
@@ -31,16 +30,18 @@ class Robot
  private:
   pros::MotorGroup *m_LeftDrive;
   pros::MotorGroup *m_RightDrive;
+  pros::Task _UpdateTask;
 
  private:
   // Odometry
   std::vector<Odometry *> m_Odometry;
+  bool m_enabled;
 
   // Distance PIDs
   PID m_AngularPID;
   PID m_LinearPID;
 
- public:
+ public:  // Constructors
   Robot(double maxAccel, double maxDecel, double maxVelocity,
         std::vector<Odometry *> odometry, PID angularPID, PID linearPID,
         pros::MotorGroup *leftDrive, pros::MotorGroup *rightDrive)
@@ -51,21 +52,33 @@ class Robot
         m_AngularPID(angularPID),
         m_LinearPID(linearPID),
         m_LeftDrive(leftDrive),
-        m_RightDrive(rightDrive)
+        m_RightDrive(rightDrive),
+        m_enabled(0),
+        _UpdateTask(
+            [this]() {
+              while (!m_enabled) { pros::delay(10); }
+              while (true)
+              {
+                for (std::size_t i = 0; i < m_Odometry.size(); i++)
+                {
+                  m_Odometry[i]->update(10);
+                }
+                pros::delay(10);
+              }
+            },
+            "Robot Update Task")
   {
   }
 
+ public:  // Enable & Disable
+  void enable() { m_enabled = true; }
+  void disable() { m_enabled = false; }
+
+ public:  // Getters & Setters
   RobotState getRobotState()
   {
     return m_Odometry[0]->getRobotState();
     // TODO: Kolman Filters on m_DeadOdom and m_DrivenOdom, (IMU???)
-  }
-
-  Vector3<double, double, Angle> getPosition() { return getRobotState().position; }
-  Vector3<double, double, Angle> getVelocity() { return getRobotState().velocity; }
-  Vector3<double, double, Angle> getAcceleration()
-  {
-    return getRobotState().acceleration;
   }
 
   void setPosition(Vector3<double, double, Angle> newPosition)
@@ -73,7 +86,8 @@ class Robot
     // Update all Odometry Objects
     for (std::size_t i = 0; i < m_Odometry.size(); i++)
     {
-      m_Odometry[i]->setRobotState({newPosition, {}, {}});
+      m_Odometry[i]->setRobotState({newPosition, (*this->getRobotState().getVelocity()),
+                                    (*this->getRobotState().getAcceleration())});
     }
   }
   void setRobotState(RobotState newState)
@@ -84,14 +98,7 @@ class Robot
     }
   }
 
-  void update(int dTime)
-  {
-    for (std::size_t i = 0; i < m_Odometry.size(); i++)
-    {
-      m_Odometry[i]->update(dTime);
-    }
-  }
-
+ public:  // Movement Functions
   void brake(pros::MotorBrake brakeType)
   {
     m_LeftDrive->set_brake_mode_all(brakeType);
@@ -112,11 +119,12 @@ class Robot
     else
     {
       RobotState Pose = this->getRobotState();
-      Pose.position.x += inches * sin(Pose.position.z.getRadians());
-      Pose.position.y += inches * cos(Pose.position.z.getRadians());
-      std::cout << "TARGET: " << Pose.position << std::endl;
+      Pose.getPosition()->x += inches * sin(Pose.getPosition()->z.getRadians());
+      Pose.getPosition()->y += inches * cos(Pose.getPosition()->z.getRadians());
+      std::cout << "TARGET: " << Pose.getPosition() << std::endl;
 
-      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED POSITION
+      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED
+      // POSITION
       // {
       auto [leftVoltage, rightVoltage] = this->_goToRobotState(Pose, 10);
 
@@ -139,11 +147,12 @@ class Robot
     else
     {
       RobotState Pose = this->getRobotState();  // Get Current Position
-      Pose.position.z += theta;                 // Change Theta
+      Pose.getPosition()->z += theta;           // Change Theta
 
-      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED POSITION
+      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED
+      // POSITION
       // {
-      auto [leftVoltage, rightVoltage] = this->_goToHeading(Pose.position.z, 10);
+      auto [leftVoltage, rightVoltage] = this->_goToHeading(Pose.getPosition()->z, 10);
 
       m_LeftDrive->move_voltage(leftVoltage);
       m_RightDrive->move_voltage(leftVoltage);
@@ -164,12 +173,13 @@ class Robot
     else
     {
       RobotState Pose = this->getRobotState();  // Get Current Position
-      Pose.position.z = theta;                  // Change Theta
-      std::cout << "TARGET" << Pose.position << std::endl;
+      Pose.getPosition()->z = theta;            // Change Theta
+      std::cout << "TARGET" << Pose.getPosition() << std::endl;
 
-      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED POSITION
+      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED
+      // POSITION
       // {
-      auto [leftVoltage, rightVoltage] = this->_goToHeading(Pose.position.z, 10);
+      auto [leftVoltage, rightVoltage] = this->_goToHeading(Pose.getPosition()->z, 10);
 
       m_LeftDrive->move_voltage(leftVoltage);
       m_RightDrive->move_voltage(leftVoltage);
@@ -188,10 +198,11 @@ class Robot
     else
     {
       RobotState Pose = this->getRobotState();
-      Pose.position.x += x;
-      Pose.position.y += y;
+      Pose.getPosition()->x += x;
+      Pose.getPosition()->y += y;
 
-      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED POSITION
+      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED
+      // POSITION
       // {
       auto [leftVoltage, rightVoltage] = this->_goToRobotState(Pose, 10);
 
@@ -211,12 +222,13 @@ class Robot
     else
     {
       RobotState Pose = this->getRobotState();
-      Pose.position.z =
-          Angle(-atan2(y - Pose.position.y, x - Pose.position.x) + M_PI_2, false);
+      Pose.getPosition()->z = Angle(
+          -atan2(y - Pose.getPosition()->y, x - Pose.getPosition()->x) + M_PI_2, false);
 
-      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED POSITION
+      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED
+      // POSITION
       // {
-      auto [leftVoltage, rightVoltage] = this->_goToHeading(Pose.position.z, 10);
+      auto [leftVoltage, rightVoltage] = this->_goToHeading(Pose.getPosition()->z, 10);
 
       m_LeftDrive->move_voltage(leftVoltage);
       m_RightDrive->move_voltage(leftVoltage);
@@ -234,23 +246,7 @@ class Robot
       pros::Task([=, this]() { moveToPose(target, resolution, false); },
                  "Robot::moveToPose ASYNC");
     }
-    else
-    {
-      RobotState pose = this->getRobotState();
-      Spline path = Spline(pose, target, resolution);
-      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED POSITION
-      // {
-      RobotState target = path.calc(path.getNearestT(this->getRobotState().position) +
-                                    T_LOOK_AHEAD / resolution);
-
-      auto [leftVoltage, rightVoltage] = this->_goToRobotState(target, 10);
-
-      m_LeftDrive->move_voltage(leftVoltage);
-      m_RightDrive->move_voltage(leftVoltage);
-
-      pros::delay(10);
-      // }
-    }
+    else {}
   }
 
   void turnToPose(RobotState target, bool async)
@@ -262,14 +258,16 @@ class Robot
     else
     {
       RobotState Pose = this->getRobotState();
-      Pose.position.z = Angle(-atan2(target.position.y - Pose.position.y,
-                                     target.position.x - Pose.position.x) +
-                                  M_PI_2,
-                              false);
+      Pose.getPosition()->z =
+          Angle(-atan2(target.getPosition()->y - Pose.getPosition()->y,
+                       target.getPosition()->x - Pose.getPosition()->x) +
+                    M_PI_2,
+                false);
 
-      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED POSITION
+      // while (true)  // TODO: CHANGE THIS TO WHEN ROBOT IS NEAR DESIRED
+      // POSITION
       // {
-      auto [leftVoltage, rightVoltage] = this->_goToHeading(Pose.position.z, 10);
+      auto [leftVoltage, rightVoltage] = this->_goToHeading(Pose.getPosition()->z, 10);
 
       m_LeftDrive->move_voltage(leftVoltage);
       m_RightDrive->move_voltage(leftVoltage);
@@ -281,8 +279,8 @@ class Robot
 
  protected:
   /**
-   * @brief Returns desired left and right Motor Voltage (mV) to turn the robot to a
-   * heading
+   * @brief Returns desired left and right Motor Voltage (mV) to turn the robot
+   * to a heading
    *
    * @return std::pair<double, double>
    */
@@ -291,9 +289,9 @@ class Robot
     std::cout << "TARGET: " << target.getDegrees() << std::endl;
 
     RobotState actual = this->getRobotState();
-    std::cout << "ACTUAL (xyɵ): " << actual.position << std::endl;
+    std::cout << "ACTUAL (xyɵ): " << actual.getPosition() << std::endl;
 
-    double angularError = (target - actual.position.z).getRadians();
+    double angularError = (target - actual.getPosition()->z).getRadians();
     double angularOut = m_AngularPID.calc(fmod(angularError, 2 * M_PI), dTime);
     std::cout << "Error: " << angularError << std::endl;
     std::cout << "Angular Out: " << angularOut << std::endl;
@@ -353,17 +351,11 @@ class Robot
             (rightDriveVel / m_MaxVelocity) * MAX_VOLTAGE};
   }
 
-  //! FUNCTION ENDED STOP BEING BLIND
-  /*
-  ? ================================================================
-  ? =================================================================
-  ? ==================================================================
-  ? ===================================================================
-  */
   /**
-   * @brief returns desired left and right Motor Voltage (mV) to move the Robot to a
-   * RobotState
-   *
+   * @brief returns desired left and right Motor Voltage (mV) to move the Robot
+   * to a RobotState
+   * TODO: RAMSETE CONTROLLER, RECHECK MATH X IS NOW HEADING 0
+   *? RAMSETE CONTROLLER is tasty
    * @param Target Desired RobotState
    * @param dTime Change in time since last called
    * @return std::pair<double, double> Left Drive (mV), Right Drive (mV)
@@ -372,24 +364,25 @@ class Robot
   {
     // Get Current Position
     RobotState actual = this->getRobotState();
-    std::cout << "ACTUAL (xyɵ): " << actual.position << std::endl;
+    std::cout << "ACTUAL (xyɵ): " << actual.getPosition() << std::endl;
 
     // Linear Error (Distance)
-    double linearError = sqrt(pow(Target.position.x - actual.position.x, 2) +
-                              pow(Target.position.y - actual.position.y, 2));
+    double linearError = sqrt(pow(Target.getPosition()->x - actual.getPosition()->x, 2) +
+                              pow(Target.getPosition()->y - actual.getPosition()->y, 2));
 
     std::cout << "ATAN2: "
-              << -atan2(Target.position.y - actual.position.y,
-                        Target.position.x - actual.position.x) *
+              << -atan2(Target.getPosition()->y - actual.getPosition()->y,
+                        Target.getPosition()->x - actual.getPosition()->x) *
                          180 / M_PI +
                      90
-              << ", X: " << Target.position.x - actual.position.x
-              << ", Y: " << Target.position.y - actual.position.y << std::endl;
+              << ", X: " << Target.getPosition()->x - actual.getPosition()->x
+              << ", Y: " << Target.getPosition()->y - actual.getPosition()->y
+              << std::endl;
 
     // Calculate Angular Error (Distance)
-    double angularError = -atan2(Target.position.y - actual.position.y,
-                                 Target.position.x - actual.position.x) +
-                          M_PI_2 - actual.position.z.getRadians();
+    double angularError = -atan2(Target.getPosition()->y - actual.getPosition()->y,
+                                 Target.getPosition()->x - actual.getPosition()->x) +
+                          M_PI_2 - actual.getPosition()->z.getRadians();
 
     // is point behind Robot?
     bool backwards = ((angularError < -M_PI_2 && angularError >= -3 * M_PI / 2) ||
@@ -413,7 +406,7 @@ class Robot
     std::cout << "Error (v,w): " << linearError << ", " << fmod(angularError, 2 * M_PI)
               << "\n";
 
-    // Calculate Linear velocity and Angular Velocities (PID Controller)
+    // Calculate Linear getVelocity() and Angular Velocities (PID Controller)
     double linearOut = m_LinearPID.calc(linearError, dTime);
     double angularOut = m_AngularPID.calc(fmod(angularError, 2 * M_PI), dTime);
 

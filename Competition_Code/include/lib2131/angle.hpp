@@ -10,124 +10,124 @@
  */
 
 #pragma once
+
 #include <cmath>
 #include <ostream>
 
 namespace lib2131
 {
-/**
- * @brief Allows for degrees and radians to co-exist :D
- *
- */
 class Angle
 {
  private:
-  double value;
-  bool isDegrees;
+  double m_value;    // Value of Angle
+  bool m_isDegrees;  // Is Value using Degrees?
 
- public:
+ public:  // Constructors
   /**
    * @brief Construct a empty Angle object
-   *
+   * @note Is defaulted to Radians with value of 0
    */
   Angle();
-  /**
-   * @brief Construct a new Angle object
-   *
-   * @param Value Value of Angle
-   * @param IsDegrees Is the Angle Unit Degrees? False if Radians.
-   */
-  Angle(double Value, bool IsDegrees);
 
   /**
-   * @brief Get the Angle in Radians
+   * @brief Construct a new Angle object
+   * @note isDegrees Defaults to true
+   * @param value Value of Angle
+   * @param isDegrees Is Angle in Degrees?
+   */
+  Angle(double value, bool isDegrees = true);
+
+ public:  // Getters & Setters
+  /**
+   * @brief Get the [Radian] Measure of Angle
    *
    * @return double Radians
    */
   double getRadians();
 
   /**
-   * @brief Get the Angle in Degrees
+   * @brief Get the [Degree] Measure of Angle
    *
    * @return double Degrees
    */
   double getDegrees();
 
   /**
-   * @brief Set the new Theta of an Angle
+   * @brief Get the [Raw] Measure of Angle
    *
-   * @param newTheta New value of Angle.
-   * @param isDegrees Is newTheta in Degrees; False if Radians.
+   * @return double m_value
    */
-  void setTheta(double newTheta, bool isDegrees);
+  double getRawValue();
 
+ public:  // Math Operations
   /**
-   * @brief Addition of Two Angles
+   * @brief Addition Operator
    *
    * @param B Added Angle
-   * @return Angle Sum
+   * @return Angle Sum of Angles
    */
   Angle operator+(Angle B);
 
   /**
-   * @brief Subtraction of Two Angles
+   * @brief Subtraction Operator
    *
    * @param B Subtracting Angle
-   * @return Angle Difference
+   * @return Angle Difference of Angles
    */
   Angle operator-(Angle B);
 
   /**
-   * @brief Scale Angle by an amount
+   * @brief Multiplication Operator
    *
    * @param B Scalar
-   * @return Angle Scaled_Angle
+   * @return Angle Scaled Angle
    */
   Angle operator*(double B);
 
   /**
-   * @brief Scale Angle by amount
+   * @brief Division Operator
    *
    * @param B Scalar
-   * @return Angle Scaled_Angle
+   * @return Angle Scaled Angle
    */
   Angle operator/(double B);
 
+ public:  // Compound Operator
   /**
-   * @brief Add to Angle
-   *
+   * @brief Addition Assignment
+   * @note Adds to Parent Angle
    * @param B Added Angle
    */
   void operator+=(Angle B);
 
   /**
-   * @brief Subtract from Angle
-   *
+   * @brief Subtraction Assignment
+   * @note Subtracts from Parent Angle
    * @param B Subtracting Angle
    */
   void operator-=(Angle B);
 
   /**
-   * @brief Scale Angle
-   *
+   * @brief Multiplication Assignment
+   * @note Scales Parent Angle
    * @param B Scalar
    */
   void operator*=(double B);
 
   /**
-   * @brief Scale Angle
-   *
-   * @param B
+   * @brief Division Assignment
+   * @note Scales Parent Angle
+   * @param B Scalar
    */
   void operator/=(double B);
 
   /**
-   * @brief "Print" Angle to OStream
+   * @brief Print an Angle to an std::Ostream
    *
    * @param os Output Stream
    * @param B Angle
-   * @return std::ostream&
+   * @return std::ostream& os
    */
-  friend std::ostream &operator<<(std::ostream &os, const Angle &B);
+  friend std::ostream& operator<<(std::ostream& os, const Angle& B);
 };
 }  // namespace lib2131

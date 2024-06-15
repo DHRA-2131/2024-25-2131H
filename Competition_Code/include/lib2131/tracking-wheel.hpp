@@ -1,9 +1,7 @@
 /**
  * @file tracking-wheel.hpp
- * @author LemLib
- * (https://github.com/LemLib/LemLib/blob/6d9e40d8e65e8326c8a87b4f30ef8724b0b5421b/src/lemlib/chassis/trackingWheel.cpp)
- * @brief Tracking Wheel class taken from LemLib, changed as to have better
- * naming. Copyright belongs to LemLib and it's contributors.
+ * @author Andrew Hilton (2131H)
+ * @brief Tracking Wheel class
  * @version 0.1
  * @date 2024-05-23
  *
@@ -15,10 +13,8 @@
 
 #include <cmath>
 
-#include "lib2131/utilities.hpp"
 #include "pros/adi.hpp"
 #include "pros/motor_group.hpp"
-#include "pros/motors.hpp"
 #include "pros/rotation.hpp"
 
 namespace lib2131
@@ -31,48 +27,53 @@ namespace lib2131
 class TrackingWheel
 {
  private:
-  float diameter;
-  float offset;
-  float driveRpm;
-  float gearRatio;
+  float m_diameter;
+  float m_offset;
+  float m_driveRpm;
+  float m_gearRatio;
 
-  pros::adi::Encoder *encoder = nullptr;
-  pros::v5::Rotation *rotation = nullptr;
-  pros::v5::MotorGroup *motors = nullptr;
+  bool m_init;
+  float m_distance;
+  float m_lastDistance;
+  float m_deltaDistance;
+
+  pros::adi::Encoder *m_pEncoder;
+  pros::v5::Rotation *m_pRotation;
+  pros::v5::MotorGroup *m_pMotors;
 
  public:
   /**
    * @brief Construct a new tracking Wheel object
    *
-   * @param Encoder Pointer to (ADI) Encoder
-   * @param Diameter Wheel Size in inches
-   * @param Offset Offset from Tracking Center
-   * @param GearRatio Gear Ratio to sensor
+   * @param encoder Pointer to (ADI) Encoder
+   * @param diameter Wheel Size in inches
+   * @param offset Offset from Tracking Center
+   * @param gearRatio Gear Ratio to sensor
    */
-  TrackingWheel(pros::adi::Encoder *Encoder, float Diameter, float Offset,
-                float GearRatio = 1);
+  TrackingWheel(pros::adi::Encoder *encoder, float diameter, float offset,
+                float gearRatio = 1);
 
   /**
    * @brief Construct a new tracking Wheel object
    *
-   * @param Encoder Pointer to (Rotational) Encoder
-   * @param Diameter Wheel Size in inches
-   * @param Offset Offset from Tracking Center
-   * @param GearRatio Gear Ratio to sensor
+   * @param encoder Pointer to (Rotational) Encoder
+   * @param diameter Wheel Size in inches
+   * @param offset Offset from Tracking Center
+   * @param gearRatio Gear Ratio to sensor
    */
-  TrackingWheel(pros::v5::Rotation *Encoder, float Diameter, float Offset,
-                float GearRatio = 1);
+  TrackingWheel(pros::v5::Rotation *encoder, float diameter, float offset,
+                float gearRatio = 1);
 
   /**
    * @brief Construct a new tracking Wheel object
    *
-   * @param Motors Pointer to (Motor) Encoder(s)
-   * @param Diameter Wheel size in inches
-   * @param Offset Offset from Tracking Center
-   * @param DriveRpm RPM at the wheels on drive
+   * @param motors Pointer to (Motor) Encoder(s)
+   * @param diameter Wheel size in inches
+   * @param offset Offset from Tracking Center
+   * @param driveRpm RPM at the wheels on drive
    */
-  TrackingWheel(pros::v5::MotorGroup *Motors, float Diameter, float Offset,
-                float DriveRpm);
+  TrackingWheel(pros::v5::MotorGroup *motors, float diameter, float offset,
+                float driveRpm);
 
   /**
    * @brief Resets Odom Wheel
@@ -85,7 +86,27 @@ class TrackingWheel
    *
    * @return float Distance
    */
-  float getDistanceTraveled();
+  float getDistance();
+
+  /**
+   * @brief Get the Change in Distance since last update
+   *
+   * @return float
+   */
+  float getDeltaDistance();
+
+  /**
+   * @brief Get the Distance from last update
+   *
+   * @return float
+   */
+  float getLastDistance();
+
+  /**
+   * @brief Update Tracking Wheel
+   *
+   */
+  void update();
 
   /**
    * @brief Get the Offset from Tracking Center

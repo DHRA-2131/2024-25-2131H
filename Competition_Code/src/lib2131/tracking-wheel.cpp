@@ -10,6 +10,10 @@
  *
  */
 #include "lib2131/tracking-wheel.hpp"
+
+#include "lib2131/utilities.hpp"
+#include "pros/abstract_motor.hpp"
+
 namespace lib2131
 {
 
@@ -23,8 +27,16 @@ namespace lib2131
  */
 TrackingWheel::TrackingWheel(pros::adi::Encoder *Encoder, float Diameter, float Offset,
                              float GearRatio)
-    : encoder(encoder), diameter(Diameter), offset(Offset), gearRatio(GearRatio)
+    : m_distance(0),
+      m_init(1),
+      m_deltaDistance(0),
+      m_lastDistance(0),
+      m_pEncoder(Encoder),
+      m_diameter(Diameter),
+      m_offset(Offset),
+      m_gearRatio(GearRatio)
 {
+  this->reset();
 }
 
 /**
@@ -37,22 +49,38 @@ TrackingWheel::TrackingWheel(pros::adi::Encoder *Encoder, float Diameter, float 
  */
 TrackingWheel::TrackingWheel(pros::v5::Rotation *Encoder, float Diameter, float Offset,
                              float GearRatio)
-    : rotation(Encoder), diameter(Diameter), offset(Offset), gearRatio(GearRatio)
+    : m_distance(0),
+      m_init(1),
+      m_deltaDistance(0),
+      m_lastDistance(0),
+      m_pRotation(Encoder),
+      m_diameter(Diameter),
+      m_offset(Offset),
+      m_gearRatio(GearRatio)
 {
+  this->reset();
 }
 
 /**
  * @brief Construct a new tracking Wheel object
  *
- * @param Motors Pointer to (Motor) Encoder(s)
+ * @param Motors Pointer to Motor Encoder(s)
  * @param Diameter Wheel size in inches
  * @param Offset Offset from Tracking Center
  * @param DriveRpm RPM at the wheels on drive
  */
 TrackingWheel::TrackingWheel(pros::v5::MotorGroup *Motors, float Diameter, float Offset,
                              float DriveRpm)
-    : motors(Motors), diameter(Diameter), offset(Offset), driveRpm(DriveRpm)
+    : m_distance(0),
+      m_init(1),
+      m_deltaDistance(0),
+      m_lastDistance(0),
+      m_pMotors(Motors),
+      m_diameter(Diameter),
+      m_offset(Offset),
+      m_driveRpm(DriveRpm)
 {
+  this->reset();
 }
 
 /**
@@ -61,9 +89,9 @@ TrackingWheel::TrackingWheel(pros::v5::MotorGroup *Motors, float Diameter, float
  */
 void TrackingWheel::reset()
 {
-  if (this->encoder != nullptr) this->encoder->reset();
-  if (this->rotation != nullptr) this->rotation->reset_position();
-  if (this->motors != nullptr) this->motors->tare_position();
+  if (this->m_pEncoder != nullptr) this->m_pEncoder->reset();
+  if (this->m_pRotation != nullptr) this->m_pRotation->reset_position();
+  if (this->m_pMotors != nullptr) this->m_pMotors->tare_position_all();
 }
 
 /**
@@ -71,51 +99,80 @@ void TrackingWheel::reset()
  *
  * @return float Distance
  */
-float TrackingWheel::getDistanceTraveled()
+float TrackingWheel::getDistance() { return m_distance; }
+float TrackingWheel::getDeltaDistance() { return m_deltaDistance; }
+float TrackingWheel::getLastDistance() { return m_lastDistance; }
+
+/**
+ * @brief Update Tracking Wheel
+ *
+ */
+void TrackingWheel::update()
 {
-  if (this->encoder != nullptr)
+  if (this->m_pEncoder != nullptr)
   {
-    return (float(this->encoder->get_value()) * this->diameter * M_PI / 360) /
-           this->gearRatio;
+    m_distance = (float(this->m_pEncoder->get_value()) * this->m_diameter * M_PI / 360) /
+                 this->m_gearRatio;
   }
-  else if (this->rotation != nullptr)
+  else if (this->m_pRotation != nullptr)
   {
-    return (float(this->rotation->get_position()) * this->diameter * M_PI / 36000) /
-           this->gearRatio;
+    m_distance =
+        (float(this->m_pRotation->get_position()) * this->m_diameter * M_PI / 36000) /
+        this->m_gearRatio;
   }
-  else if (this->motors != nullptr)
+  else if (this->m_pMotors != nullptr)
   {
-    // get distance traveled by each motor
-    std::vector<pros::v5::MotorGears> gearsets = this->motors->get_gearing_all();
-    this->motors->set_encoder_units_all(pros::MotorEncoderUnits::degrees);
-    std::vector<double> positions = this->motors->get_position_all();
+    // Get each motor's GearSet
+    std::vector<pros::v5::MotorGears> gearsets = this->m_pMotors->get_gearing_all();
+    // Make sure all the encoders are using Revolutions
+    this->m_pMotors->set_encoder_units_all(pros::MotorEncoderUnits::degrees);
+    // Get Position of Motors
+    std::vector<double> positions = this->m_pMotors->get_position_all();
+    // Calculate Distances for each motor
     std::vector<float> distances;
-    for (int i = 0; i < this->motors->size(); i++)
+    for (int i = 0; i < this->m_pMotors->size(); i++)
     {
-      float in;
+      float rpm;
       switch (gearsets[i])
       {
         case pros::v5::MotorGears::red:
-          in = 100;
+          rpm = 100.0;
           break;
         case pros::v5::MotorGears::green:
-          in = 200;
+          rpm = 200.0;
+          std::cout << "GREEN MOTOR: " << i << std::endl;
           break;
-        case pros::MotorGears::blue:
-          in = 600;
+        case pros::v5::MotorGears::blue:
+          rpm = 600.0;
           break;
         default:
-          in = 200;
           break;
       }
-      distances.push_back(positions[i] / 360 * (diameter * M_PI) * (driveRpm / in));
+
+      distances.push_back(positions[i] / 360.0 * (m_diameter * M_PI) *
+                          (m_driveRpm / rpm));
     }
-    return average(distances);
+    // Distance = Average of each motor
+    m_distance = average(distances);
   }
   else
   {
-    return 0;
+    m_distance = 0;  // Should never execute
   }
+
+  if (m_init)
+  {
+    m_deltaDistance = 0;
+    m_init = false;
+  }
+  else
+  {
+    // Update delta
+    m_deltaDistance = m_distance - m_lastDistance;
+  }
+
+  // Update Last
+  m_lastDistance = m_distance;
 }
 
 /**
@@ -123,16 +180,12 @@ float TrackingWheel::getDistanceTraveled()
  *
  * @return float Offset
  */
-float TrackingWheel::getOffset() { return this->offset; }
+float TrackingWheel::getOffset() { return this->m_offset; }
 
 /**
  * @brief Get the Type of Odom
  *
  * @return bool isMotor?
  */
-bool TrackingWheel::getType()
-{
-  if (this->motors != nullptr) return 1;
-  return 0;
-}
+bool TrackingWheel::getType() { return (this->m_pMotors != nullptr); }
 }  // namespace lib2131

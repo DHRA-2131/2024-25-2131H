@@ -6,15 +6,15 @@ namespace lib2131
 class PID
 {
  private:
-  double kP, kI, kD;
+  float kP, kI, kD;
 
-  double P, I, D;
-  double lastP, lastI, lastD;
+  float P, I, D;
+  float lastP, lastI, lastD;
 
  public:
   PID();
-  PID(double KP, double KI, double KD);
+  PID(float KP, float KI, float KD);
 
-  double calc(double error, int dTime);
+  float calc(float error, int dTime);
 };
 }  // namespace lib2131
