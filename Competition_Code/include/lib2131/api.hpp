@@ -1,7 +1,15 @@
-#include "lib2131/angle.hpp"
-#include "lib2131/odom.hpp"
-#include "lib2131/pid.hpp"
-#include "lib2131/robot-state.hpp"
-#include "lib2131/robot.hpp"
-#include "lib2131/tracking-wheel.hpp"
-#include "lib2131/vector3.hpp"
+#pragma once
+// Odometry Files
+#include "lib2131/odometry/AbstractOdometry.hpp"
+#include "lib2131/odometry/BlendedOdometry.hpp"
+#include "lib2131/odometry/ImuOdometry.hpp"
+#include "lib2131/odometry/OdometryBuilder.hpp"
+#include "lib2131/odometry/WheelOdometry.hpp"
+
+
+// Tracking Wheel Files
+#include "lib2131/odometry/tracking_wheel/ADITrackingWheel.hpp"
+#include "lib2131/odometry/tracking_wheel/AbstractTrackingWheel.hpp"
+#include "lib2131/odometry/tracking_wheel/MotorTrackingWheel.hpp"
+#include "lib2131/odometry/tracking_wheel/RotationalTrackingWheel.hpp"
+#include "lib2131/odometry/tracking_wheel/TrackingWheelBuilder.hpp"

@@ -1,6 +1,7 @@
 BasedOnStyle: Google
 Language: Cpp
 ColumnLimit: 90
+IndentWidth: 2
 AlignTrailingComments: true
 AllowShortBlocksOnASingleLine: true
 AllowShortIfStatementsOnASingleLine: true

@@ -1,7 +1,6 @@
 #include "main.h"
 
 #include "main/robot-config.hpp"
-#include "pros/misc.h"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -11,11 +10,8 @@
  */
 void initialize()
 {
-  std::cout << "MAIN" << std::endl;
-
-  Inertial.reset(true);
-  Robot.setRobotState({{0, 0, 0}, {0, 0, 0}, {0, 0, 0}});
-  Robot.enable();
+  DrivenOdom->calibrate();
+  DeadOdom->calibrate();
 }
 
 /**
@@ -67,20 +63,24 @@ void opcontrol()
   bool buttonAPressing = false;
   while (true)
   {
-    LeftDrive.move_voltage(primary.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / 100 *
-                           -12000);
-    RightDrive.move_voltage(primary.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / 100 *
-                            -12000);
+    // LeftDrive.move_voltage(primary.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / 100 *
+    //                        -12000);
+    // RightDrive.move_voltage(primary.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / 100
+    // *
+    //                         -12000);
 
-    if (!buttonAPressing && primary.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-    {
-      Clamp.toggle();
-      buttonAPressing = true;
-    }
-    else if (buttonAPressing && !primary.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-    {
-      buttonAPressing = false;
-    }
+    // if (!buttonAPressing && primary.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+    // {
+    //   Clamp.toggle();
+    //   buttonAPressing = true;
+    // }
+    // else if (buttonAPressing && !primary.get_digital(pros::E_CONTROLLER_DIGITAL_A))
+    // {
+    //   buttonAPressing = false;
+    // }
+
+    DrivenOdom->update(10);
+    DeadOdom->update(10);
 
     pros::delay(10);
   }

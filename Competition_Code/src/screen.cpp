@@ -11,25 +11,27 @@
 
 #include "main/screen.hpp"
 
+#include "lib2131/utilities/Pose.hpp"
 #include "pros/llemu.hpp"
 
 pros::Task ScreenTask([]() {
   pros::lcd::initialize();
   while (true)
   {
-    auto driveOdomPosition = DriveOdom.getRobotState().getPosition();
+    lib2131::utilities::Pose BaseOdom = DrivenOdom->getState().Position;
     pros::lcd::print(1, "Drive Odometry: ");
-    pros::lcd::print(2, "{%f, %f, %f}", driveOdomPosition->x, driveOdomPosition->y,
-                     driveOdomPosition->z.getDegrees());
+    pros::lcd::print(2, "{%f, %f, %f}", BaseOdom.x, BaseOdom.y,
+                     BaseOdom.theta.getDegrees());
 
-    auto tWheelOdom = TWheelOdom.getRobotState().getPosition();
+    lib2131::utilities::Pose WheelOdom = DeadOdom->getState().Position;
     pros::lcd::print(4, "Tracking Wheel Odometry: ");
-    pros::lcd::print(5, "{%f, %f, %f}", tWheelOdom->x, tWheelOdom->y,
-                     tWheelOdom->z.getDegrees());
-    pros::lcd::print(6, "TOTW: %f, %f", LeftDeadWheel.getDistance(),
-                     RightDeadWheel.getDistance());
-    pros::lcd::print(7, "DOTW: %f, %f", LeftDriveWheel.getDistance(),
-                     RightDriveWheel.getDistance());
+    pros::lcd::print(5, "{%f, %f, %f}", WheelOdom.x, WheelOdom.y,
+                     WheelOdom.theta.getDegrees());
+
+    pros::lcd::print(6, "ODOM: %f, %f", LeftDeadWheel->getDistance(),
+                     RightDeadWheel->getDistance());
+    pros::lcd::print(7, "DRIVE: %f, %f", LeftDrivenWheel->getDistance(),
+                     RightDrivenWheel->getDistance());
 
     pros::delay(RefreshRate);
   }

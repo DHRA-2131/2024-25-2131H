@@ -9,12 +9,13 @@
  *
  */
 
+#include <memory>
+
 #include "lib2131/api.hpp"
 #include "pros/adi.hpp"
 #include "pros/imu.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/motors.hpp"
-#include "pros/rotation.hpp"
 
 // Motors + MotorGroups
 extern pros::Motor LeftFront;
@@ -32,30 +33,22 @@ extern pros::v5::MotorGroup RightDrive;
 extern pros::adi::Pneumatics Clamp;
 
 // Sensors
-extern pros::Rotation RearEncoder;
-extern pros::Rotation LeftEncoder;
-extern pros::Rotation RightEncoder;
-
 extern pros::IMU Inertial;
 
-// Tracking Wheels
-extern lib2131::TrackingWheel RearWheel;
-extern lib2131::TrackingWheel LeftDeadWheel;
-extern lib2131::TrackingWheel RightDeadWheel;
+using namespace lib2131::odometry::trackingWheel;
 
-// Drivetrain T-Wheels
-extern lib2131::TrackingWheel LeftDriveWheel;
-extern lib2131::TrackingWheel RightDriveWheel;
+// Dead Wheels
+extern std::shared_ptr<RotationalTrackingWheel> LeftDeadWheel;
+extern std::shared_ptr<RotationalTrackingWheel> RightDeadWheel;
+extern std::shared_ptr<RotationalTrackingWheel> RearWheel;
+
+// Motor Encoder Tracking Wheels
+extern std::shared_ptr<MotorTrackingWheel> LeftDrivenWheel;
+extern std::shared_ptr<MotorTrackingWheel> RightDrivenWheel;
 
 // Odometry
-extern lib2131::Odometry TWheelOdom;
-extern lib2131::Odometry DriveOdom;
-
-extern lib2131::PID linearPID;
-extern lib2131::PID angularPID;
-
-// Robot
-extern lib2131::Robot Robot;
+extern std::shared_ptr<lib2131::odometry::BlendedOdometry> DrivenOdom;
+extern std::shared_ptr<lib2131::odometry::WheelOdometry> DeadOdom;
 
 // Controller
 extern pros::Controller primary;
