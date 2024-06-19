@@ -22,7 +22,7 @@ struct Pose
     return Angle(atan2(B.y - this->y, B.x - this->x), false);
   }
 
-  Pose rotate(Angle& B)
+  Pose rotate(Angle B)
   {
     // Calculate rotated point
     double newX = y * sin(B.getRadians()) + x * cos(B.getRadians());

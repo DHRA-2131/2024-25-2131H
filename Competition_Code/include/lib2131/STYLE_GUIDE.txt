@@ -1,0 +1,7 @@
+1. Private Variables: "m_" as a prefix
+2. Pointers: "p" as a prefix 
+3. Text Style: Camel Case 
+
+Namespaces: Snake Case
+File Names: Capitalized 
+Folder Names: Lowercase
