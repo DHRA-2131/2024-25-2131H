@@ -1,12 +1,14 @@
 #pragma once
 
 #include "lib2131/exit_condition/AbstractExitCondition.hpp"
+#include "lib2131/utilities/Pose.hpp"
 
 namespace lib2131::exit_condition
 {
 class ErrorExitCondition : public AbstractExitCondition
 {
  private:  // Variables
+  utilities::Pose m_target;
   double m_stopTolerance;
   double m_thruTolerance;
 
@@ -21,8 +23,10 @@ class ErrorExitCondition : public AbstractExitCondition
  public:  // Functions
   bool canExit(utilities::Pose currentPose, bool thru) override
   {
-    if (thru) { return (currentPose.magnitude(m_target) < m_thruTolerance); }
-    else { return (currentPose.magnitude(m_target) < m_stopTolerance); }
+    utilities::Pose localError = (m_target - currentPose).rotate(currentPose.theta);
+    // X is Forward Error
+    if (thru) { return (localError.x < m_thruTolerance); }
+    else { return (localError.x < m_stopTolerance); }
   }
 };
 }  // namespace lib2131::exit_condition
