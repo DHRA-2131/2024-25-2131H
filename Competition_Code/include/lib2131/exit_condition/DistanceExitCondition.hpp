@@ -25,8 +25,7 @@ class ErrorExitCondition : public AbstractExitCondition
   {
     double distance = currentPose.magnitude(m_target);
     // X is Forward Error
-    if (thru) { return (distance < m_thruTolerance); }
-    else { return (distance < m_stopTolerance); }
+    return thru ? (distance < m_thruTolerance) : (distance < m_stopTolerance);
   }
 };
 }  // namespace lib2131::exit_condition

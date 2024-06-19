@@ -25,8 +25,7 @@ class ErrorExitCondition : public AbstractExitCondition
   {
     utilities::Pose localError = (m_target - currentPose).rotate(currentPose.theta);
     // X is Forward Error
-    if (thru) { return (localError.x < m_thruTolerance); }
-    else { return (localError.x < m_stopTolerance); }
+    return thru ? (localError.x < m_thruTolerance) : (localError.x < m_stopTolerance);
   }
 };
 }  // namespace lib2131::exit_condition

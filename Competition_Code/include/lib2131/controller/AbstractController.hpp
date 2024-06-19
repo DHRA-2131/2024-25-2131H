@@ -5,6 +5,7 @@
 #include "lib2131/exit_condition/AbstractExitCondition.hpp"
 #include "lib2131/odometry/AbstractOdometry.hpp"
 #include "lib2131/utilities/Angle.hpp"
+#include "lib2131/utilities/Motion.hpp"
 #include "lib2131/utilities/Pose.hpp"
 
 namespace lib2131::controller
@@ -19,15 +20,17 @@ class AbstractController
   // Positional Info
   std::shared_ptr<odometry::AbstractOdometry> m_pOdometry;
   utilities::Pose m_target;
+  utilities::Pose m_error;
 
   // Stationary Turn Info
   utilities::Angle m_angularTarget;
+  utilities::Angle m_angularError;
 
  public:  // constructors
-  AbstractController(std::shared_ptr<odometry::AbstractOdometry> Odometry,
+  AbstractController(std::shared_ptr<odometry::AbstractOdometry> odometry,
                      std::shared_ptr<exit_condition::AbstractExitCondition> linearExit,
                      std::shared_ptr<exit_condition::AbstractExitCondition> angularExit)
-      : m_pOdometry(std::move(Odometry)),
+      : m_pOdometry(std::move(odometry)),
         m_pLinearExit(std::move(linearExit)),
         m_pAngularExit(angularExit)
   {
@@ -53,6 +56,7 @@ class AbstractController
     this->m_angularTarget = target;
   }
 
- public:  // overloads
+ public:  // Overloads
+  virtual utilities::Motion getOutput(bool reverse, bool thru, double deltaTime) = 0;
 };
 }  // namespace lib2131::controller

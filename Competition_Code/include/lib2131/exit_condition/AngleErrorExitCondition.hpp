@@ -1,7 +1,7 @@
 #pragma once
 
 #include "lib2131/exit_condition/AbstractExitCondition.hpp"
-#include "utilities/Angle.hpp"
+#include "lib2131/utilities/Angle.hpp"
 
 namespace lib2131::exit_condition
 {
@@ -23,11 +23,8 @@ class ErrorExitCondition : public AbstractExitCondition
  public:  // Functions
   bool canExit(utilities::Pose currentPose, bool thru) override
   {
-    if (thru)
-    {
-      return ((this->m_target - currentPose.theta).getDegrees() < m_thruTolerance);
-    }
-    else { return ((this->m_target - currentPose.theta).getDegrees() < m_stopTolerance); }
+    return thru ? ((this->m_target - currentPose.theta).getDegrees() < m_thruTolerance)
+                : ((this->m_target - currentPose.theta).getDegrees() < m_stopTolerance);
   }
 };
 }  // namespace lib2131::exit_condition
