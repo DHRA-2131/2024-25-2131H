@@ -16,8 +16,7 @@ class PIDController : public AbstractController
   double m_angleLockDistance;
 
  public:  // Constructors
-  PIDController(std::shared_ptr<odometry::AbstractOdometry> odometry,
-                std::shared_ptr<exit_condition::AbstractExitCondition> linearExit,
+  PIDController(std::shared_ptr<exit_condition::AbstractExitCondition> linearExit,
                 std::shared_ptr<exit_condition::AbstractExitCondition> angularExit,
                 PID linearPID, PID angularPID, double angleLockDist)
       : AbstractController(linearExit, angularExit),
