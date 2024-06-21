@@ -5,6 +5,7 @@
 #include "lib2131/controller/AbstractController.hpp"
 #include "lib2131/utilities/Angle.hpp"
 #include "lib2131/utilities/PID.hpp"
+#include "lib2131/utilities/Pose.hpp"
 
 namespace lib2131::controller
 {
@@ -19,7 +20,7 @@ class PIDController : public AbstractController
                 std::shared_ptr<exit_condition::AbstractExitCondition> linearExit,
                 std::shared_ptr<exit_condition::AbstractExitCondition> angularExit,
                 PID linearPID, PID angularPID, double angleLockDist)
-      : AbstractController(odometry, linearExit, angularExit),
+      : AbstractController(linearExit, angularExit),
         m_linearPID(linearPID),
         m_angularPID(angularPID),
         m_angleLockDistance(angleLockDist)
@@ -27,7 +28,8 @@ class PIDController : public AbstractController
   }
 
  public:  // Functions
-  utilities::Motion getOutput(bool reverse, bool thru, double deltaTime) override
+  utilities::Motion getOutput(utilities::Pose currentPose, bool reverse, bool thru,
+                              double deltaTime) override
   {
     double linearOut, angularOut;
 
@@ -35,18 +37,17 @@ class PIDController : public AbstractController
     int direction = reverse ? -1 : 1;
 
     // Calculate Error
-    utilities::Pose actual = this->m_pOdometry->getState().Position;
-    this->m_error = m_target - actual;
-    double linearError = this->m_target.magnitude(actual);
+    this->m_error = m_target - currentPose;
+    double linearError = this->m_target.magnitude(currentPose);
 
     // Initialize Angle Error
     utilities::Angle angleError(
-        std::atan2(m_error.y, m_error.y) - actual.theta.getRadians(), false);
+        std::atan2(m_error.y, m_error.y) - currentPose.theta.getRadians(), false);
 
     // Flip Heading and recalculate angle Error
     if (reverse)
     {
-      angleError = {std::atan2(-m_error.y, -m_error.y) - actual.theta.getRadians(),
+      angleError = {std::atan2(-m_error.y, -m_error.y) - currentPose.theta.getRadians(),
                     false};
     }
 
@@ -71,8 +72,8 @@ class PIDController : public AbstractController
     linearOut = std::max(-100.0, std::min(100.0, linearOut));
     angularOut = std::max(-100.0, std::min(100.0, angularOut));
 
-    if (this->m_pAngularExit->canExit(actual, false) &&
-        this->m_pLinearExit->canExit(actual, false) && !thru)
+    if (this->m_pAngularExit->canExit(currentPose, false) &&
+        this->m_pLinearExit->canExit(currentPose, false) && !thru)
     {
       return {0, 0};
     }
