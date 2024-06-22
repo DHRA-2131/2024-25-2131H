@@ -27,6 +27,16 @@ class DifferentialChassis : public AbstractChassis
   }
 
  public:  // Overrides
+  void tank(std::int8_t leftJoyPct, std::int8_t rightJoyPct) override
+  {
+    m_leftDrive.move_voltage(leftJoyPct / 100 * 12000);
+    m_rightDrive.move_voltage(rightJoyPct / 100 * 12000);
+  }
+  void arcade(std::int8_t fwdPct, std::int8_t turnPct) override
+  {
+    m_leftDrive.move_voltage(fwdPct + turnPct / 100 * 12000);
+    m_rightDrive.move_voltage(fwdPct - turnPct / 100 * 12000);
+  }
   // Local Motions
   void turnTo(utilities::Angle Heading, bool relative, bool reverse = false,
               bool thru = false, double timeout = std::numeric_limits<double>::infinity(),
@@ -38,11 +48,15 @@ class DifferentialChassis : public AbstractChassis
     }
     else
     {
+      // Set Target
+      this->m_controller->setAngularTarget(Heading, this->m_odometry->getState().Position,
+                                           relative);
+
       // Generate Motion Profile
       utilities::MotionProfile mp(Heading.getRadians(), m_params.maxAngularVelocity,
                                   m_params.maxAngularAcceleration,
                                   m_params.maxAngularDeceleration);
-
+      // Timer
       uint msec = 0;
       // While exit conditions not met
       while (!m_controller->canExit() && msec < timeout)
@@ -75,6 +89,51 @@ class DifferentialChassis : public AbstractChassis
                double timeout = std::numeric_limits<double>::infinity(),
                bool async = false) override
   {
+    if (async)
+    {
+      pros::Task asyncTask([&]() { moveFor(inches, thru, timeout, false); });
+    }
+    else
+    {
+      // Set Target
+      this->m_controller->setTarget({inches, 0, {0, false}},
+                                    this->m_odometry->getState().Position, true);
+
+      // Go backwards?
+      const bool reverse(inches < 0);
+
+      // Generate Motion Profile
+      utilities::MotionProfile mp(inches, m_params.maxLinearVelocity,
+                                  m_params.maxLinearAcceleration,
+                                  m_params.maxLinearDeceleration);
+      // Timer
+      uint msec = 0;
+      // While exit conditions not met
+      while (!m_controller->canExit() && msec < timeout)
+      {
+        // Get Controller Output
+        utilities::Motion controllerOut = m_controller->getOutput(
+            this->m_odometry->getState().Position, reverse, thru, 10);
+
+        // Get Motion Profile Output
+        double mpOut = mp.getVelocity(msec);
+
+        double output;
+        // Average them together
+        if (mpOut != 0) { output = (mpOut + controllerOut.LinearVelocity) / 2; }
+        else { output = controllerOut.LinearVelocity; }
+
+        // Convert to Pct then convert to Voltage (mV)
+        output = output / m_params.maxLinearVelocity * 12000;
+        this->m_leftDrive.move_voltage(output);
+        this->m_rightDrive.move_voltage(output);
+
+        // Allow for other tasks to finish and motors to update
+        pros::delay(10);
+        // Update Counter
+        msec += 10;
+      }
+    }
   }
 
   // X, Y Motion
@@ -83,6 +142,7 @@ class DifferentialChassis : public AbstractChassis
                  bool async = false) override
   {
   }
+
   void turnToPoint(utilities::Point point, bool reverse = false, bool thru = false,
                    double timeout = std::numeric_limits<double>::infinity(),
                    bool async = false) override

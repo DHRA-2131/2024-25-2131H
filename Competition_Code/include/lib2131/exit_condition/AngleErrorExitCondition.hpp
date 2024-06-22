@@ -21,6 +21,7 @@ class ErrorExitCondition : public AbstractExitCondition
   }
 
  public:  // Functions
+  void setTarget(utilities::Angle target) override { this->m_target = target; }
   bool canExit(utilities::Angle currentAngle, bool thru) override
   {
     return thru ? ((this->m_target - currentAngle).getDegrees() < m_thruTolerance)

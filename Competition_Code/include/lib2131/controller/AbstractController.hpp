@@ -55,6 +55,7 @@ class AbstractController
   {
     if (relative) { target.rotate(currentPose.theta * -1); }
     this->m_target = target;
+    for (const auto& ec : this->m_linearExitConditions) { ec->setTarget(target); }
   }
 
   void setAngularTarget(utilities::Angle target, utilities::Pose currentPose,
@@ -62,11 +63,12 @@ class AbstractController
   {
     if (relative) { target += currentPose.theta; }
     this->m_angularTarget = target;
+    for (const auto& ec : this->m_angularExitConditions) { ec->setTarget(target); }
   }
 
  public:  // Overloads
-  virtual utilities::Motion getLinearOutput(utilities::Pose currentPose, bool reverse,
-                                            bool thru, double deltaTime) = 0;
+  virtual utilities::Motion getOutput(utilities::Pose currentPose, bool reverse,
+                                      bool thru, double deltaTime) = 0;
   virtual utilities::Motion getAngleOutput(utilities::Angle currentAngle, bool reverse,
                                            bool thru, double deltaTime) = 0;
 };

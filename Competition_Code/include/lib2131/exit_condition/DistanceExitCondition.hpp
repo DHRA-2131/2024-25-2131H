@@ -21,6 +21,7 @@ class ErrorExitCondition : public AbstractExitCondition
   }
 
  public:  // Functions
+  void setTarget(utilities::Pose target) override { m_target = target; }
   bool canExit(utilities::Pose currentPose, bool thru) override
   {
     double distance = currentPose.magnitude(m_target);

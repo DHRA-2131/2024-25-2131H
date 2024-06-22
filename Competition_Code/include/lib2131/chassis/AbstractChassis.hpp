@@ -53,18 +53,10 @@ class AbstractChassis
 
  public:  // Methods
   // Driving types
-  void tank(std::int8_t leftJoyPct, std::int8_t rightJoyPct)
-  {
-    m_leftDrive.move_voltage(leftJoyPct / 100 * 12000);
-    m_rightDrive.move_voltage(rightJoyPct / 100 * 12000);
-  }
+  virtual void tank(std::int8_t leftJoyPct, std::int8_t rightJoyPct) = 0;
 
   // Ew
-  void arcade(std::int8_t fwdPct, std::int8_t turnPct)
-  {
-    m_leftDrive.move_voltage(fwdPct + turnPct / 100 * 12000);
-    m_rightDrive.move_voltage(fwdPct - turnPct / 100 * 12000);
-  }
+  virtual void arcade(std::int8_t fwdPct, std::int8_t turnPct) = 0;
 
   // BrakeType
   pros::motor_brake_mode_e_t getBrakeType() { return this->m_brakeType; }

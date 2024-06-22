@@ -31,8 +31,8 @@ class PIDController : public AbstractController
   }
 
  public:  // Functions
-  utilities::Motion getLinearOutput(utilities::Pose currentPose, bool reverse, bool thru,
-                                    double deltaTime) override
+  utilities::Motion getOutput(utilities::Pose currentPose, bool reverse, bool thru,
+                              double deltaTime) override
   {
     double linearOut, angularOut;
 
