@@ -76,18 +76,28 @@ class AbstractChassis
  public:  // Overrides
   // Local Motions
   virtual void turnTo(utilities::Angle Heading, bool relative, bool reverse = false,
-                      bool thru = false, bool async = false) = 0;
-  virtual void moveFor(double inches, bool thru = false, bool async = false) = 0;
+                      bool thru = false,
+                      double timeout = std::numeric_limits<double>::infinity(),
+                      bool async = false) = 0;
+  virtual void moveFor(double inches, bool thru = false,
+                       double timeout = std::numeric_limits<double>::infinity(),
+                       bool async = false) = 0;
 
   // X, Y Motion
   virtual void goToPoint(utilities::Point point, bool thru = false,
+                         double timeout = std::numeric_limits<double>::infinity(),
                          bool async = false) = 0;
   virtual void turnToPoint(utilities::Point point, bool reverse = false,
-                           bool thru = false, bool async = false) = 0;
+                           bool thru = false,
+                           double timeout = std::numeric_limits<double>::infinity(),
+                           bool async = false) = 0;
 
   // X, Y, Heading Pathing Motion
-  virtual void goToPose(utilities::Pose pose, bool thru = false, bool async = false) = 0;
+  virtual void goToPose(utilities::Pose pose, bool thru = false,
+                        double timeout = std::numeric_limits<double>::infinity(),
+                        bool async = false) = 0;
   virtual void turnToPose(utilities::Pose pose, bool reverse = false, bool thru = false,
+                          double timeout = std::numeric_limits<double>::infinity(),
                           bool async = false) = 0;
 };
 }  // namespace lib2131::chassis

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <limits>
 
 #include "lib2131/chassis/AbstractChassis.hpp"
 #include "lib2131/utilities/Motion.hpp"
@@ -28,7 +29,8 @@ class DifferentialChassis : public AbstractChassis
  public:  // Overrides
   // Local Motions
   void turnTo(utilities::Angle Heading, bool relative, bool reverse = false,
-              bool thru = false, bool async = false) override
+              bool thru = false, double timeout = std::numeric_limits<double>::infinity(),
+              bool async = false) override
   {
     if (async)
     {
@@ -43,45 +45,58 @@ class DifferentialChassis : public AbstractChassis
 
       uint msec = 0;
       // While exit conditions not met
-      while (!m_controller->canExit())
+      while (!m_controller->canExit() && msec < timeout)
       {
         // Get Controller Output
         utilities::Motion controllerOut = m_controller->getAngleOutput(
             this->m_odometry->getState().Position.theta, reverse, thru, 10);
 
         // Get Motion Profile Output
-        utilities::Motion mpOut = {0, mp.getVelocity(msec)};
+        double mpOut = mp.getVelocity(msec);
 
         double output;
         // Average them together
-        if (mpOut.AngularVelocity != 0)
-        {
-          output = (mpOut.AngularVelocity + controllerOut.AngularVelocity) / 2;
-        }
+        if (mpOut != 0) { output = (mpOut + controllerOut.AngularVelocity) / 2; }
         else { output = controllerOut.AngularVelocity; }
 
+        // Convert to Pct then convert to Voltage (mV)
         this->m_leftDrive.move_voltage(output / m_params.maxAngularVelocity * 12000);
         this->m_rightDrive.move_voltage(-output / m_params.maxAngularVelocity * 12000);
 
+        // Allow for other tasks to finish and motors to update
         pros::delay(10);
+        // Update Counter
         msec += 10;
       }
     }
   }
-  void moveFor(double inches, bool thru = false, bool async = false) override {}
+
+  void moveFor(double inches, bool thru = false,
+               double timeout = std::numeric_limits<double>::infinity(),
+               bool async = false) override
+  {
+  }
 
   // X, Y Motion
-  void goToPoint(utilities::Point point, bool thru = false, bool async = false) override
+  void goToPoint(utilities::Point point, bool thru = false,
+                 double timeout = std::numeric_limits<double>::infinity(),
+                 bool async = false) override
   {
   }
   void turnToPoint(utilities::Point point, bool reverse = false, bool thru = false,
+                   double timeout = std::numeric_limits<double>::infinity(),
                    bool async = false) override
   {
   }
 
   // X, Y, Heading Pathing Motion
-  void goToPose(utilities::Pose pose, bool thru = false, bool async = false) override {}
+  void goToPose(utilities::Pose pose, bool thru = false,
+                double timeout = std::numeric_limits<double>::infinity(),
+                bool async = false) override
+  {
+  }
   void turnToPose(utilities::Pose pose, bool reverse = false, bool thru = false,
+                  double timeout = std::numeric_limits<double>::infinity(),
                   bool async = false) override
   {
   }
