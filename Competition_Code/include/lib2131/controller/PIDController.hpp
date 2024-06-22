@@ -93,16 +93,17 @@ class PIDController : public AbstractController
   utilities::Motion getAngleOutput(utilities::Angle currentAngle, bool reverse, bool thru,
                                    double deltaTime) override
   {
+    //? Check if angle needs to be wrapped (fmod)
     // Use Rear Heading?
     if (reverse) { currentAngle += utilities::Angle(180, true); }
 
     // Calculate Angle Error
-    utilities::Angle angleError = this->getAngularError(currentAngle);
+    utilities::Angle angleError(this->getAngularError(currentAngle));
 
     // Force Shortest Direction
-    if (fabs(angleError.getDegrees()) > 180)
+    if (fabs(angleError.getRadians()) > M_PI)
     {
-      angleError.getDegrees() < 0 ? angleError += utilities::Angle(360, true)
+      angleError.getRadians() < 0 ? angleError += utilities::Angle(360, true)
                                   : angleError -= utilities::Angle(360, false);
     }
 

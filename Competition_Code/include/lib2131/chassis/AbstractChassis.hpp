@@ -76,7 +76,7 @@ class AbstractChassis
                        bool async = false) = 0;
 
   // X, Y Motion
-  virtual void goToPoint(utilities::Point point, bool thru = false,
+  virtual void goToPoint(utilities::Point point, bool relative, bool thru = false,
                          double timeout = std::numeric_limits<double>::infinity(),
                          bool async = false) = 0;
   virtual void turnToPoint(utilities::Point point, bool reverse = false,
@@ -85,7 +85,7 @@ class AbstractChassis
                            bool async = false) = 0;
 
   // X, Y, Heading Pathing Motion
-  virtual void goToPose(utilities::Pose pose, bool thru = false,
+  virtual void goToPose(utilities::Pose pose, bool relative, bool thru = false,
                         double timeout = std::numeric_limits<double>::infinity(),
                         bool async = false) = 0;
   virtual void turnToPose(utilities::Pose pose, bool reverse = false, bool thru = false,
