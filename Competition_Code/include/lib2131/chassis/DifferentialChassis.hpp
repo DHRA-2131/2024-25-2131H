@@ -8,6 +8,7 @@
 #include "lib2131/chassis/AbstractChassis.hpp"
 #include "lib2131/utilities/Motion.hpp"
 #include "lib2131/utilities/MotionProfile.hpp"
+#include "lib2131/utilities/Pose.hpp"
 #include "pros/rtos.hpp"
 
 namespace lib2131::chassis
@@ -84,6 +85,11 @@ class DifferentialChassis : public AbstractChassis
         // Update Counter
         msec += 10;
       }
+      if (!thru)
+      {
+        this->m_leftDrive.brake();
+        this->m_rightDrive.brake();
+      }
     }
   }
 
@@ -108,6 +114,7 @@ class DifferentialChassis : public AbstractChassis
       utilities::MotionProfile mp(inches, m_params.maxLinearVelocity,
                                   m_params.maxLinearAcceleration,
                                   m_params.maxLinearDeceleration);
+      int8_t direction = reverse ? -1 : 1;
       // Timer
       uint msec = 0;
       // While exit conditions not met
@@ -118,7 +125,7 @@ class DifferentialChassis : public AbstractChassis
             this->m_odometry->getState().Position, reverse, thru, 10);
 
         // Get Motion Profile Output
-        double mpOut = mp.getVelocity(msec);
+        double mpOut = mp.getVelocity(msec) * direction;
 
         double output;
         // Average them together
@@ -134,6 +141,11 @@ class DifferentialChassis : public AbstractChassis
         pros::delay(10);
         // Update Counter
         msec += 10;
+      }
+      if (!thru)
+      {
+        this->m_leftDrive.brake();
+        this->m_rightDrive.brake();
       }
     }
   }
@@ -169,6 +181,7 @@ class DifferentialChassis : public AbstractChassis
           m_params.maxAngularVelocity, m_params.maxAngularAcceleration,
           m_params.maxAngularDeceleration);
 
+      int8_t direction = reverse ? -1 : 1;
       // Timer
       uint msec = 0;
       // While exit conditions not met
@@ -179,8 +192,8 @@ class DifferentialChassis : public AbstractChassis
             this->m_odometry->getState().Position, reverse, thru, 10);
 
         // Get Motion Profile Output
-        utilities::Motion mpOut = {linearMp.getVelocity(msec),
-                                   angularMp.getVelocity(msec)};
+        utilities::Motion mpOut = {linearMp.getVelocity(msec) * direction,
+                                   angularMp.getVelocity(msec) * direction};
 
         utilities::Motion output;
         // Average them together
@@ -207,6 +220,11 @@ class DifferentialChassis : public AbstractChassis
         // Update Counter
         msec += 10;
       }
+      if (!thru)
+      {
+        this->m_leftDrive.brake();
+        this->m_rightDrive.brake();
+      }
     }
   }
 
@@ -214,6 +232,10 @@ class DifferentialChassis : public AbstractChassis
                    double timeout = std::numeric_limits<double>::infinity(),
                    bool async = false) override
   {
+    utilities::Pose currentPose(this->m_odometry->getState().Position);
+
+    this->turnTo(currentPose.amplitude({point.x, point.y, {0, false}}), false, reverse,
+                 thru, timeout, async);
   }
 
   // X, Y, Heading Pathing Motion
@@ -221,11 +243,85 @@ class DifferentialChassis : public AbstractChassis
                 double timeout = std::numeric_limits<double>::infinity(),
                 bool async = false) override
   {
+    if (async)
+    {
+      pros::Task asyncTask([&]() { goToPose(pose, relative, thru, timeout, false); });
+    }
+    else
+    {
+      utilities::Pose currentPose(this->m_odometry->getState().Position);
+      // Set Target
+      this->m_controller->setTarget(pose, currentPose, false);
+
+      // Go backwards?
+      const bool reverse =
+          fabs(this->m_controller->getAngularError(currentPose.theta).getRadians()) >
+          M_PI_2;
+
+      // Generate Motion Profile
+      utilities::MotionProfile linearMp(
+          currentPose.magnitude(pose), m_params.maxLinearVelocity,
+          m_params.maxLinearAcceleration, m_params.maxLinearDeceleration);
+
+      utilities::MotionProfile angularMp(
+          m_controller->getAngularError(currentPose.theta).getRadians(),
+          m_params.maxAngularVelocity, m_params.maxAngularAcceleration,
+          m_params.maxAngularDeceleration);
+
+      int8_t direction = reverse ? -1 : 1;
+
+      // Timer
+      uint msec = 0;
+      // While exit conditions not met
+      while (!m_controller->canExit() && msec < timeout)
+      {
+        // Get Controller Output
+        utilities::Motion controllerOut = m_controller->getOutput(
+            this->m_odometry->getState().Position, reverse, thru, 10);
+
+        // Get Motion Profile Output
+        utilities::Motion mpOut = {linearMp.getVelocity(msec) * direction,
+                                   angularMp.getVelocity(msec) * direction};
+
+        utilities::Motion output;
+        // Average them together
+        if (mpOut.LinearVelocity != 0 || mpOut.AngularVelocity != 0)
+        {
+          output = {(mpOut.LinearVelocity + controllerOut.LinearVelocity) / 2,
+                    (mpOut.AngularVelocity + controllerOut.AngularVelocity) / 2};
+        }
+        else { output = controllerOut; }
+
+        // Convert to Pct then convert to Voltage (mV)
+        double leftOutput = (output.LinearVelocity / m_params.maxLinearVelocity +
+                             output.AngularVelocity / m_params.maxAngularVelocity) *
+                            12000;
+        double rightOutput = (output.LinearVelocity / m_params.maxLinearVelocity -
+                              output.AngularVelocity / m_params.maxAngularVelocity) *
+                             12000;
+
+        this->m_leftDrive.move_voltage(leftOutput);
+        this->m_rightDrive.move_voltage(rightOutput);
+
+        // Allow for other tasks to finish and motors to update
+        pros::delay(10);
+        // Update Counter
+        msec += 10;
+      }
+      if (!thru)
+      {
+        this->m_leftDrive.brake();
+        this->m_rightDrive.brake();
+      }
+    }
   }
   void turnToPose(utilities::Pose pose, bool reverse = false, bool thru = false,
                   double timeout = std::numeric_limits<double>::infinity(),
                   bool async = false) override
   {
+    utilities::Pose currentPose(this->m_odometry->getState().Position);
+
+    this->turnTo(currentPose.amplitude(pose), false, reverse, thru, timeout, async);
   }
 };
 

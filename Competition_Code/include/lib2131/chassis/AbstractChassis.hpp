@@ -63,6 +63,8 @@ class AbstractChassis
   void setBrakeType(pros::motor_brake_mode_e_t newBrakeType)
   {
     this->m_brakeType = newBrakeType;
+    m_leftDrive.set_brake_mode(m_brakeType);
+    m_rightDrive.set_brake_mode(m_brakeType);
   }
 
  public:  // Overrides
