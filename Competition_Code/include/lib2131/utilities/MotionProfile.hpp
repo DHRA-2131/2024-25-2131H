@@ -1,6 +1,9 @@
 #pragma once
 
+#include <sys/types.h>
+
 #include <cmath>
+
 
 namespace lib2131::utilities
 {
@@ -50,7 +53,8 @@ class MotionProfile
   }
 
  public:  // Methods
-  const double getDistance(double Msec)
+  const double getTotalTime() { return m_totalTime; }
+  const double getDistance(uint Msec)
   {
     if (0 < Msec && Msec < m_accelTime) { return 0.5 * m_maxAccel * Msec * Msec; }
     else if (m_accelTime < Msec && Msec < m_accelTime + m_coastTime)
@@ -65,7 +69,7 @@ class MotionProfile
     else { return 0.0; }
   }
 
-  const double getVelocity(double Msec)
+  const double getVelocity(uint Msec)
   {
     if (0 < Msec && Msec < m_accelTime) { return m_maxAccel * Msec; }
     else if (m_accelTime < Msec && Msec < m_accelTime + m_coastTime)
@@ -79,7 +83,7 @@ class MotionProfile
     else { return 0.0; }
   }
 
-  const double getAcceleration(double Msec)
+  const double getAcceleration(uint Msec)
   {
     if (0 < Msec && Msec < m_accelTime) { return m_maxAccel; }
     else if (m_accelTime < Msec && Msec < m_accelTime + m_coastTime) { return 0.0; }

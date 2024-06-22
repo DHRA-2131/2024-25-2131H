@@ -1,8 +1,10 @@
 #pragma once
 
 #include <algorithm>
+#include <vector>
 
 #include "lib2131/controller/AbstractController.hpp"
+#include "lib2131/exit_condition/AbstractExitCondition.hpp"
 #include "lib2131/utilities/Angle.hpp"
 #include "lib2131/utilities/PID.hpp"
 #include "lib2131/utilities/Pose.hpp"
@@ -16,10 +18,12 @@ class PIDController : public AbstractController
   double m_angleLockDistance;
 
  public:  // Constructors
-  PIDController(std::shared_ptr<exit_condition::AbstractExitCondition> linearExit,
-                std::shared_ptr<exit_condition::AbstractExitCondition> angularExit,
+  PIDController(std::vector<std::shared_ptr<exit_condition::AbstractExitCondition>>
+                    linearExitConditions,
+                std::vector<std::shared_ptr<exit_condition::AbstractExitCondition>>
+                    angularExitConditions,
                 PID linearPID, PID angularPID, double angleLockDist)
-      : AbstractController(linearExit, angularExit),
+      : AbstractController(linearExitConditions, angularExitConditions),
         m_linearPID(linearPID),
         m_angularPID(angularPID),
         m_angleLockDistance(angleLockDist)
@@ -27,8 +31,8 @@ class PIDController : public AbstractController
   }
 
  public:  // Functions
-  utilities::Motion getOutput(utilities::Pose currentPose, bool reverse, bool thru,
-                              double deltaTime) override
+  utilities::Motion getLinearOutput(utilities::Pose currentPose, bool reverse, bool thru,
+                                    double deltaTime) override
   {
     double linearOut, angularOut;
 
@@ -71,12 +75,50 @@ class PIDController : public AbstractController
     linearOut = std::max(-100.0, std::min(100.0, linearOut));
     angularOut = std::max(-100.0, std::min(100.0, angularOut));
 
-    if (this->m_pAngularExit->canExit(currentPose, false) &&
-        this->m_pLinearExit->canExit(currentPose, false) && !thru)
+    // All Exit Conditions say exit is possible
+    if (std::all_of(this->m_linearExitConditions.begin(),
+                    this->m_linearExitConditions.end(),
+                    [&](std::shared_ptr<exit_condition::AbstractExitCondition> ec) {
+                      return ec->canExit(currentPose, thru);
+                    }))
     {
-      return {0, 0};
+      // Then Allow Exit
+      this->m_canExit = true;
     }
-    else { return {linearError, angularOut}; }
+
+    // Return Output
+    return {linearError, angularOut};
+  }
+
+  utilities::Motion getAngleOutput(utilities::Angle currentAngle, bool reverse, bool thru,
+                                   double deltaTime) override
+  {
+    // Use Rear Heading?
+    if (reverse) { currentAngle += utilities::Angle(180, true); }
+
+    // Calculate Angle Error
+    utilities::Angle angleError = this->getAngularError(currentAngle);
+
+    // Force Shortest Direction
+    if (fabs(angleError.getDegrees()) > 180)
+    {
+      angleError.getDegrees() < 0 ? angleError += utilities::Angle(360, true)
+                                  : angleError -= utilities::Angle(360, false);
+    }
+
+    double angularOutput = this->m_angularPID.calc(angleError.getRadians(), deltaTime);
+
+    if (std::all_of(this->m_angularExitConditions.begin(),
+                    this->m_angularExitConditions.end(),
+                    [&](std::shared_ptr<exit_condition::AbstractExitCondition> ec) {
+                      return ec->canExit(currentAngle, thru);
+                    }))
+    {
+      // Then Allow Exit
+      this->m_canExit = true;
+    }
+
+    return {0, angularOutput};
   }
 };
 }  // namespace lib2131::controller

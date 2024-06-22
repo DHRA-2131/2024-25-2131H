@@ -21,10 +21,10 @@ class ErrorExitCondition : public AbstractExitCondition
   }
 
  public:  // Functions
-  bool canExit(utilities::Pose currentPose, bool thru) override
+  bool canExit(utilities::Angle currentAngle, bool thru) override
   {
-    return thru ? ((this->m_target - currentPose.theta).getDegrees() < m_thruTolerance)
-                : ((this->m_target - currentPose.theta).getDegrees() < m_stopTolerance);
+    return thru ? ((this->m_target - currentAngle).getDegrees() < m_thruTolerance)
+                : ((this->m_target - currentAngle).getDegrees() < m_stopTolerance);
   }
 };
 }  // namespace lib2131::exit_condition
