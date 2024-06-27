@@ -5,6 +5,7 @@
 
 #include "lib2131/controller/AbstractController.hpp"
 #include "lib2131/odometry/AbstractOdometry.hpp"
+#include "lib2131/utilities/Motion.hpp"
 #include "lib2131/utilities/Point.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/motors.h"
@@ -29,6 +30,10 @@ class AbstractChassis
 {
  protected:  // Variables
   std::shared_ptr<controller::AbstractController> m_controller;
+
+  // Motion
+  utilities::Motion m_currentMotion;
+  utilities::Motion m_lastMotion;
 
   // Motor Groups
   pros::v5::MotorGroup m_leftDrive;
@@ -57,6 +62,8 @@ class AbstractChassis
 
   // Ew
   virtual void arcade(std::int8_t fwdPct, std::int8_t turnPct) = 0;
+
+  virtual void constrainMotion(utilities::Motion newMotion) = 0;
 
   // BrakeType
   pros::motor_brake_mode_e_t getBrakeType() { return this->m_brakeType; }

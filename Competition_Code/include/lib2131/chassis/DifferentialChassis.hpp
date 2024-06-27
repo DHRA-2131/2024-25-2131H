@@ -40,6 +40,12 @@ class DifferentialChassis : public AbstractChassis
     m_leftDrive.move_voltage(fwdPct + turnPct / 100 * 12000);
     m_rightDrive.move_voltage(fwdPct - turnPct / 100 * 12000);
   }
+
+  void constrainMotion(utilities::Motion newMotion) override
+  {
+    if (newMotion.LinearVelocity > m_params.maxLinearVelocity) {}
+  }
+
   // Local Motions
   void turnTo(utilities::Angle Heading, bool relative, bool reverse = false,
               bool thru = false, double timeout = std::numeric_limits<double>::infinity(),

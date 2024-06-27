@@ -4,7 +4,6 @@
 
 #include <cmath>
 
-
 namespace lib2131::utilities
 {
 class MotionProfile
@@ -12,9 +11,9 @@ class MotionProfile
  private:  // Variables
   // Parameters
   const double m_distance;     // Inches
-  const double m_maxVelocity;  // Inches / Msec
-  const double m_maxAccel;     // Inches / Msec * Msec
-  const double m_maxDecel;     // Inches / Msec * Msec
+  const double m_maxVelocity;  // Inches / Seconds
+  const double m_maxAccel;     // Inches / Seconds * Seconds
+  const double m_maxDecel;     // Inches / Seconds * Seconds
 
   // Calculated Distances
   const double m_minDistance;    // Inches
@@ -23,10 +22,10 @@ class MotionProfile
   const double m_coastDistance;  // Inches
 
   // Calculated Times
-  const double m_accelTime;  // Msec
-  const double m_decelTime;  // Msec
-  const double m_coastTime;  // Msec
-  const double m_totalTime;  // Msec
+  const double m_accelTime;  // Seconds
+  const double m_decelTime;  // Seconds
+  const double m_coastTime;  // Seconds
+  const double m_totalTime;  // Seconds
 
  public:  // Constructors
           /**
@@ -38,17 +37,17 @@ class MotionProfile
            */
   MotionProfile(double distance, double maxVelocity, double maxAccel, double maxDecel)
       : m_distance(distance),
-        m_maxVelocity(maxVelocity * 1000),
-        m_maxAccel(fabs(maxAccel * 1000 * 1000)),
-        m_maxDecel(fabs(maxDecel * 1000 * 1000)),
+        m_maxVelocity(maxVelocity),
+        m_maxAccel(fabs(maxAccel)),
+        m_maxDecel(fabs(maxDecel)),
         m_minDistance(maxVelocity * maxVelocity / maxAccel),
         m_accelDistance(maxVelocity * maxVelocity / 2 * maxAccel),
         m_decelDistance(maxVelocity * maxVelocity / 2 * maxDecel),
         m_coastDistance(distance - m_accelDistance - m_decelDistance),
-        m_accelTime((maxVelocity / maxAccel) * 1000),
-        m_decelTime((maxVelocity / maxDecel) * 1000),
-        m_coastTime((distance / maxVelocity) * 1000),
-        m_totalTime((m_accelTime + m_coastTime + m_decelTime) * 1000)
+        m_accelTime((maxVelocity / maxAccel)),
+        m_decelTime((maxVelocity / maxDecel)),
+        m_coastTime((distance / maxVelocity)),
+        m_totalTime((m_accelTime + m_coastTime + m_decelTime))
   {
   }
 
@@ -56,6 +55,7 @@ class MotionProfile
   const double getTotalTime() { return m_totalTime; }
   const double getDistance(uint Msec)
   {
+    Msec /= 1000;  // Convert to Seconds
     if (0 < Msec && Msec < m_accelTime) { return 0.5 * m_maxAccel * Msec * Msec; }
     else if (m_accelTime < Msec && Msec < m_accelTime + m_coastTime)
     {
@@ -71,6 +71,7 @@ class MotionProfile
 
   const double getVelocity(uint Msec)
   {
+    Msec /= 1000;  // Convert to Seconds
     if (0 < Msec && Msec < m_accelTime) { return m_maxAccel * Msec; }
     else if (m_accelTime < Msec && Msec < m_accelTime + m_coastTime)
     {
@@ -85,6 +86,7 @@ class MotionProfile
 
   const double getAcceleration(uint Msec)
   {
+    Msec /= 1000;  // Convert to Seconds
     if (0 < Msec && Msec < m_accelTime) { return m_maxAccel; }
     else if (m_accelTime < Msec && Msec < m_accelTime + m_coastTime) { return 0.0; }
     else if (m_accelTime + m_coastTime < Msec && Msec < m_totalTime)

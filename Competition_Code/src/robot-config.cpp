@@ -8,7 +8,7 @@
  * @copyright Copyright (c) 2024
  *
  */
-
+// TODO: add carts to motor odom
 #include "main/robot-config.hpp"
 
 #include <memory>
@@ -28,13 +28,6 @@
 #define RIGHT_DRIVE_PORTS {5, 8, 6}
 
 // Drive Motors
-pros::Motor LeftFront(-4, pros::v5::MotorGearset::green);
-pros::Motor LeftMid(-1, pros::v5::MotorGearset::green);
-pros::Motor LeftRear(-2, pros::v5::MotorGearset::green);
-
-pros::Motor RightFront(5, pros::v5::MotorGearset::green);
-pros::Motor RightMid(8, pros::v5::MotorGearset::green);
-pros::Motor RightRear(6, pros::v5::MotorGearset::green);
 
 pros::v5::MotorGroup LeftDrive(LEFT_DRIVE_PORTS, pros::v5::MotorGearset::green);
 pros::v5::MotorGroup RightDrive(RIGHT_DRIVE_PORTS, pros::v5::MotorGearset::green);
