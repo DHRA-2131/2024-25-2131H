@@ -4,6 +4,7 @@
 #include "lib2131/odometry/AbstractOdometry.hpp"
 #include "lib2131/odometry/tracking_wheel/AbstractTrackingWheel.hpp"
 #include "lib2131/utilities/Pose.hpp"
+#include "lib2131/utilities/Units.h"
 
 namespace lib2131::odometry
 {
@@ -11,6 +12,9 @@ using namespace trackingWheel;
 
 class WheelOdometry : public AbstractOdometry
 {
+  using distance_t = units::length::inch_t;
+  using angle_t = units::angle::radian_t;
+
  private:  // Variables
   std::shared_ptr<AbstractTrackingWheel> m_pLeftWheel;
   std::shared_ptr<AbstractTrackingWheel> m_pRightWheel;
@@ -28,7 +32,7 @@ class WheelOdometry : public AbstractOdometry
         m_pRightWheel(std::move(rightWheel)),
         m_pRearWheel(std::move(rearWheel)),
         m_hasRear(true),
-        m_viable(leftWheel->getOffset() - rightWheel->getOffset() != 0)
+        m_viable(leftWheel->getOffset() - rightWheel->getOffset() != distance_t(0))
   {
   }
 
@@ -38,12 +42,12 @@ class WheelOdometry : public AbstractOdometry
         m_pLeftWheel(leftWheel),
         m_pRightWheel(rightWheel),
         m_hasRear(false),
-        m_viable(leftWheel->getOffset() - rightWheel->getOffset() != 0)
+        m_viable(leftWheel->getOffset() - rightWheel->getOffset() != distance_t(0))
   {
   }
 
  public:  // Functions
-  void update(double deltaTime) override
+  void update(units::time::millisecond_t deltaTime) override
   {
     if (!m_viable)
     {
@@ -56,19 +60,19 @@ class WheelOdometry : public AbstractOdometry
     if (m_hasRear) m_pRearWheel->update();
 
     // Inertial Angle
-    this->m_deltaTheta = utilities::Angle(
-        (m_pLeftWheel->getDeltaDistance() - m_pRightWheel->getDeltaDistance()) /
-            (m_pLeftWheel->getOffset() - m_pRightWheel->getOffset()),
-        false);
+    this->m_deltaTheta =
+        angle_t((m_pLeftWheel->getDeltaDistance() - m_pRightWheel->getDeltaDistance()) /
+                    (m_pLeftWheel->getOffset() - m_pRightWheel->getOffset()),
+                false);
 
-    utilities::Angle avgTheta = this->m_currentTheta - this->m_deltaTheta / 2;
+    angle_t avgTheta = this->m_currentTheta - this->m_deltaTheta / 2;
     this->m_currentTheta -= this->m_deltaTheta;
 
     // Calculate Local Change
-    double localDeltaX = this->calculateChordLength(
+    distance_t localDeltaX = this->calculateChordLength(
         m_pLeftWheel->getDeltaDistance(), m_pLeftWheel->getOffset(), this->m_deltaTheta);
 
-    double localDeltaY = 0;
+    distance_t localDeltaY(0);
     if (m_hasRear)
     {
       localDeltaY =
@@ -76,9 +80,8 @@ class WheelOdometry : public AbstractOdometry
                                      m_pRearWheel->getOffset(), this->m_deltaTheta);
     }
 
-    this->updateStates(
-        utilities::Pose(localDeltaX, localDeltaY, this->m_deltaTheta).rotate(avgTheta),
-        deltaTime);
+    this->updateStates(utilities::Pose({localDeltaX, localDeltaY}, this->m_deltaTheta),
+                       avgTheta, deltaTime);
   }
   void calibrate() override
   {

@@ -1,30 +1,34 @@
 #pragma once
 #include <cmath>
 
-#include "lib2131/utilities/Angle.hpp"
+#include "lib2131/utilities/Units.h"
 
 namespace lib2131::utilities
 {
 
 struct Point
 {
-  double x, y;
+  using angle_t = units::angle::radian_t;
+  using distance_t = units::length::inch_t;
 
-  double magnitude(const Point& B)
+  distance_t x, y;
+
+  distance_t magnitude(const Point& B)
   {
-    return sqrt(pow(B.x - this->x, 2) + pow(B.y - this->y, 2));
+    return units::math::sqrt(units::math::pow<2>(B.x - this->x) +
+                             units::math::pow<2>(B.y - this->y));
   }
 
-  Angle amplitude(const Point& B)
+  angle_t amplitude(const Point& B)
   {
-    return Angle(atan2(B.y - this->y, B.x - this->x), false);
+    return angle_t(units::math::atan2(B.y - this->y, B.x - this->x));
   }
 
-  void rotate(Angle& B)
+  void rotate(angle_t& B)
   {
     // Calculate rotated point
-    double newX = y * sin(B.getRadians()) + x * cos(B.getRadians());
-    double newY = y * cos(B.getRadians()) + x * -sin(B.getRadians());
+    distance_t newX = y * units::math::sin(B) + x * units::math::cos(B);
+    distance_t newY = y * units::math::cos(B) + x * -units::math::sin(B);
 
     // Set new Point
     x = newX;

@@ -5,29 +5,35 @@
 #include "lib2131/odometry/tracking_wheel/ADITrackingWheel.hpp"
 #include "lib2131/odometry/tracking_wheel/MotorTrackingWheel.hpp"
 #include "lib2131/odometry/tracking_wheel/RotationalTrackingWheel.hpp"
+#include "lib2131/utilities/Units.h"
 #include "pros/motor_group.hpp"
 
 namespace lib2131::odometry::trackingWheel
 {
+
+using namespace units::literals;
+
 class TrackingWheelBuilder
 {
+  using distance_t = units::length::inch_t;
+
  private:  // Tracking Wheel Configuration
-  float m_offset;
-  float m_wheelDiameter;
-  float m_ratio;
-  double m_distance;
+  distance_t m_offset;
+  distance_t m_wheelDiameter;
+  double m_ratio;
+  distance_t m_distance;
 
  public:  // Constructors / Deconstructor
   TrackingWheelBuilder() : m_offset(0), m_wheelDiameter(0), m_ratio(1), m_distance(0) {}
   ~TrackingWheelBuilder() {}
 
  public:  // Configuration
-  TrackingWheelBuilder& setOffset(float offset)
+  TrackingWheelBuilder& setOffset(distance_t offset)
   {
     m_offset = offset;
     return *this;
   }
-  TrackingWheelBuilder& setWheelDiameter(float wheelDiameter)
+  TrackingWheelBuilder& setWheelDiameter(distance_t wheelDiameter)
   {
     m_wheelDiameter = wheelDiameter;
     return *this;
@@ -37,7 +43,7 @@ class TrackingWheelBuilder
     m_ratio = ratio;
     return *this;
   }
-  TrackingWheelBuilder& setInitalDistance(float distance)
+  TrackingWheelBuilder& setInitalDistance(distance_t distance)
   {
     m_distance = distance;
     return *this;
@@ -49,7 +55,7 @@ class TrackingWheelBuilder
   std::shared_ptr<ADITrackingWheel> buildADIEncoderTrackingWheel(int8_t port)
   {
     // Check if necessary info is included
-    if (m_ratio == 0 || m_offset == 0 || m_wheelDiameter == 0)
+    if (m_ratio == 0 || m_offset == 0_in || m_wheelDiameter == 0_in)
     {
       throw "Build Tracking Wheel Failed";
       return nullptr;
@@ -60,7 +66,7 @@ class TrackingWheelBuilder
   std::shared_ptr<RotationalTrackingWheel> buildRotationalTrackingWheel(int8_t port)
   {
     // Check if necessary info is included
-    if (m_ratio == 0 || m_offset == 0 || m_wheelDiameter == 0)
+    if (m_ratio == 0 || m_offset == 0_in || m_wheelDiameter == 0_in)
     {
       throw "Build Tracking Wheel Failed";
       return nullptr;
@@ -72,7 +78,7 @@ class TrackingWheelBuilder
       const std::initializer_list<std::int8_t> ports, double rpm)
   {
     // Check if necessary info is included
-    if (m_ratio == 0 || m_offset == 0 || m_wheelDiameter == 0)
+    if (m_ratio == 0 || m_offset == 0_in || m_wheelDiameter == 0_in)
     {
       throw "Build Tracking Wheel Failed";
       return nullptr;

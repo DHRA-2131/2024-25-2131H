@@ -1,24 +1,29 @@
 #pragma once
 #include <cmath>
 
+#include "lib2131/utilities/Units.h"
+
 namespace lib2131::odometry::trackingWheel
 {
+using namespace units::literals;
 
 class AbstractTrackingWheel
 {
+  using distance_t = units::length::inch_t;
+
  private:  // Constant Variables
-  const float m_offset;
-  const float m_wheelDiameter;
+  distance_t m_offset;
+  distance_t m_wheelDiameter;
   const float m_ratio;
 
  private:  // Non Const Variables
-  double m_distance;
-  double m_distanceLast;
-  double m_deltaDistance;
+  distance_t m_distance;
+  distance_t m_distanceLast;
+  distance_t m_deltaDistance;
 
  public:
-  AbstractTrackingWheel(const float offset, const float wheelDiameter, const float ratio,
-                        double distance = 0)
+  AbstractTrackingWheel(distance_t offset, distance_t wheelDiameter, const float ratio,
+                        distance_t distance = 0_in)
       : m_offset(offset),
         m_wheelDiameter(wheelDiameter),
         m_ratio(ratio),
@@ -26,10 +31,10 @@ class AbstractTrackingWheel
   {
   }
 
-  double getDistance() { return m_distance; }
-  double getDeltaDistance() { return m_deltaDistance; }
+  distance_t getDistance() { return m_distance; }
+  distance_t getDeltaDistance() { return m_deltaDistance; }
 
-  const float getOffset() { return m_offset; }
+  distance_t getOffset() { return m_offset; }
 
   void update()
   {
@@ -45,12 +50,12 @@ class AbstractTrackingWheel
   void reset()
   {
     this->tareSensor();
-    this->m_distance = 0;
-    this->m_deltaDistance = 0;
-    this->m_distanceLast = 0;
+    this->m_distance = distance_t(0);
+    this->m_deltaDistance = distance_t(0);
+    this->m_distanceLast = distance_t(0);
   }
 
   virtual void tareSensor() = 0;
-  virtual double getRaw() = 0;
+  virtual units::angle::degree_t getRaw() = 0;
 };
 }  // namespace lib2131::odometry::trackingWheel

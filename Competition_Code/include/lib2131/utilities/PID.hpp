@@ -1,4 +1,3 @@
-
 #pragma once
 
 namespace lib2131

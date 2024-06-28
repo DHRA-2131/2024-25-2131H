@@ -7,16 +7,20 @@
 
 namespace lib2131::odometry::trackingWheel
 {
+using namespace units::literals;
+
 class MotorTrackingWheel : public AbstractTrackingWheel
 {
+  using distance_t = units::length::inch_t;
+
  private:  // Pointers
   std::shared_ptr<pros::v5::MotorGroup> m_pEncoder;
   const float m_rpm;
 
  public:  // Constructors
   MotorTrackingWheel(const std::shared_ptr<pros::v5::MotorGroup>& motorGroup,
-                     const float offset, const float wheelDiameter, const float rpm,
-                     double distance = 0)
+                     distance_t offset, distance_t wheelDiameter, const float rpm,
+                     distance_t distance = 0_in)
       : AbstractTrackingWheel(offset, wheelDiameter, 1, distance),
         m_pEncoder(std::move(motorGroup)),
         m_rpm(rpm)
@@ -26,7 +30,7 @@ class MotorTrackingWheel : public AbstractTrackingWheel
 
  public:  // Overriden methods
   void tareSensor() override { m_pEncoder->tare_position_all(); }
-  double getRaw() override
+  units::angle::degree_t getRaw() override
   {  // Get each motor's GearSet
     std::vector<pros::v5::MotorGears> gearsets = this->m_pEncoder->get_gearing_all();
     // Make sure all the encoders are using Revolutions
@@ -56,7 +60,7 @@ class MotorTrackingWheel : public AbstractTrackingWheel
       distances.push_back(positions[i] / gearsetRpm);
     }
     // Distance = Average of each motor
-    return lib2131::utilities::average(distances) * m_rpm;
+    return units::angle::degree_t(lib2131::utilities::average(distances) * m_rpm);
   }
 };
 }  // namespace lib2131::odometry::trackingWheel
