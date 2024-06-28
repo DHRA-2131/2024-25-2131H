@@ -56,7 +56,8 @@ class BlendedOdometry : public AbstractOdometry
     if (m_hasHorizontal) m_pHorizontalWheel->update();
 
     // Inertial Angle
-    this->m_deltaTheta = this->m_currentTheta - angle_t(m_pIMU->get_heading() * -1);
+    this->m_deltaTheta =
+        this->m_currentTheta - units::angle::degree_t(m_pIMU->get_heading() * -1);
 
     angle_t avgTheta = this->m_currentTheta - this->m_deltaTheta / 2;
     this->m_currentTheta -= this->m_deltaTheta;

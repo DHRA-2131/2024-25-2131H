@@ -9,8 +9,6 @@
  *
  */
 
-#include <memory>
-
 #include "lib2131/api.hpp"
 #include "pros/adi.hpp"
 #include "pros/imu.hpp"

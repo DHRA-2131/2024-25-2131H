@@ -40,7 +40,8 @@ class AbstractTrackingWheel
   {
     //* this->getRaw should be in degrees
     // Revolutions * Circumference / Ratio
-    m_distance = this->getRaw() / 360.0 * m_wheelDiameter * M_PI / m_ratio;
+    m_distance = distance_t(this->getRaw().value() / 360.0 * m_wheelDiameter.value() *
+                            M_PI / m_ratio);
     // Find Delta
     m_deltaDistance = m_distance - m_distanceLast;
     // Update Last

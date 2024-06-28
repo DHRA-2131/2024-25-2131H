@@ -24,6 +24,8 @@
 // -4, 1, -2 LF, LM, LR
 // 5, 8, 6 RF, RM, RR
 
+using namespace units::literals;
+
 #define LEFT_DRIVE_PORTS {-4, -1, -2}
 #define RIGHT_DRIVE_PORTS {5, 8, 6}
 
@@ -41,33 +43,33 @@ pros::IMU Inertial(21);
 // Dead Wheels
 std::shared_ptr<RotationalTrackingWheel> LeftDeadWheel =
     lib2131::odometry::TrackingWheelBuilder::newBuilder()
-        .setWheelDiameter(2.0)
-        .setOffset(3.5)
+        .setWheelDiameter(2.0_in)
+        .setOffset(3.5_in)
         .buildRotationalTrackingWheel(20);
 
 std::shared_ptr<RotationalTrackingWheel> RightDeadWheel =
     lib2131::odometry::TrackingWheelBuilder::newBuilder()
-        .setWheelDiameter(2.0)
-        .setOffset(-3.5)
+        .setWheelDiameter(2.0_in)
+        .setOffset(-3.5_in)
         .buildRotationalTrackingWheel(-19);
 
 std::shared_ptr<RotationalTrackingWheel> RearWheel =
     lib2131::odometry::TrackingWheelBuilder::newBuilder()
-        .setWheelDiameter(2.0)
-        .setOffset(5)
+        .setWheelDiameter(2.0_in)
+        .setOffset(5_in)
         .buildRotationalTrackingWheel(10);
 
 // Motor Encoder Tracking Wheels
 std::shared_ptr<MotorTrackingWheel> LeftDrivenWheel =
     lib2131::odometry::TrackingWheelBuilder::newBuilder()
-        .setWheelDiameter(3.25)
-        .setOffset(12.75 / 2.0)
+        .setWheelDiameter(3.25_in)
+        .setOffset(6.375_in)
         .buildMotorTrackingWheel(LEFT_DRIVE_PORTS, 333.0 + (1.0 / 3.0));
 
 std::shared_ptr<MotorTrackingWheel> RightDrivenWheel =
     lib2131::odometry::TrackingWheelBuilder::newBuilder()
-        .setWheelDiameter(3.25)
-        .setOffset(-12.75 / 2.0)
+        .setWheelDiameter(3.25_in)
+        .setOffset(-6.375_in)
         .buildMotorTrackingWheel(RIGHT_DRIVE_PORTS, 333.0 + (1.0 / 3.0));
 
 // Odometry

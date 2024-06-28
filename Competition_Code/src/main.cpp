@@ -2,6 +2,8 @@
 
 #include "main/robot-config.hpp"
 
+using namespace units::literals;
+
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -79,8 +81,8 @@ void opcontrol()
     //   buttonAPressing = false;
     // }
 
-    DrivenOdom->update(10);
-    DeadOdom->update(10);
+    DrivenOdom->update(10_ms);
+    DeadOdom->update(10_ms);
 
     pros::delay(10);
   }

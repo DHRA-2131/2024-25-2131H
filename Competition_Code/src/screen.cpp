@@ -20,13 +20,13 @@ pros::Task ScreenTask([]() {
   {
     lib2131::utilities::Pose BaseOdom = DrivenOdom->getState().Position;
     pros::lcd::print(1, "Drive Odometry: ");
-    pros::lcd::print(2, "{%f, %f, %f}", BaseOdom.x, BaseOdom.y,
-                     BaseOdom.theta.getDegrees());
+    pros::lcd::print(2, "{%f, %f, %f}", BaseOdom.pos.x, BaseOdom.pos.y,
+                     BaseOdom.theta.convert<units::angle::degrees>());
 
     lib2131::utilities::Pose WheelOdom = DeadOdom->getState().Position;
     pros::lcd::print(4, "Tracking Wheel Odometry: ");
-    pros::lcd::print(5, "{%f, %f, %f}", WheelOdom.x, WheelOdom.y,
-                     WheelOdom.theta.getDegrees());
+    pros::lcd::print(5, "{%f, %f, %f}", WheelOdom.pos.x, WheelOdom.pos.y,
+                     WheelOdom.theta.convert<units::angle::degrees>());
 
     pros::lcd::print(6, "ODOM: %f, %f", LeftDeadWheel->getDistance(),
                      RightDeadWheel->getDistance());
