@@ -62,6 +62,7 @@ class OdometryBuilder
   }
 
  public:  // Build
+  // TODO : Make one builder
   std::shared_ptr<BlendedOdometry> buildBlendedOdometry()
   {
     if (m_pLeftWheel != nullptr && m_pIMU != nullptr)
