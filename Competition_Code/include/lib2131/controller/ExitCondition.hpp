@@ -29,7 +29,6 @@ struct angleParam
   units::angle::degree_t thruDistance = 10_deg;
 };
 
-template <class U>
 class ExitCondition
 {
  private:  // Variables

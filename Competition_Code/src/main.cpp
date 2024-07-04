@@ -1,5 +1,7 @@
 #include "main.h"
 
+#include "lib2131/utilities/MotionProfile.hpp"
+#include "lib2131/utilities/Units.h"
 #include "main/robot-config.hpp"
 
 using namespace units::literals;
@@ -60,30 +62,31 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+using namespace units::literals;
 void opcontrol()
 {
-  bool buttonAPressing = false;
+  units::time::second_t OPControlTime = 0_ms;
+
+  /* DRIVE CONTROL bool buttonAPressing = false; */
+
+  lib2131::utilities::MotionProfile<units::length::inches> MP(180, 100.0, 200.0, 200.0);
+  std::cout << MP.getTotalTime() << "\n";
   while (true)
   {
-    // LeftDrive.move_voltage(primary.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / 100 *
-    //                        -12000);
-    // RightDrive.move_voltage(primary.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / 100
-    // *
-    //                         -12000);
-
-    // if (!buttonAPressing && primary.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-    // {
-    //   Clamp.toggle();
-    //   buttonAPressing = true;
-    // }
-    // else if (buttonAPressing && !primary.get_digital(pros::E_CONTROLLER_DIGITAL_A))
-    // {
-    //   buttonAPressing = false;
-    // }
-
+    /* DRIVE CONTROL
+    LeftDrive.move_voltage(primary.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / 100 *
+                           12000);
+    RightDrive.move_voltage(primary.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / 100 *
+                            12000);
+    */
+    /* ODOMETRY
     DrivenOdom->update(10_ms);
     DeadOdom->update(10_ms);
+    */
 
+    /* Motion Profile Test*/
+    std::cout << MP.getAcceleration(OPControlTime) << "\n";
     pros::delay(10);
+    OPControlTime += 10_ms;
   }
 }
