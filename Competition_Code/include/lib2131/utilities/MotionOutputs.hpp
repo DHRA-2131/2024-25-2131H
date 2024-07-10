@@ -13,16 +13,4 @@ struct WheelVelocities
   linear_velocity_t rightWheelVelocity;
 };
 
-struct LocalVelocities
-{
-  linear_velocity_t linearVelocity;
-  angular_velocity_t angularVelocity;
-};
-
-struct GlobalVelocities
-{
-  linear_velocity_t xVelocity;
-  linear_velocity_t yVelocity;
-  angular_velocity_t angularVelocity;
-};
 }  // namespace lib2131::utilities

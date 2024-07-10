@@ -1,6 +1,6 @@
 #pragma once
 
-namespace lib2131
+namespace lib2131::utilities
 {
 class PID
 {
@@ -22,4 +22,4 @@ class PID
     return P * m_kP + I * m_kI + D * m_kD;
   }
 };
-}  // namespace lib2131
+}  // namespace lib2131::utilities

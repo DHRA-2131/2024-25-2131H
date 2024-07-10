@@ -41,7 +41,8 @@ class ImuOdometry : public AbstractOdometry
     angle_t avgTheta = this->m_currentTheta - this->m_deltaTheta / 2;
     this->m_currentTheta -= this->m_deltaTheta;
 
-    // Get Acceleration in G's -> Convert to In/s -> Store as Point
+    // TODO: Make Points Smarter (Maybe a Vector2 Class that Points use)
+    // Get Acceleration in G's -> Convert to In/s -> Store as (Velocity) Point
     auto IMUAccel = this->m_pIMU->get_accel();
     this->m_DeltaXY += utilities::Point(distance_t(IMUAccel.x / 386.0885826772),
                                         distance_t(IMUAccel.y / 386.0885826772));

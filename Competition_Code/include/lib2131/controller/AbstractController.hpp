@@ -12,11 +12,9 @@ class AbstractController
  protected:  // variables
   // Positional Info
   utilities::Pose m_target;
-  utilities::Pose m_error;
 
   // Stationary Turn Info
   units::angle::radian_t m_angularTarget;
-  units::angle::radian_t m_angularError;
 
  public:  // Variables
   // Exit Conditions
