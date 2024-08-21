@@ -84,7 +84,6 @@
 #include <ratio>
 #include <type_traits>
 
-
 #if !defined(UNIT_LIB_DISABLE_IOSTREAM)
 #include <iostream>
 #include <string>
@@ -951,8 +950,8 @@ typedef base_unit<> dimensionless_unit;  ///< Represents a quantity with no dime
 
 // SI BASE UNIT TYPES
 //					METERS			KILOGRAMS
-//SECONDS			RADIANS			AMPERES			KELVIN
-//MOLE			CANDELA			BYTE		---		CATEGORY
+// SECONDS			RADIANS			AMPERES			KELVIN
+// MOLE			CANDELA			BYTE		---		CATEGORY
 typedef base_unit<detail::meter_ratio<1>>
     length_unit;  ///< Represents an SI base unit of length
 typedef base_unit<detail::meter_ratio<0>, std::ratio<1>>
@@ -976,8 +975,8 @@ typedef base_unit<detail::meter_ratio<0>, std::ratio<0>, std::ratio<0>, std::rat
 
 // SI DERIVED UNIT TYPES
 //					METERS			KILOGRAMS
-//SECONDS			RADIANS			AMPERES			KELVIN
-//MOLE			CANDELA			BYTE		---		CATEGORY
+// SECONDS			RADIANS			AMPERES			KELVIN
+// MOLE			CANDELA			BYTE		---		CATEGORY
 typedef base_unit<detail::meter_ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<2>,
                   std::ratio<0>, std::ratio<0>, std::ratio<0>, std::ratio<0>>
     solid_angle_unit;  ///< Represents an SI derived unit of solid angle
@@ -1033,8 +1032,8 @@ typedef base_unit<detail::meter_ratio<0>, std::ratio<0>, std::ratio<-1>>
 
 // OTHER UNIT TYPES
 //					METERS			KILOGRAMS
-//SECONDS			RADIANS			AMPERES			KELVIN
-//MOLE			CANDELA			BYTE		---		CATEGORY
+// SECONDS			RADIANS			AMPERES			KELVIN
+// MOLE			CANDELA			BYTE		---		CATEGORY
 typedef base_unit<detail::meter_ratio<2>, std::ratio<1>, std::ratio<-2>>
     torque_unit;  ///< Represents an SI derived unit of torque
 typedef base_unit<detail::meter_ratio<2>>
@@ -3211,7 +3210,7 @@ struct linear_scale
   template <class... Args>
   inline constexpr linear_scale(const T& value, Args&&...) noexcept : m_value(value)
   {
-  }                                                                   ///< constructor.
+  }  ///< constructor.
   inline constexpr T operator()() const noexcept { return m_value; }  ///< returns value.
 
   T m_value;  ///< linearized value.

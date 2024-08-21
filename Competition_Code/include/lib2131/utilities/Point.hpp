@@ -35,10 +35,10 @@ struct Point
     y = newY;
   }
 
-  const Point operator+(const Point& B) { return {this->x + B.x, this->y + B.y}; }
-  const Point operator-(const Point& B) { return {this->x - B.x, this->y - B.y}; }
-  const Point operator*(const double B) { return {this->x * B, this->y * B}; }
-  const Point operator/(const double B) { return {this->x / B, this->y / B}; }
+  Point operator+(Point B) { return {this->x + B.x, this->y + B.y}; }
+  Point operator-(Point B) { return {this->x - B.x, this->y - B.y}; }
+  Point operator*(double B) { return {this->x * B, this->y * B}; }
+  Point operator/(double B) { return {this->x / B, this->y / B}; }
 
   Point& operator+=(const Point& B)
   {
@@ -65,4 +65,5 @@ struct Point
     return *this;
   }
 };
+
 }  // namespace lib2131::utilities

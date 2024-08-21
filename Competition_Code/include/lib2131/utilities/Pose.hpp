@@ -13,10 +13,10 @@ struct Pose
   Point pos;
   angle_t theta;
 
-  Pose operator+(const Pose& B) { return {this->pos + B.pos, this->theta + B.theta}; }
-  Pose operator-(const Pose& B) { return {this->pos - B.pos, this->theta - B.theta}; }
-  Pose operator*(const double B) { return {this->pos * B, this->theta * B}; }
-  Pose operator/(const double B) { return {this->pos / B, this->theta / B}; }
+  Pose operator+(Pose& B) { return {this->pos + B.pos, this->theta + B.theta}; }
+  Pose operator-(Pose& B) { return {this->pos - B.pos, this->theta - B.theta}; }
+  Pose operator*(double B) { return {this->pos * B, this->theta * B}; }
+  Pose operator/(double B) { return {this->pos / B, this->theta / B}; }
 
   Pose& operator+=(const Pose& B)
   {
@@ -43,4 +43,5 @@ struct Pose
     return *this;
   }
 };
+
 }  // namespace lib2131::utilities

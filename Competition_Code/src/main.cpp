@@ -1,6 +1,9 @@
 #include "main.h"
 
+#include <math.h>
+
 #include "lib2131/utilities/MotionProfile.hpp"
+#include "lib2131/utilities/Trajectory.hpp"
 #include "lib2131/utilities/Units.h"
 #include "main/robot-config.hpp"
 
@@ -14,8 +17,8 @@ using namespace units::literals;
  */
 void initialize()
 {
-  DrivenOdom->calibrate();
-  DeadOdom->calibrate();
+  // DrivenOdom->calibrate();
+  // DeadOdom->calibrate();
 }
 
 /**
@@ -65,28 +68,29 @@ void autonomous() {}
 using namespace units::literals;
 void opcontrol()
 {
+  double lastT = 0;
   units::time::second_t OPControlTime = 0_ms;
 
-  /* DRIVE CONTROL bool buttonAPressing = false; */
+  lib2131::utilities::Trajectory path({0_in, 0_in, 0_deg}, {100_in, 100_in, 0_deg},
+                                      100_in, -100_in, 30);
+  lib2131::utilities::MotionProfile<units::length::inches> linearPath(
+      path.getPathLength().to<double>(), 100, 40, 40, 0, 0);
 
-  lib2131::utilities::MotionProfile<units::length::inches> MP(180, 100.0, 200.0, 200.0);
-  std::cout << MP.getTotalTime() << "\n";
   while (true)
   {
-    /* DRIVE CONTROL
-    LeftDrive.move_voltage(primary.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y) / 100 *
-                           12000);
-    RightDrive.move_voltage(primary.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_Y) / 100 *
-                            12000);
-    */
-    /* ODOMETRY
-    DrivenOdom->update(10_ms);
-    DeadOdom->update(10_ms);
-    */
+    double t = path.solveFromDistance(linearPath.getDistance(OPControlTime), lastT);
 
-    /* Motion Profile Test*/
-    std::cout << MP.getAcceleration(OPControlTime) << "\n";
+    auto linearVel = linearPath.getVelocity(OPControlTime);
+    double k = path.getCurvature(t);
+    units::angular_velocity::radians_per_second_t angularVel(linearVel.to<double>() * k);
+
+    if (OPControlTime < linearPath.getTotalTime())
+    {
+      std::cout << t << ", " << k << "," << linearVel << ", " << angularVel << std::endl;
+    }
     pros::delay(10);
     OPControlTime += 10_ms;
+
+    lastT = t;
   }
 }
