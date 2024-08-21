@@ -1,14 +1,5 @@
 #include "main.h"
 
-#include <math.h>
-
-#include "lib2131/utilities/MotionProfile.hpp"
-#include "lib2131/utilities/Trajectory.hpp"
-#include "lib2131/utilities/Units.h"
-#include "main/robot-config.hpp"
-
-using namespace units::literals;
-
 /**
  * Runs initialization code. This occurs as soon as the program is started.
  *
@@ -65,32 +56,4 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-using namespace units::literals;
-void opcontrol()
-{
-  double lastT = 0;
-  units::time::second_t OPControlTime = 0_ms;
-
-  lib2131::utilities::Trajectory path({0_in, 0_in, 0_deg}, {100_in, 100_in, 0_deg},
-                                      100_in, -100_in, 30);
-  lib2131::utilities::MotionProfile<units::length::inches> linearPath(
-      path.getPathLength().to<double>(), 100, 40, 40, 0, 0);
-
-  while (true)
-  {
-    double t = path.solveFromDistance(linearPath.getDistance(OPControlTime), lastT);
-
-    auto linearVel = linearPath.getVelocity(OPControlTime);
-    double k = path.getCurvature(t);
-    units::angular_velocity::radians_per_second_t angularVel(linearVel.to<double>() * k);
-
-    if (OPControlTime < linearPath.getTotalTime())
-    {
-      std::cout << t << ", " << k << "," << linearVel << ", " << angularVel << std::endl;
-    }
-    pros::delay(10);
-    OPControlTime += 10_ms;
-
-    lastT = t;
-  }
-}
+void opcontrol() {}
