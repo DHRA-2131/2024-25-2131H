@@ -1,6 +1,10 @@
 #include "main.h"
 
+#include "main/ButtonConfig.hpp"
 #include "main/RobotConfig.hpp"
+#include "systems/Arm.hpp"
+#include "systems/Drivetrain.hpp"
+#include "systems/Intake.hpp"
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -8,11 +12,7 @@
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize()
-{
-  // DrivenOdom->calibrate();
-  // DeadOdom->calibrate();
-}
+void initialize() { Systems::Arm::init(); }
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -58,4 +58,16 @@ void autonomous() {}
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
-void opcontrol() {}
+void opcontrol()
+{
+  while (true)
+  {
+    Systems::Drivetrain::teleOp(primary);
+    Systems::Arm::teleOp(primary);
+    Systems::Intake::teleOp(primary);
+
+    Buttons::update();
+
+    pros::delay(15);
+  }
+}

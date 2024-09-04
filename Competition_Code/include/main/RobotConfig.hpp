@@ -4,7 +4,7 @@
 // Constants
 constexpr double driveRPM = 450;
 constexpr double trackWidth = 13.5;
-constexpr double armHeight = 200;
+constexpr double armHeight = 300;
 
 // Drivetrain
 extern pros::v5::MotorGroup leftDrive;
@@ -14,7 +14,8 @@ extern pros::adi::Pneumatics clamp;
 
 // Arm
 extern pros::v5::Motor arm;
-extern pros::adi::Pneumatics armPneu;
+extern pros::adi::Pneumatics armPneu1;
+extern pros::adi::Pneumatics armPneu2;
 
 // Intake
 extern pros::v5::Motor intake;

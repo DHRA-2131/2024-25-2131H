@@ -10,7 +10,8 @@ pros::adi::Pneumatics clamp('C', false, false);
 
 // Arm
 pros::v5::Motor arm(5);
-pros::adi::Pneumatics armPneu(pros::adi::ext_adi_port_pair_t('G', 'H'), false, false);
+pros::adi::Pneumatics armPneu1('G', false, false);
+pros::adi::Pneumatics armPneu2('H', false, false);
 
 // Intake
 pros::v5::Motor intake(11, pros::v5::MotorGearset::blue);
