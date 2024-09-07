@@ -1,7 +1,6 @@
 #pragma once
 
 #include "ButtonDetector.hpp"
-#include "main/RobotConfig.hpp"
 
 namespace Buttons
 {

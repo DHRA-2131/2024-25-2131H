@@ -2,9 +2,8 @@
 
 namespace Systems
 {
-namespace Arm
+namespace Clamp
 {
-void init();
 void teleOp();
-}  // namespace Arm
+}  // namespace Clamp
 }  // namespace Systems

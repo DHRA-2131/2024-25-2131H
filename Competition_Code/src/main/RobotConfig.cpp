@@ -3,18 +3,15 @@
 #include "pros/adi.hpp"
 
 // Drivetrain
-pros::v5::MotorGroup leftDrive({-7, -4, -3}, pros::v5::MotorGearset::blue);
-pros::v5::MotorGroup rightDrive({10, 9, 2}, pros::v5::MotorGearset::blue);
-pros::Imu imu(8);
+pros::v5::MotorGroup leftDrive({-8, -9, -10}, pros::v5::MotorGearset::blue);
+pros::v5::MotorGroup rightDrive({18, 19, 20}, pros::v5::MotorGearset::blue);
+pros::Imu imu(0);
 pros::adi::Pneumatics clamp('C', false, false);
 
 // Arm
-pros::v5::Motor arm(5);
-pros::adi::Pneumatics armPneu1('G', false, false);
-pros::adi::Pneumatics armPneu2('H', false, false);
-
+pros::v5::Motor arm(0);
 // Intake
-pros::v5::Motor intake(11, pros::v5::MotorGearset::blue);
+pros::v5::Motor intake(3, pros::v5::MotorGearset::blue);
 
 // Controller
 pros::Controller primary(pros::E_CONTROLLER_MASTER);

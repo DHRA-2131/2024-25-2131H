@@ -1,8 +1,9 @@
 #include "main.h"
 
 #include "main/ButtonConfig.hpp"
-#include "main/RobotConfig.hpp"
+#include "main/Screen.hpp"
 #include "systems/Arm.hpp"
+#include "systems/Clamp.hpp"
 #include "systems/Drivetrain.hpp"
 #include "systems/Intake.hpp"
 
@@ -62,12 +63,15 @@ void opcontrol()
 {
   while (true)
   {
-    Systems::Drivetrain::teleOp(primary);
-    Systems::Arm::teleOp(primary);
-    Systems::Intake::teleOp(primary);
+    Systems::Drivetrain::teleOp();
+    Systems::Arm::teleOp();
+    Systems::Intake::teleOp();
+    Systems::Clamp::teleOp();
 
     Buttons::update();
 
-    pros::delay(15);
+    pros::delay(10);
+
+    Screen::update();
   }
 }

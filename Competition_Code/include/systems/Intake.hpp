@@ -1,11 +1,9 @@
 #pragma once
 
-#include "pros/misc.hpp"
-
 namespace Systems
 {
 namespace Intake
 {
-void teleOp(pros::Controller& primary);
+void teleOp();
 }  // namespace Intake
 }  // namespace Systems

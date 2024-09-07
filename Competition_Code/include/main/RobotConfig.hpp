@@ -14,8 +14,6 @@ extern pros::adi::Pneumatics clamp;
 
 // Arm
 extern pros::v5::Motor arm;
-extern pros::adi::Pneumatics armPneu1;
-extern pros::adi::Pneumatics armPneu2;
 
 // Intake
 extern pros::v5::Motor intake;

@@ -3,12 +3,11 @@
 #include "main/ButtonConfig.hpp"
 #include "main/RobotConfig.hpp"
 
-
 namespace Systems
 {
 namespace Intake
 {
-void teleOp(pros::Controller& primary)
+void teleOp()
 {
   if (Buttons::Intake.isPressing()) { intake.move_voltage(12000); }
   else if (Buttons::Outtake.isPressing()) { intake.move_voltage(-12000); }
