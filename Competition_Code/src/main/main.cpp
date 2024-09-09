@@ -63,15 +63,19 @@ void opcontrol()
 {
   while (true)
   {
+    // Call Tele-Operation of all systems
     Systems::Drivetrain::teleOp();
     Systems::Arm::teleOp();
     Systems::Intake::teleOp();
     Systems::Clamp::teleOp();
 
+    // Update all ButtonDetectors
     Buttons::update();
 
+    // Allow for V5 Sensors to update and tasks to update
     pros::delay(10);
 
+    // Update Screen
     Screen::update();
   }
 }

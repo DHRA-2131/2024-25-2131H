@@ -12,6 +12,10 @@ ButtonDetector ArmDown(pros::E_CONTROLLER_DIGITAL_R2);  // Arm Down
 
 ButtonDetector ClampToggle(pros::E_CONTROLLER_DIGITAL_X);  // Clamp
 
+/**
+ * @brief Update all Buttons
+ *
+ */
 void update()
 {
   Intake.update();
