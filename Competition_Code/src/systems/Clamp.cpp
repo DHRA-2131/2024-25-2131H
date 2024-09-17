@@ -2,6 +2,7 @@
 
 #include "main/ButtonConfig.hpp"
 #include "main/RobotConfig.hpp"
+#include "pros/misc.h"
 
 namespace Systems
 {

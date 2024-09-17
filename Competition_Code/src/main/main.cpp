@@ -1,6 +1,7 @@
 #include "main.h"
 
-#include "main/ButtonConfig.hpp"
+#include "ButtonConfig.hpp"
+#include "RobotConfig.hpp"
 #include "main/Screen.hpp"
 #include "systems/Arm.hpp"
 #include "systems/Clamp.hpp"
@@ -13,7 +14,11 @@
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
-void initialize() { Systems::Arm::init(); }
+void initialize()
+{
+  chassis.calibrate();
+  Systems::Arm::init();
+}
 
 /**
  * Runs while the robot is in the disabled state of Field Management System or
@@ -44,7 +49,7 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() { Screen::getAuton()->getAutonCB()(); }
 
 /**
  * Runs the operator control code. This function will be started in its own task
@@ -69,13 +74,10 @@ void opcontrol()
     Systems::Intake::teleOp();
     Systems::Clamp::teleOp();
 
-    // Update all ButtonDetectors
-    Buttons::update();
-
     // Allow for V5 Sensors to update and tasks to update
     pros::delay(10);
 
-    // Update Screen
-    Screen::update();
+    // Update Button Detectors
+    Buttons::update();
   }
 }

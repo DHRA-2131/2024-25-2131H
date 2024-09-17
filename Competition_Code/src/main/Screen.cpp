@@ -1,8 +1,10 @@
 #include "main/Screen.hpp"
 
+#include "Autonomous.hpp"
 #include "ChangeDetector.hpp"
 #include "RobotConfig.hpp"
 #include "pros/misc.hpp"
+#include "pros/rtos.hpp"
 #include "pros/screen.h"
 #include "pros/screen.hpp"
 
@@ -23,16 +25,15 @@ void NULL_AUTON() {}
 // Initialization of a list Containing AutonCards.
 // Each Card can be customized with a name and description.
 std::vector<AutonCard> Cards = {
-    {"LEFT", "Left Description", NULL_AUTON},      // Left Field Autonomous [Not Coded]
-    {"RIGHT", "Right Description", NULL_AUTON},    // Right Field Autonomous [Not Coded]
-    {"SKILLS", "Skills Description", NULL_AUTON},  // Skills Autonomous [Not Coded]
-    {"DEBUG", "Debug Description",
-     NULL_AUTON},  // Debug (For Odom testing, PID Tunning, etc) [Not Coded]
-    {"AUTON5", "AUTON5", NULL_AUTON}};  // Place holder autonomous for demonstration
+    {"LEFT", "Left Description", Autonomous::left},        // Left Field Autonomous
+    {"RIGHT", "Right Description", Autonomous::right},     // Right Field Autonomous
+    {"SKILLS", "Skills Description", Autonomous::skills},  // Skills Autonomous
+    {"DEBUG", "Debug Description", Autonomous::debug},     // Debug for PID etc
+};
+int index = 2;  // Index of card (Increments by +1 on initial)
 
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;
-int index = -1;                       // Index of card (Increments to 0 on initial)
 ChangeDetector<bool> ScreenDetector;  // ChangeDetector for the screen touch status
 
 /**
@@ -70,8 +71,18 @@ void update()
                         HEIGHT - MEDIUM_TEXT_MARGIN - 2 * MEDIUM_TEXT_SIZE,
                         "Robot Battery %: %f", pros::battery::get_capacity());
   }
-
   // No long the inital execution of Screen::update()
   initial = false;
 }
+
+AutonCard* getAuton() { return &Cards[index]; }
+pros::Task ScreenThread([]() {
+  pros::delay(10);
+  while (true)
+  {
+    update();
+    pros::delay(50);
+  }
+});
+
 }  // namespace Screen

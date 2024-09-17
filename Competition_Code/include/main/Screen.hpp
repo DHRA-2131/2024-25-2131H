@@ -9,6 +9,8 @@ namespace Screen
 {
 extern bool debug;
 
+typedef void (*callback)();
+
 #define WIDTH 480
 #define HEIGHT 240
 #define PEN_WIDTH 1
@@ -18,8 +20,6 @@ extern bool debug;
 
 #define MEDIUM_TEXT_MARGIN 10
 #define MEDIUM_TEXT_SIZE 20
-
-void update();
 
 /**
  * @brief Container for Autonomous Information. Used in Screen.hpp.
@@ -74,5 +74,12 @@ class AutonCard
         2 * LARGE_TEXT_MARGIN + LARGE_TEXT_SIZE + PEN_WIDTH + MEDIUM_TEXT_MARGIN,
         m_setupDesc.c_str());
   }
+
+  std::string getName() { return m_name; }
+  callback getAutonCB() { return m_pAutonCallback; }
 };
+
+void update();
+AutonCard* getAuton();
+
 }  // namespace Screen
