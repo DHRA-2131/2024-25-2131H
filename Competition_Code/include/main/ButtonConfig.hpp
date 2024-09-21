@@ -10,6 +10,8 @@ extern ButtonDetector Outtake;  // Outtake
 extern ButtonDetector ArmUp;    // Arm Up
 extern ButtonDetector ArmDown;  // Arm Down
 
+extern ButtonDetector Doinkler;  // Doinkler
+
 extern ButtonDetector ClampToggle;  // Clamp
 
 void update();  // Update all buttons

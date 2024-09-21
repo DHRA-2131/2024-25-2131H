@@ -3,16 +3,20 @@
 #include "pros/abstract_motor.hpp"
 #include "pros/adi.hpp"
 
+// Color Toggle
+pros::adi::DigitalIn teamColor('A');
+
 // Drivetrain
-// -8, -9, -10
-// 18, 19, 20
 pros::v5::MotorGroup leftDrive({-8, -9, -7}, pros::v5::MotorGearset::blue);
 pros::v5::MotorGroup rightDrive({18, 19, 20}, pros::v5::MotorGearset::blue);
 pros::Imu imu(21);
 pros::adi::Pneumatics clamp('C', false, false);
 
 // Arm
-pros::v5::Motor arm(-13, pros::MotorGear::red);
+pros::v5::Motor arm(6, pros::MotorGear::red);
+pros::v5::Rotation armEncoder(-16);
+pros::adi::Pneumatics doinkler('D', false, false);
+
 // Intake
 pros::v5::Motor intake(3, pros::v5::MotorGearset::blue);
 
@@ -20,7 +24,6 @@ pros::v5::Motor intake(3, pros::v5::MotorGearset::blue);
 pros::Controller primary(pros::E_CONTROLLER_MASTER);
 
 // LEMLIB
-
 // Drivetrain
 lemlib::Drivetrain drivetrain(&leftDrive,                  // left motor group
                               &rightDrive,                 // right motor group

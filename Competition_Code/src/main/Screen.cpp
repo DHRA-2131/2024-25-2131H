@@ -25,16 +25,18 @@ void NULL_AUTON() {}
 // Initialization of a list Containing AutonCards.
 // Each Card can be customized with a name and description.
 std::vector<AutonCard> Cards = {
-    {"LEFT", "Left Description", Autonomous::left},        // Left Field Autonomous
-    {"RIGHT", "Right Description", Autonomous::right},     // Right Field Autonomous
-    {"SKILLS", "Skills Description", Autonomous::skills},  // Skills Autonomous
-    {"DEBUG", "Debug Description", Autonomous::debug},     // Debug for PID etc
+    {"LOW STAKE", "(48, 12, -180)", Autonomous::lowStake},  // Left Field Autonomous
+    {"RIGHT", "Right Description", Autonomous::right},      // Right Field Autonomous
+    {"SKILLS", "Skills Description", Autonomous::skills},   // Skills Autonomous
+    {"DEBUG", "Debug Description", Autonomous::debug},      // Debug for PID etc
 };
-int index = 2;  // Index of card (Increments by +1 on initial)
+int index = -1;  // Index of card (Increments by +1 on initial)
 
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;
 ChangeDetector<bool> ScreenDetector;  // ChangeDetector for the screen touch status
+ChangeDetector<bool> TeamDetector;
+bool redTeam(1);
 
 /**
  * @brief Update the brain screen. Must be called for Screen to be drawn.
@@ -46,6 +48,14 @@ void update()
   ScreenDetector.check(pros::screen::touch_status().touch_status ==
                        pros::E_TOUCH_PRESSED);
 
+  TeamDetector.check(teamColor.get_value());
+
+  if (TeamDetector.getChanged() && TeamDetector.getValue())
+  {
+    redTeam = !redTeam;
+    Cards[index].draw(redTeam);  // Draw the card
+  }
+
   // If ScreenDetector detects the button changed from released to pressed
   // or it's the inital loop
   if (ScreenDetector.getChanged() && ScreenDetector.getValue() || initial)
@@ -55,7 +65,7 @@ void update()
     {
       index = 0;
     }
-    Cards[index].draw();  // Draw the card
+    Cards[index].draw(redTeam);  // Draw the card
   }
 
   // If debug is enabled
@@ -76,6 +86,8 @@ void update()
 }
 
 AutonCard* getAuton() { return &Cards[index]; }
+bool isRedTeam() { return redTeam; }
+
 pros::Task ScreenThread([]() {
   pros::delay(10);
   while (true)

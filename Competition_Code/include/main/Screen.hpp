@@ -9,7 +9,7 @@ namespace Screen
 {
 extern bool debug;
 
-typedef void (*callback)();
+typedef void (*callback)(bool);
 
 #define WIDTH 480
 #define HEIGHT 240
@@ -31,7 +31,7 @@ class AutonCard
   std::string m_name;       // Name of Auton
   std::string m_setupDesc;  // Set up Description of Auton
 
-  void (*m_pAutonCallback)(void);  // Callback to Auton
+  void (*m_pAutonCallback)(bool);  // Callback to Auton
 
  public:  // Constructors
   /**
@@ -41,7 +41,7 @@ class AutonCard
    * @param setupDesc Set-Up Description
    * @param AutonCallback Callback to the Autonomous Function
    */
-  AutonCard(std::string name, std::string setupDesc, void (*AutonCallback)(void))
+  AutonCard(std::string name, std::string setupDesc, void (*AutonCallback)(bool))
       : m_name(name), m_setupDesc(setupDesc), m_pAutonCallback(AutonCallback)
   {
   }
@@ -51,9 +51,16 @@ class AutonCard
    * @brief Draw AutonCard on screen
    *
    */
-  void draw()
+  void draw(bool redTeam)
   {
-    pros::screen::set_eraser(0x0a1400);             // Brown
+    if (redTeam)
+    {
+      pros::screen::set_eraser(0xff0000);  // Red
+    }
+    else
+    {
+      pros::screen::set_eraser(0x0000ff);  // Blue
+    }
     pros::screen::set_pen(RGB2COLOR(224, 114, 0));  // Gold
 
     // Clear Screen
@@ -80,6 +87,7 @@ class AutonCard
 };
 
 void update();
+bool isRedTeam();
 AutonCard* getAuton();
 
 }  // namespace Screen

@@ -4,8 +4,8 @@
 
 namespace Autonomous
 {
-void left();
-void right();
-void skills();
-void debug();
+void lowStake(bool isRedTeam);
+void right(bool isRedTeam);
+void skills(bool isRedTeam);
+void debug(bool isRedTeam);
 }  // namespace Autonomous
