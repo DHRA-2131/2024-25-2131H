@@ -5,6 +5,7 @@
  *
  * @tparam T typename of target value
  */
+#include <cstddef>
 template <typename T>
 class ChangeDetector
 {
@@ -17,7 +18,7 @@ class ChangeDetector
    * @brief Construct a new Change Detector
    *
    */
-  ChangeDetector() : value(), changed(false) {}
+  ChangeDetector(T initalValue = 0) : value(), changed(false) {}
 
   /**
    * @brief Returns whether a value has changed

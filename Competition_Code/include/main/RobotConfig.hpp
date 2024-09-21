@@ -1,6 +1,8 @@
 #pragma once
 #include "lemlib/api.hpp"
 #include "pros/adi.hpp"
+#include "pros/distance.hpp"
+#include "pros/optical.hpp"
 
 // Constants
 constexpr double driveRPM = 450;
@@ -8,21 +10,39 @@ constexpr double trackWidth = 13.5;
 constexpr double armHeight = 300;
 
 // Team Color Toggle
+namespace Screen
+{
 extern pros::adi::DigitalIn teamColor;
+}
 
-// Drivetrain
+namespace Systems
+{
+namespace Drivetrain
+{
 extern pros::v5::MotorGroup leftDrive;
 extern pros::v5::MotorGroup rightDrive;
 extern pros::Imu imu;
-extern pros::adi::Pneumatics clamp;
+}  // namespace Drivetrain
 
-// Arm
-extern pros::v5::Motor arm;
-extern pros::v5::Rotation armEncoder;
+namespace Clamp
+{
+extern pros::adi::Pneumatics pneumatic;
+extern pros::Distance goalDetector;
+}  // namespace Clamp
+
+namespace Arm
+{
+extern pros::v5::Motor motor;
 extern pros::adi::Pneumatics doinkler;
+};  // namespace Arm
 
-// Intake
-extern pros::v5::Motor intake;
+namespace Intake
+{
+extern pros::v5::Motor motor;
+extern pros::Optical colorDetector;
+extern pros::Distance ringDetector;
+}  // namespace Intake
+}  // namespace Systems
 
 // Controller
 extern pros::Controller primary;

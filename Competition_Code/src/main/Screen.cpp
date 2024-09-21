@@ -45,8 +45,7 @@ bool redTeam(1);
 void update()
 {
   // Update change detector
-  ScreenDetector.check(pros::screen::touch_status().touch_status ==
-                       pros::E_TOUCH_PRESSED);
+  ScreenDetector.check(pros::screen::touch_status().touch_status == pros::E_TOUCH_PRESSED);
 
   TeamDetector.check(teamColor.get_value());
 
@@ -73,13 +72,11 @@ void update()
   {
     // Print robot position
     lemlib::Pose pose = chassis.getPose();
-    pros::screen::print(pros::E_TEXT_MEDIUM, MEDIUM_TEXT_MARGIN,
-                        HEIGHT - MEDIUM_TEXT_MARGIN - MEDIUM_TEXT_SIZE,
-                        "X: %f, Y: %f, Theta: %f", pose.x, pose.y, pose.theta);
+    pros::screen::print(pros::E_TEXT_MEDIUM, MEDIUM_TEXT_MARGIN, HEIGHT - MEDIUM_TEXT_MARGIN - MEDIUM_TEXT_SIZE, "X: %f, Y: %f, Theta: %f",
+                        pose.x, pose.y, pose.theta);
     // Print battery life
-    pros::screen::print(pros::E_TEXT_MEDIUM, MEDIUM_TEXT_MARGIN,
-                        HEIGHT - MEDIUM_TEXT_MARGIN - 2 * MEDIUM_TEXT_SIZE,
-                        "Robot Battery %: %f", pros::battery::get_capacity());
+    pros::screen::print(pros::E_TEXT_MEDIUM, MEDIUM_TEXT_MARGIN, HEIGHT - MEDIUM_TEXT_MARGIN - 2 * MEDIUM_TEXT_SIZE, "Robot Battery %: %f",
+                        pros::battery::get_capacity());
   }
   // No long the inital execution of Screen::update()
   initial = false;
