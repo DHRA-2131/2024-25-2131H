@@ -1,5 +1,7 @@
 #pragma once
+
 #include "lemlib/api.hpp"
+#include "path-addin/ChassisAddin.hpp"
 #include "pros/adi.hpp"
 #include "pros/distance.hpp"
 #include "pros/optical.hpp"
@@ -41,6 +43,8 @@ namespace Intake
 extern pros::v5::Motor motor;
 extern pros::Optical colorDetector;
 extern pros::Distance ringDetector;
+extern pros::adi::Pneumatics ringSort;
+
 }  // namespace Intake
 }  // namespace Systems
 
@@ -61,4 +65,4 @@ extern lemlib::ControllerSettings lateral_controller;
 extern lemlib::ControllerSettings angular_controller;
 
 // Chassis Class
-extern lemlib::Chassis chassis;
+extern Pathing::Chassis chassis;

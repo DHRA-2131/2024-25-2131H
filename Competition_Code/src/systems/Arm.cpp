@@ -74,6 +74,8 @@ void teleOp()
   if (Buttons::Doinkler.changedToPressed()) { doinkler.toggle(); }
 }
 
+void setPosition(int newIndex) { index = newIndex; }
+
 pros::Task armThread(
     []() {
       while (true)

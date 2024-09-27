@@ -61,7 +61,7 @@ class AutonCard
     {
       pros::screen::set_eraser(0x0000ff);  // Blue
     }
-    pros::screen::set_pen(RGB2COLOR(224, 114, 0));  // Gold
+    pros::screen::set_pen(0xffffff);  // White
 
     // Clear Screen
     pros::screen::erase_rect(0, 0, WIDTH, HEIGHT);
@@ -69,17 +69,13 @@ class AutonCard
     // Draw Background
     pros::screen::draw_rect(PEN_WIDTH, PEN_WIDTH, WIDTH - PEN_WIDTH, HEIGHT - PEN_WIDTH);
     // Draw Frame around text
-    pros::screen::draw_rect(PEN_WIDTH, PEN_WIDTH, WIDTH - PEN_WIDTH,
-                            2 * LARGE_TEXT_MARGIN + LARGE_TEXT_SIZE + PEN_WIDTH);
+    pros::screen::draw_rect(PEN_WIDTH, PEN_WIDTH, WIDTH - PEN_WIDTH, 2 * LARGE_TEXT_MARGIN + LARGE_TEXT_SIZE + PEN_WIDTH);
 
     // Display Name
-    pros::screen::print(pros::E_TEXT_LARGE, LARGE_TEXT_MARGIN, LARGE_TEXT_MARGIN,
-                        m_name.c_str());
+    pros::screen::print(pros::E_TEXT_LARGE, LARGE_TEXT_MARGIN, LARGE_TEXT_MARGIN, m_name.c_str());
     // Display Set-Up Description
-    pros::screen::print(
-        pros::E_TEXT_MEDIUM, MEDIUM_TEXT_MARGIN,
-        2 * LARGE_TEXT_MARGIN + LARGE_TEXT_SIZE + PEN_WIDTH + MEDIUM_TEXT_MARGIN,
-        m_setupDesc.c_str());
+    pros::screen::print(pros::E_TEXT_MEDIUM, MEDIUM_TEXT_MARGIN, 2 * LARGE_TEXT_MARGIN + LARGE_TEXT_SIZE + PEN_WIDTH + MEDIUM_TEXT_MARGIN,
+                        m_setupDesc.c_str());
   }
 
   std::string getName() { return m_name; }

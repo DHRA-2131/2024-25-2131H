@@ -10,6 +10,8 @@ namespace Systems
 namespace Intake
 {
 bool enabled(1);
+bool autoSortEnabled(1);
+
 struct ringColors
 {
   static const int none = 0;
@@ -21,8 +23,12 @@ int possession[2] = {0, 0};
 ChangeDetector<int> PossessionChangeDetector(ringColors::none);
 ChangeDetector<bool> RingChangeDetector;
 
+void enableAutoSort() { autoSortEnabled = true; }
+void disableAutoSort() { autoSortEnabled = false; }
+
 void teleOp()
 {
+  enableAutoSort();
   if (enabled)
   {
     if (Buttons::Intake.isPressing()) { motor.move_voltage(12000); }
@@ -63,22 +69,26 @@ pros::Task autoSortTask(
     []() {
       while (true)
       {
-        RingChangeDetector.check(ringDetector.get() < 20);
-        if (RingChangeDetector.getChanged() && RingChangeDetector.getValue())
+        if (autoSortEnabled)
         {
-          int teamColor = Screen::isRedTeam() ? 1 : 2;
-          if (possession[0] != teamColor && possession[0] != ringColors::none)
+          RingChangeDetector.check(ringDetector.get() < 20);
+          if (RingChangeDetector.getChanged() && RingChangeDetector.getValue())
           {
-            enabled = false;
-            pros::delay(65);
-            motor.move_voltage(1000);
-            pros::delay(100);
-            enabled = true;
+            int teamColor = Screen::isRedTeam() ? 1 : 2;
+            if (possession[0] != teamColor && possession[0] != ringColors::none)
+            {
+              enabled = false;
+              ringSort.extend();
+              // Pneumatic Open
+              pros::delay(300);
+              ringSort.retract();
+              enabled = true;
+            }
+            possession[0] = possession[1];
+            possession[1] = ringColors::none;
           }
-          possession[0] = possession[1];
-          possession[1] = ringColors::none;
+          pros::delay(50);
         }
-        pros::delay(50);
       }
     },
     "AUTO-SORT TASK");

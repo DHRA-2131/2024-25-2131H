@@ -17,7 +17,7 @@
 void initialize()
 {
   Systems::Arm::init();
-  chassis.calibrate();
+  chassis.calibrate(true);
 }
 
 /**

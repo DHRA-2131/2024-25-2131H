@@ -25,18 +25,18 @@ void NULL_AUTON() {}
 // Initialization of a list Containing AutonCards.
 // Each Card can be customized with a name and description.
 std::vector<AutonCard> Cards = {
-    {"LOW STAKE", "(48, 12, -180)", Autonomous::lowStake},  // Left Field Autonomous
-    {"RIGHT", "Right Description", Autonomous::right},      // Right Field Autonomous
+    {"LOW STAKE", "(48, 12, -180)", Autonomous::lowStake},  // lowStake Autonomous
+    {"RIGHT", "(24, 20, -180)", Autonomous::highStake},     // highStake Autonomous
     {"SKILLS", "Skills Description", Autonomous::skills},   // Skills Autonomous
     {"DEBUG", "Debug Description", Autonomous::debug},      // Debug for PID etc
 };
-int index = -1;  // Index of card (Increments by +1 on initial)
+int index = 0;  // Index of card (Increments by +1 on initial)
 
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;
 ChangeDetector<bool> ScreenDetector;  // ChangeDetector for the screen touch status
 ChangeDetector<bool> TeamDetector;
-bool redTeam(1);
+bool redTeam(0);
 
 /**
  * @brief Update the brain screen. Must be called for Screen to be drawn.

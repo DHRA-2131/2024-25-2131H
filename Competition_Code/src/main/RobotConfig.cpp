@@ -26,7 +26,7 @@ pros::Distance goalDetector(13);
 
 namespace Arm
 {
-pros::v5::Motor motor(6, pros::MotorGear::red);
+pros::v5::Motor motor(5, pros::MotorGear::red);
 pros::adi::Pneumatics doinkler('D', false, false);
 }  // namespace Arm
 
@@ -35,6 +35,7 @@ namespace Intake
 pros::v5::Motor motor(3, pros::v5::MotorGearset::blue);
 pros::Optical colorDetector(17);
 pros::Distance ringDetector(16);
+pros::adi::Pneumatics ringSort('E', false, false);
 }  // namespace Intake
 
 }  // namespace Systems
@@ -86,8 +87,8 @@ lemlib::ControllerSettings angular_controller(1.005,  // proportional gain (kP)
 );
 
 // Chassis class
-lemlib::Chassis chassis(drivetrain,          // drivetrain settings
-                        lateral_controller,  // lateral PID settings
-                        angular_controller,  // angular PID settings
-                        sensors              // odometry sensors
+Pathing::Chassis chassis(drivetrain,          // drivetrain settings
+                         lateral_controller,  // lateral PID settings
+                         angular_controller,  // angular PID settings
+                         sensors              // odometry sensors
 );

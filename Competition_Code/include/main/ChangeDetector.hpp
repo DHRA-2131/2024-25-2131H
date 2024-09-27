@@ -5,7 +5,6 @@
  *
  * @tparam T typename of target value
  */
-#include <cstddef>
 template <typename T>
 class ChangeDetector
 {
