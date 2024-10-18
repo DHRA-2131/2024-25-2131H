@@ -23,8 +23,16 @@ int possession[2] = {0, 0};
 ChangeDetector<int> PossessionChangeDetector(ringColors::none);
 ChangeDetector<bool> RingChangeDetector;
 
-void enableAutoSort() { autoSortEnabled = true; }
-void disableAutoSort() { autoSortEnabled = false; }
+void enableAutoSort()
+{
+  colorDetector.set_led_pwm(100);
+  autoSortEnabled = true;
+}
+void disableAutoSort()
+{
+  colorDetector.set_led_pwm(0);
+  autoSortEnabled = false;
+}
 
 void teleOp()
 {

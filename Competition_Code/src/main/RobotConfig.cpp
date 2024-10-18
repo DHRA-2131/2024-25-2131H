@@ -13,8 +13,8 @@ namespace Systems
 
 namespace Drivetrain
 {
-pros::v5::MotorGroup leftDrive({-8, -9, -7}, pros::v5::MotorGearset::blue);
-pros::v5::MotorGroup rightDrive({18, 19, 20}, pros::v5::MotorGearset::blue);
+pros::v5::MotorGroup leftDrive({-8, -9, -6}, pros::v5::MotorGearset::blue);
+pros::v5::MotorGroup rightDrive({18, 15, 20}, pros::v5::MotorGearset::blue);
 pros::Imu imu(21);
 }  // namespace Drivetrain
 
@@ -50,7 +50,7 @@ lemlib::Drivetrain drivetrain(&Systems::Drivetrain::leftDrive,   // left motor g
                               13.5,                              // 13.5 inch track width
                               lemlib::Omniwheel::NEW_275,        // using new 2.75" omniwheel
                               driveRPM,                          // drivetrain rpm is 450
-                              2                                  // horizontal drift is 2 (for now)
+                              0                                  // Traction Wheel drive
 );
 
 // Odometry
