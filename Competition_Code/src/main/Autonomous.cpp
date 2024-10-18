@@ -1,38 +1,14 @@
 #include "main/Autonomous.hpp"
 
-#include "RobotConfig.hpp"
 #include "lemlib/chassis/chassis.hpp"
-#include "path-addin/Path.hpp"
+#include "main/RobotConfig.hpp"
+#include "systems/Arm.hpp"
 #include "systems/Clamp.hpp"
 #include "systems/Intake.hpp"
 
 namespace Autonomous
 {
 using namespace Systems;
-class Path : public Pathing::AbstractPath
-{
- public:
-  lemlib::Pose rootFunction(double t) override
-  {
-    // X0, Angle0, X1, Angle1
-    return this->m_controlPoints[0] + (this->m_controlPoints[0] * -1 + this->m_controlPoints[1]) * t +
-           (this->m_controlPoints[0] * -1 - this->m_controlPoints[1] * 2 + this->m_controlPoints[2] * 2 + this->m_controlPoints[3]) *
-               std::pow(t, 2) +
-           (this->m_controlPoints[0] + this->m_controlPoints[1] - this->m_controlPoints[2] - this->m_controlPoints[3]) * std::pow(t, 3);
-  };
-  lemlib::Pose firstDerivative(double t) override
-  {
-    return this->m_controlPoints[0] + (this->m_controlPoints[0] * -1 + this->m_controlPoints[1]) +
-           (this->m_controlPoints[0] * -1 - this->m_controlPoints[1] * 2 + this->m_controlPoints[2] * 2 + this->m_controlPoints[3]) * t *
-               2 +
-           (this->m_controlPoints[0] + this->m_controlPoints[1] - this->m_controlPoints[2] - this->m_controlPoints[3]) * std::pow(t, 2) * 3;
-  };
-  lemlib::Pose secondDerivative(double t) override
-  {
-    return (this->m_controlPoints[0] * -1 - this->m_controlPoints[1] * 2 + this->m_controlPoints[2] * 2 + this->m_controlPoints[3]) * 2 +
-           (this->m_controlPoints[0] + this->m_controlPoints[1] - this->m_controlPoints[2] - this->m_controlPoints[3]) * t * 6;
-  };
-} mySpline;
 
 void lowStake(bool isRedTeam)
 {
@@ -161,6 +137,5 @@ void skills(bool isRedTeam)
   chassis.swingToPoint(24, 96, lemlib::DriveSide::LEFT, 1000, {}, false);  // Stage to Goal 3 (Swing to not push goal into the wall)
   chassis.moveToPoint(24, 96, 3000, {}, false);                            // Long movement (needs time)
 }
-
 void debug(bool isRedTeam) { chassis.setPose({0, 0, 0}); }
 }  // namespace Autonomous
