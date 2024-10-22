@@ -2,7 +2,6 @@
 
 #include "lemlib/chassis/chassis.hpp"
 #include "main/RobotConfig.hpp"
-#include "systems/Arm.hpp"
 #include "systems/Clamp.hpp"
 #include "systems/Intake.hpp"
 

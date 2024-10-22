@@ -11,15 +11,15 @@ extern bool debug;
 
 typedef void (*callback)(bool);
 
-#define WIDTH 480
-#define HEIGHT 240
-#define PEN_WIDTH 1
+#define WIDTH 480    // Width of the screen
+#define HEIGHT 240   // Height of the screen
+#define PEN_WIDTH 1  // Pen width
 
-#define LARGE_TEXT_MARGIN 10
-#define LARGE_TEXT_SIZE 30
+#define LARGE_TEXT_MARGIN 10  // Margin for large text
+#define LARGE_TEXT_SIZE 30    // Large text size in pnt
 
-#define MEDIUM_TEXT_MARGIN 10
-#define MEDIUM_TEXT_SIZE 20
+#define MEDIUM_TEXT_MARGIN 10  // Margin for medium text
+#define MEDIUM_TEXT_SIZE 20    // Medium text size in pnt
 
 /**
  * @brief Container for Autonomous Information. Used in Screen.hpp.
@@ -53,14 +53,17 @@ class AutonCard
    */
   void draw(bool redTeam)
   {
-    if (redTeam)
+    if (redTeam)  // If on red team
     {
+      // Draw background in red
       pros::screen::set_eraser(0xff0000);  // Red
     }
     else
     {
+      // Draw background in blue
       pros::screen::set_eraser(0x0000ff);  // Blue
     }
+    // Set Pen color to white
     pros::screen::set_pen(0xffffff);  // White
 
     // Clear Screen
@@ -78,12 +81,36 @@ class AutonCard
                         m_setupDesc.c_str());
   }
 
+  /**
+   * @brief Get the Name of AutonCard
+   *
+   * @return std::string
+   */
   std::string getName() { return m_name; }
+
+  /**
+   * @brief Get the Auton Callback from AutonCard
+   *
+   * @return callback
+   */
   callback getAutonCB() { return m_pAutonCallback; }
 };
 
+/**
+ * @brief Update the screen
+ *
+ */
 void update();
+
+/**
+ * @brief Return if team color is red
+ *
+ * @return true Yes, it's red
+ * @return false No, it's blue
+ */
 bool isRedTeam();
+
+// Get AutonCard (Returns current auton card)
 AutonCard* getAuton();
 
 }  // namespace Screen

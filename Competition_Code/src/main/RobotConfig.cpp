@@ -1,9 +1,5 @@
 #include "main/RobotConfig.hpp"
 
-#include "pros/abstract_motor.hpp"
-#include "pros/adi.hpp"
-#include "pros/distance.hpp"
-
 namespace Screen
 {
 pros::adi::DigitalIn teamColor('A');
@@ -13,37 +9,53 @@ namespace Systems
 
 namespace Drivetrain
 {
+// Left Drive
 pros::v5::MotorGroup leftDrive({-8, -9, -6}, pros::v5::MotorGearset::blue);
+// Right Drive
 pros::v5::MotorGroup rightDrive({18, 15, 20}, pros::v5::MotorGearset::blue);
+// Vex V5 Inertial Sensor
 pros::Imu imu(21);
 }  // namespace Drivetrain
 
 namespace Clamp
 {
+// Clamp Pneumatic
 pros::adi::Pneumatics pneumatic('C', false, false);
+// Distance sensor to detect goals
 pros::Distance goalDetector(13);
 }  // namespace Clamp
 
 namespace Arm
 {
+// Arm Motor
 pros::v5::Motor motor(5, pros::MotorGear::red);
+
+// Doinkler (For removing corner rings)
 pros::adi::Pneumatics doinkler('D', false, false);
 }  // namespace Arm
 
 namespace Intake
 {
+// Intake Motor
 pros::v5::Motor motor(3, pros::v5::MotorGearset::blue);
+// Vex V5 Optical Sensor (For detecting ring colors)
 pros::Optical colorDetector(17);
+// Vex V5 Distance Sensor (For detecting rings as they approach the top of the intake)
+//* Two sensors are being used due to the refresh rate on Vex V5 Optical Sensors.
+//* Optical sensors update at 100 Msec and Distance sensors update at ~50 msec
 pros::Distance ringDetector(16);
+
+// Pneumatic discard / eject
 pros::adi::Pneumatics ringSort('E', false, false);
 }  // namespace Intake
 
 }  // namespace Systems
 
-// Controller
+// Controllers (Only run one)
 pros::Controller primary(pros::E_CONTROLLER_MASTER);
 
-// LEMLIB
+// *** === LEMLIB UTILIZATION === *** //
+
 // Drivetrain
 lemlib::Drivetrain drivetrain(&Systems::Drivetrain::leftDrive,   // left motor group
                               &Systems::Drivetrain::rightDrive,  // right motor group

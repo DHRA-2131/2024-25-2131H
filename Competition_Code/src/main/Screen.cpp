@@ -35,8 +35,8 @@ int index = -1;  // Index of card (Increments by +1 on initial)
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;
 ChangeDetector<bool> ScreenDetector;  // ChangeDetector for the screen touch status
-ChangeDetector<bool> TeamDetector;
-bool redTeam(0);
+ChangeDetector<bool> TeamDetector;    // ChangeDetector for the team color status
+bool redTeam(0);                      // If current team color is red / blue
 
 /**
  * @brief Update the brain screen. Must be called for Screen to be drawn.
@@ -44,14 +44,17 @@ bool redTeam(0);
  */
 void update()
 {
-  // Update change detectors
+  // Check if screen touch status has changed
   ScreenDetector.check(pros::screen::touch_status().touch_status == pros::E_TOUCH_PRESSED);
+
+  // Check if Team Color status has changed
   TeamDetector.check(teamColor.get_value());
 
+  // If the teamColor button state just changed to true
   if (TeamDetector.getChanged() && TeamDetector.getValue())
   {
-    redTeam = !redTeam;
-    Cards[index].draw(redTeam);  // Draw the card
+    redTeam = !redTeam;          // Toggle team color
+    Cards[index].draw(redTeam);  // Redraw screen
   }
 
   // If ScreenDetector detects the button changed from released to pressed
@@ -64,6 +67,7 @@ void update()
       index = 0;
     }
     Cards[index].draw(redTeam);  // Draw the card
+
     // Print battery life
     pros::screen::print(pros::E_TEXT_MEDIUM, MEDIUM_TEXT_MARGIN, HEIGHT - MEDIUM_TEXT_MARGIN - 2 * MEDIUM_TEXT_SIZE, "Robot Battery %: %f",
                         pros::battery::get_capacity());
@@ -78,19 +82,32 @@ void update()
                         pose.x, pose.y, pose.theta);
   }
 
-  // No long the inital execution of Screen::update()
+  // No long the inital execution of Screen::update(), so initial = false;
   initial = false;
 }
 
+/**
+ * @brief Get the AutonCard of current screen
+ *
+ * @return AutonCard*
+ */
 AutonCard* getAuton() { return &Cards[index]; }
+
+/**
+ * @brief Is the current team color red
+ *
+ * @return true Yes, it's red
+ * @return false No, it's blue
+ */
 bool isRedTeam() { return redTeam; }
 
+// Screen thread
 pros::Task ScreenThread([]() {
-  pros::delay(10);
+  pros::delay(10);  // Delay for os
   while (true)
   {
-    update();
-    pros::delay(50);
+    update();         // Run update task
+    pros::delay(50);  // Don't take up CPU Resources
   }
 });
 

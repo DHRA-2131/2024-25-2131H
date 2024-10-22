@@ -16,8 +16,8 @@
  */
 void initialize()
 {
-  Systems::Arm::init();
-  chassis.calibrate(true);
+  Systems::Arm::init();     // Tare the arm
+  chassis.calibrate(true);  // Calibrate the inertial
 }
 
 /**
@@ -49,7 +49,12 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() { Screen::getAuton()->getAutonCB()(Screen::isRedTeam()); }
+void autonomous()
+{
+  // Get AutonCard from screen
+  // From AutonCard get Autonomous Callback, then call it (pass the team color to the auton)
+  Screen::getAuton()->getAutonCB()(Screen::isRedTeam());
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
