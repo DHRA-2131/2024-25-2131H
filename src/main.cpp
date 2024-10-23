@@ -4,15 +4,17 @@
 #include "2131H/Systems/Chassis/chassis.hpp"
 #include "2131H/Systems/Odometry/wheel-odometry.hpp"
 #include "2131H/Utilities/console.hpp"
+#include "pros/abstract_motor.hpp"
+#include "pros/motor_group.hpp"
 
 pros::MotorGroup leftDrive({-8, -9, -6}, pros::v5::MotorGearset::blue);
 pros::MotorGroup rightDrive({18, 15, 20}, pros::v5::MotorGearset::blue);
 pros::IMU inertial(21);
 
-Systems::ChassisParameters chassisInfo(&leftDrive, &rightDrive, 450, 600, 2.75, 13.5);
+Systems::ChassisParameters chassisInfo{&leftDrive, &rightDrive, 450, 600, 2.75, 13.5};
 
-Systems::TrackingWheel leftTracker(&leftDrive, 2.75, 450);
-Systems::TrackingWheel rightTracker(&rightDrive, 2.75, 450);
+Systems::TrackingWheel leftTracker(&leftDrive, -7.75, 2.75, 450);
+Systems::TrackingWheel rightTracker(&rightDrive, 7.75, 2.75, 450);
 Systems::WheelOdometry odometryInfo({&leftTracker, &rightTracker, nullptr, &inertial});
 
 Systems::ExitCondition::Settle lateralExit(1000, 2);
@@ -64,11 +66,10 @@ void autonomous() { Console.log(Utilities::Logger::BG_Light_Cyan, "Autonomous");
 void opcontrol()
 {
   Console.log(Utilities::Logger::BG_Light_Blue, "Operator Control: ");
-  Console.log(chassis.getMaxVelocity());
-  chassis.setVelocities(0, 90);
+
   while (true)
   {
-    chassis.logVelocity();
+    // chassis.logPosition();
     pros::delay(10);
   }
 }

@@ -68,6 +68,7 @@ class Chassis
 
   // Odometry Instance
   AbstractOdometry* m_odometry;
+  bool m_chassisCalibrated;  // Have we calibrated?
 
   // Chassis Threading
   pros::Task ChassisThread;
@@ -109,7 +110,8 @@ class Chassis
             [this]() {
               while (true)
               {
-                if (m_odometryEnabled)  // Allows for odometry to not be calculated
+                if (m_odometryEnabled &&
+                    m_chassisCalibrated)  // Only calculate if Enabled and Calibrated
                 {
                   m_prevPose = std::move(m_currentPose);  // Store previous Positions
                   m_currentPose =
@@ -133,8 +135,6 @@ class Chassis
                   // Update Motors
                   m_chassisInfo.leftDrive->move_velocity(m_rightPct * m_chassisInfo.motorRpm);
                   m_chassisInfo.rightDrive->move_velocity(m_leftPct * m_chassisInfo.motorRpm);
-
-                  m_chassisInfo.leftDrive->set_brake_mode_all(pros::MotorBrake::brake);
                 }
                 pros::delay(10);  // Don't take CPU resources
               }
@@ -153,6 +153,7 @@ class Chassis
    */
   void init()
   {
+    m_chassisCalibrated = true;
     // Calibrate Odometry
     m_odometry->init(true);
     this->resumeOdometry();

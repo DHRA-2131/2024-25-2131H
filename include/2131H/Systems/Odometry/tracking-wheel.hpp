@@ -25,36 +25,43 @@ namespace Systems
 {
 class TrackingWheel
 {
- private:  // === Member Variables === //
-  pros::adi::Encoder* m_pEncoder = nullptr;
-  pros::v5::Rotation* m_pRotation = nullptr;
-  pros::v5::MotorGroup* m_pMotorGroup = nullptr;
+ private:                                     // === Member Variables === //
+  pros::adi::Encoder* m_pEncoder = nullptr;   // Encoder (Cortex)
+  pros::v5::Rotation* m_pRotation = nullptr;  // Encoder (Rotational V5)
 
-  double m_wheelDiameter;
-  double m_ratio;
-  double m_offset;
+  // Motor Variables
+  pros::v5::MotorGroup* m_pMotorGroup = nullptr;  // Encoder (V5 Motor)
+  std::vector<bool> m_motorDCs;                   // All Motor DCs
+  double m_lastAvgValue;                          // Last Average of motors
+
+  double m_wheelDiameter;  // Wheel Diameter (In)
+  double m_ratio;          // Ratio / RPM from sensor to Tracking wheel
+  double m_offset;         // Offset from tracking center (In)
 
  public:  // === Constructors === //
   /**
    * @brief Construct a new Tracking Wheel using a pros::adi::Encoder
    *
    * @param pEncoder Pointer to Encoder
-   * @param wheelDiameter
+   * @param offset Offset from Tracking center
+   * @param wheelDiameter Wheel Diameter
    * @param ratio Ratio from wheel to encoder
    */
-  TrackingWheel(pros::adi::Encoder* pEncoder, double wheelDiameter, double ratio = 1)
-      : m_pEncoder(pEncoder), m_wheelDiameter(wheelDiameter), m_ratio(ratio)
+  TrackingWheel(pros::adi::Encoder* pEncoder, double offset, double wheelDiameter, double ratio = 1)
+      : m_pEncoder(pEncoder), m_offset(offset), m_wheelDiameter(wheelDiameter), m_ratio(ratio)
   {
   }
   /**
    * @brief Construct a new Tracking Wheel using a pros::v5::Rotation
    *
    * @param pRotation Pointer to Rotation
-   * @param wheelDiameter
+   * @param offset Offset from Tracking center
+   * @param wheelDiameter Wheel Diameter
    * @param ratio Ratio from wheel to Rotational Sensor
    */
-  TrackingWheel(pros::v5::Rotation* pRotation, double wheelDiameter, double ratio = 1)
-      : m_pRotation(pRotation), m_wheelDiameter(wheelDiameter), m_ratio(ratio)
+  TrackingWheel(pros::v5::Rotation* pRotation, double offset, double wheelDiameter,
+                double ratio = 1)
+      : m_pRotation(pRotation), m_offset(offset), m_wheelDiameter(wheelDiameter), m_ratio(ratio)
   {
   }
 
@@ -62,12 +69,14 @@ class TrackingWheel
    * @brief Construct a new Tracking Wheel using a pros::v5::MotorGroup
    *
    * @param pMotorGroup Pointer to MotorGroup
-   * @param wheelDiameter
+   * @param offset Half the track width
+   * @param wheelDiameter wheel Diameter
    * @param rpm RPM of chassis
    */
-  TrackingWheel(pros::v5::MotorGroup* pMotorGroup, double wheelDiameter, double rpm)
-      : m_pMotorGroup(pMotorGroup), m_wheelDiameter(wheelDiameter), m_ratio(rpm)
+  TrackingWheel(pros::v5::MotorGroup* pMotorGroup, double offset, double wheelDiameter, double rpm)
+      : m_pMotorGroup(pMotorGroup), m_offset(offset), m_wheelDiameter(wheelDiameter), m_ratio(rpm)
   {
+    m_motorDCs.resize(m_pMotorGroup->size(), 0);
   }
 
  public:  // === Functions === //
@@ -103,7 +112,7 @@ class TrackingWheel
       std::vector<double> positions = this->m_pMotorGroup->get_position_all();
 
       // Calculated Distance off of the motor Positions
-      std::vector<float> distances;
+      std::vector<float> distances = {};
       for (int i = 0; i < this->m_pMotorGroup->size(); i++)
       {
         float in;  // Internal Cartridge
@@ -124,11 +133,25 @@ class TrackingWheel
         }
 
         // (Positions [deg] / 360.0 [Deg])* (Circumference [In]) * (chassis [RPM] / Gearset [RPM])
-        distances.push_back((positions[i] / 360.0) * (this->m_ratio / in) *
-                            (this->m_wheelDiameter * M_PI));
+        double distance =
+            (positions[i] / 360.0) * (this->m_ratio / in) * (this->m_wheelDiameter * M_PI);
+
+        // Only add distance if it's *not* infinite
+        if (!std::isinf(distance))
+        {
+          // If Motor hasn't been DCed then add it to list
+          if (!m_motorDCs[i]) { distances.push_back(distance); }
+        }
+        else
+        {
+          m_motorDCs[i] = 1;  // Add DC to DC list
+        }
       }
+
       // Avg all motor distance
-      return avg(distances);
+      // Store value to be used in next loop
+      m_lastAvgValue = avg(distances);
+      return m_lastAvgValue;
     }
     // Not using any sensor (Should never happen)
     else { return 0; }
