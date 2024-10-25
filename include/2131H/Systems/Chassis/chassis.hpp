@@ -156,10 +156,18 @@ class Chassis
 
       // If accel is too quick, limit to max accel
       if (rightAccel > m_chassisInfo.maxAcceleration) { m_right += m_chassisInfo.maxAcceleration; }
+      else if (rightAccel < -m_chassisInfo.maxAcceleration)
+      {
+        m_right -= m_chassisInfo.maxAcceleration;
+      }
       else { m_right = newRight; }
 
-      // If accel is too quick, limit to max accel
+      // If accel/deccel is too quick, limit to max accel/deccel
       if (leftAccel > m_chassisInfo.maxAcceleration) { m_left += m_chassisInfo.maxAcceleration; }
+      else if (leftAccel < -m_chassisInfo.maxAcceleration)
+      {
+        m_left -= m_chassisInfo.maxAcceleration;
+      }
       else { m_left = newLeft; }
 
       // Cap Motor Velocities
