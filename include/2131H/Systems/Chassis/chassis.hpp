@@ -155,18 +155,25 @@ class Chassis
       double leftAccel = (newLeft - m_left) * 1000.0 / deltaTime;
 
       // If accel is too quick, limit to max accel
-      if (rightAccel > m_chassisInfo.maxAcceleration) { m_right += m_chassisInfo.maxAcceleration; }
+      if (rightAccel > m_chassisInfo.maxAcceleration)
+      {
+        // Set to max accel (Adjusted to (In/S) / DeltaTime)
+        m_right += m_chassisInfo.maxAcceleration * deltaTime / 1000.0;
+      }
       else if (rightAccel < -m_chassisInfo.maxAcceleration)
       {
-        m_right -= m_chassisInfo.maxAcceleration;
+        m_right -= m_chassisInfo.maxAcceleration * deltaTime / 1000.0;
       }
       else { m_right = newRight; }
 
       // If accel/deccel is too quick, limit to max accel/deccel
-      if (leftAccel > m_chassisInfo.maxAcceleration) { m_left += m_chassisInfo.maxAcceleration; }
+      if (leftAccel > m_chassisInfo.maxAcceleration)
+      {
+        m_left += m_chassisInfo.maxAcceleration * deltaTime / 1000.0;
+      }
       else if (leftAccel < -m_chassisInfo.maxAcceleration)
       {
-        m_left -= m_chassisInfo.maxAcceleration;
+        m_left -= m_chassisInfo.maxAcceleration * deltaTime / 1000.0;
       }
       else { m_left = newLeft; }
 
