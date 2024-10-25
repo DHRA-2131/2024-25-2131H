@@ -11,7 +11,7 @@ pros::MotorGroup leftDrive({-8, -9, -6}, pros::v5::MotorGearset::blue);
 pros::MotorGroup rightDrive({18, 15, 20}, pros::v5::MotorGearset::blue);
 pros::IMU inertial(21);
 
-Systems::ChassisParameters chassisInfo{&leftDrive, &rightDrive, 450, 600, 2.75, 13.5};
+Systems::ChassisParameters chassisInfo{&leftDrive, &rightDrive, 450, 600, 2.75, 13.5, 17};
 
 Systems::TrackingWheel leftTracker(&leftDrive, -7.75, 2.75, 450);
 Systems::TrackingWheel rightTracker(&rightDrive, 7.75, 2.75, 450);

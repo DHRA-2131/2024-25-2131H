@@ -15,7 +15,6 @@
 #include "2131H/Utilities/console.hpp"
 #include "2131H/Utilities/pose.hpp"
 #include "pid-controller.hpp"
-#include "pros/abstract_motor.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/rtos.h"
 
@@ -26,14 +25,29 @@ namespace Systems
 
 struct ChassisParameters
 {
-  pros::MotorGroup* leftDrive;
-  pros::MotorGroup* rightDrive;
+  pros::MotorGroup* leftDrive;   // Pointer to left drive MotorGroup
+  pros::MotorGroup* rightDrive;  // Pointer to left drive MotorGroup
 
-  const double wheelRpm;
-  const double motorRpm;
+  const double wheelRpm;  // max RPM of the wheels
+  const double motorRpm;  // max RPM of the motor
 
-  const double wheelSize;
-  const double trackWidth;
+  const double wheelSize;   // (Inches)
+  const double trackWidth;  // (Inches)
+
+  const double robotWeight;  // (Pounds)
+
+  // === Overridable === //
+  const double kTraction = 1;  // Traction tuning value for adjusting max Acceleration
+
+  // === Calculated === //
+  const double wheelSizeM = wheelSize / 39.3701;                     // (Meters)
+  const double motorCount = leftDrive->size() + rightDrive->size();  // Total Count of all motors
+  const double robotWeightKg = robotWeight * 0.45359237;             // (Kilograms)
+  const double motorNm = 0.35 * (600.0 / motorRpm);                  // Nm of each motor
+  const double maxVelocity = wheelRpm * wheelSize * M_PI / 60.0;     // Max Velocity (In/s)
+  const double maxAcceleration = (motorCount * motorNm * motorRpm) /
+                                 (wheelRpm * robotWeightKg * wheelSizeM) *
+                                 kTraction;  // Max Acceleration of motors (In/S^2)
 };
 
 struct moveToParams
@@ -51,9 +65,6 @@ class Chassis
   // Drive Information
   const ChassisParameters m_chassisInfo;
 
-  // Theoretical Max Velocity (In / S)
-  const double m_maxVelocity;
-
   // Positional Information (In, In, Degrees)
   Pose m_currentPose;
   Pose m_prevPose;
@@ -62,9 +73,9 @@ class Chassis
   double m_angularVelocity;  // (In / S)
   double m_linearVelocity;   // (Rad / S)
 
-  // Motor Voltages [-12000 mV, 12000 mV]
-  double m_leftPct;
-  double m_rightPct;
+  // Motor Commands
+  double m_left;
+  double m_right;
 
   // Odometry Instance
   AbstractOdometry* m_odometry;
@@ -72,6 +83,7 @@ class Chassis
 
   // Chassis Threading
   pros::Task ChassisThread;
+  const double deltaTime = 10;
   bool m_odometryEnabled;
   bool m_chassisEnabled;
 
@@ -98,7 +110,6 @@ class Chassis
  public:  // === Constructors === //
   Chassis(ChassisParameters info, AbstractOdometry* Odometry, PID* lateralPID, PID* angularPID)
       : m_chassisInfo(info),
-        m_maxVelocity(m_chassisInfo.wheelRpm * m_chassisInfo.wheelSize * M_PI / 60.0),
         m_odometryEnabled(true),
         m_chassisEnabled(true),
         m_odometry(Odometry),
@@ -110,33 +121,8 @@ class Chassis
             [this]() {
               while (true)
               {
-                if (m_odometryEnabled &&
-                    m_chassisCalibrated)  // Only calculate if Enabled and Calibrated
-                {
-                  m_prevPose = std::move(m_currentPose);  // Store previous Positions
-                  m_currentPose =
-                      m_odometry->updatePose(this->m_currentPose);  // Update Odometry Position
-                }
-
-                if (m_chassisEnabled)  // Allow for Motor Control
-                {
-                  // Right Wheel (In / S) = (linear + angular)
-                  // Left Wheel (In / S) = (linear - angular)
-                  // Velocity Command (% of Max) =  Left Wheel, Right Wheel / Max Velocity
-                  m_rightPct = (m_linearVelocity + m_angularVelocity) / m_maxVelocity;
-                  m_leftPct = (m_linearVelocity - m_angularVelocity) / m_maxVelocity;
-
-                  // Cap Motor Velocities
-                  m_rightPct = std::clamp(m_rightPct, -100.0, 100.0);
-                  m_leftPct = std::clamp(m_leftPct, -100.0, 100.0);
-
-                  // TODO: Slew Rate?
-
-                  // Update Motors
-                  m_chassisInfo.leftDrive->move_velocity(m_rightPct * m_chassisInfo.motorRpm);
-                  m_chassisInfo.rightDrive->move_velocity(m_leftPct * m_chassisInfo.motorRpm);
-                }
-                pros::delay(10);  // Don't take CPU resources
+                _update(deltaTime);
+                pros::delay(deltaTime);  // Don't take CPU resources
               }
             },
             TASK_PRIORITY_DEFAULT, TASK_STACK_DEPTH_DEFAULT, "Chassis Thread")
@@ -144,7 +130,50 @@ class Chassis
   }
 
  private:  // === Member Functions === //
-  ;
+  /**
+   * @brief Updates all chassis code, runs in ChassisThread
+   *
+   */
+  void _update(double deltaTime)
+  {
+    if (m_odometryEnabled && m_chassisCalibrated)  // Only calculate if Enabled and Calibrated
+    {
+      m_prevPose = std::move(m_currentPose);                        // Store previous Positions
+      m_currentPose = m_odometry->updatePose(this->m_currentPose);  // Update Odometry Position
+    }
+
+    if (m_chassisEnabled)  // Allow for Motor Control
+    {
+      // Right Wheel (In / S) = (linear + angular)
+      // Left Wheel (In / S) = (linear - angular)
+      double newRight = (m_linearVelocity + m_angularVelocity);
+      double newLeft = (m_linearVelocity - m_angularVelocity);
+
+      // Calculate Acceleration of motors
+      // (In / S) / 10 Ms * 100.0 = (In / S^2)
+      double rightAccel = (newRight - m_right) * 1000.0 / deltaTime;
+      double leftAccel = (newLeft - m_left) * 1000.0 / deltaTime;
+
+      // If accel is too quick, limit to max accel
+      if (rightAccel > m_chassisInfo.maxAcceleration) { m_right += m_chassisInfo.maxAcceleration; }
+      else { m_right = newRight; }
+
+      // If accel is too quick, limit to max accel
+      if (leftAccel > m_chassisInfo.maxAcceleration) { m_left += m_chassisInfo.maxAcceleration; }
+      else { m_left = newLeft; }
+
+      // Cap Motor Velocities
+      m_right = std::clamp(newRight, -m_chassisInfo.maxVelocity, m_chassisInfo.maxVelocity);
+      m_left = std::clamp(newLeft, -m_chassisInfo.maxVelocity, m_chassisInfo.maxVelocity);
+
+      // Update Motors
+      // Motor Command / Max Velocity = % of max * Max RPM = Desired RPM
+      m_chassisInfo.leftDrive->move_velocity(m_right / m_chassisInfo.maxVelocity *
+                                             m_chassisInfo.motorRpm);
+      m_chassisInfo.rightDrive->move_velocity(m_left / m_chassisInfo.maxVelocity *
+                                              m_chassisInfo.motorRpm);
+    }
+  }
 
  public:  // === Functions === //
   /**
@@ -221,7 +250,20 @@ class Chassis
   void resumeAll() { ChassisThread.resume(); }
 
  public:  // === Getters / Setters === //
-  double getMaxVelocity() { return m_maxVelocity; }
+  /**
+   * @brief Returns the calculated maximum velocity
+   *
+   * @return double
+   */
+  double getMaxVelocity() { return m_chassisInfo.maxVelocity; }
+
+  /**
+   * @brief Returns the calculated maximum acceleration
+   *
+   * @return double
+   */
+  double getMaxAcceleration() { return m_chassisInfo.maxAcceleration; }
+
   /**
    * @brief Set Velocity of Drivetrain
    *
