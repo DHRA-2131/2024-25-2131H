@@ -11,12 +11,15 @@
  */
 #pragma once
 
+#include <cmath>
+
 #include "2131H/Systems/Odometry/abstract-odometry.hpp"
 #include "2131H/Utilities/console.hpp"
 #include "2131H/Utilities/pose.hpp"
 #include "pid-controller.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/rtos.h"
+#include "pros/rtos.hpp"
 
 using namespace Utilities;
 
@@ -315,8 +318,8 @@ class Chassis
   {
     // Delta Position (In, In, Deg) / 10 msec
     // Velocity (In, In, Deg) / S = Delta Position * 100.0 ((Msec) -> (S))
-    Pose out = (m_currentPose - m_prevPose) * 100.0;
-    out.setTheta(out.getTheta(true) * 100.0, true);  // Also scale theta
+    Pose out = (m_currentPose - m_prevPose) * 1000.0 / deltaTime;
+    out.setTheta(out.getTheta(true) * 1000.0 / deltaTime, true);  // Also scale theta
     return out;
   }
 
@@ -325,6 +328,96 @@ class Chassis
   void moveForward(double distance, int timeout, bool forceHeading = true, moveToParams params = {},
                    bool async = false)
   {
+    // When heading isn't enforced we just tell the motors to essentially move forwards
+    if (!forceHeading)
+    {
+      if (async)  // If async start a async thread
+      {
+        pros::Task asyncThread(
+            [&, this]() { this->moveForward(distance, timeout, forceHeading, params, false); },
+            "Async Move Forwards");
+        pros::delay(10);  // Task needs some time to start
+        return;           // Exit function
+      }
+
+      bool fwd = (distance > 0);  // Is the robot moving fwd or backwards
+      distance = fabs(distance);  // Sanitize the distance for motion profile math
+
+      // This is the minimum distance required for a trapezoidal motion profile
+      double minDistance = std::pow(m_chassisInfo.maxVelocity, 2) / m_chassisInfo.maxAcceleration;
+      // Calculates MP off of distance and chassis info, for more information visit:
+      // https://www.desmos.com/calculator/daculs5px6
+
+      // TODO: Account for Initial Velocity
+      double accelTime = (m_chassisInfo.maxVelocity) / m_chassisInfo.maxAcceleration;
+      double accelDistance = 0.5 * m_chassisInfo.maxAcceleration * std::pow(accelTime, 2);
+
+      //* The linked graph accounts for a separate Deccel. For VRC this isn't needed because the
+      //* Accel is roughly equal to Deccel
+      double coastDistance = distance - accelDistance * 2.0;
+      double coastTime = (coastDistance / m_chassisInfo.maxVelocity);
+      double time = 0;      // Current time of motion in seconds
+      double velocity = 0;  // Velocity output
+      double totalTime = coastTime + 2.0 * accelTime;
+
+      if (distance > minDistance)  // Run a triangle motion profile because there is no coast
+      {
+        // In this situation coastTime is negative which is needed for calculations
+        while (time < totalTime)
+        {
+          // For half of the total time accel
+          if (time < totalTime / 2.0)
+          {
+            velocity += m_chassisInfo.maxAcceleration * deltaTime / 1000.0;
+          }
+          // Otherwise, deccel until total time is hit
+          else { velocity -= m_chassisInfo.maxAcceleration * deltaTime / 1000.0; }
+
+          // if not forwards, We need to go backwards!
+          if (!fwd) { velocity *= 1; }
+
+          setVelocities(velocity, 0);  // Send motor commands
+
+          time += 0.010;    // Update time
+          pros::delay(10);  // Delay
+        }
+      }
+      else  // Use a Trapezoidal Motion Profile
+      {
+        while (time < totalTime)
+        {
+          // Accelerate by the max Acceleration if in accel phase
+          if (time < accelTime) { velocity += m_chassisInfo.maxAcceleration * deltaTime / 1000.0; }
+          else if (time > accelTime && time > coastTime + accelTime)
+          {
+            // Coast phase (Code should already coast so nothing is really needed here)
+          }
+          // Decelerate by the max Acceleration during the deccel phases
+          else if (time > coastTime + accelTime)
+          {
+            velocity -= m_chassisInfo.maxAcceleration * deltaTime / 1000.0;
+          }
+
+          // if not forwards, We need to go backwards!
+          if (!fwd) { velocity *= 1; }
+
+          setVelocities(velocity, 0);  // Send motor commands
+
+          time += 0.010;    // Update time
+          pros::delay(10);  // Delay
+        }
+      }
+    }
+    else  // Otherwise, it will use Odometry to calculate a point and drive to the point
+    {
+      Pose currentPose = this->getPose();
+      double currentTheta = currentPose.getTheta(true);
+
+      // Calculate the target point in front / behind the bot
+      Pose targetPose =
+          currentPose + Pose{distance * cos(currentTheta), distance * sin(currentTheta), 0};
+      this->moveToPoint(targetPose, timeout, params, async);  // Move to calculated point
+    }
   }
   void turnToPoint(Pose target, int timeout, turnToParams params = {}, bool async = false) {}
   void turnToHeading(double heading, int timeout, turnToParams params = {}, bool async = false) {}
