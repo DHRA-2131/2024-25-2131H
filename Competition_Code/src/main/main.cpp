@@ -25,7 +25,7 @@ void initialize()
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() {}
+void disabled() { Systems::Clamp::disableAutoClamp(); }
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field

@@ -59,82 +59,73 @@ void lowStake(bool isRedTeam)
 void highStake(bool isRedTeam) {}
 void skills(bool isRedTeam)
 {
-  Intake::disableAutoSort();
-  // Start Pos
-  chassis.setPose({72, 10, 0});
-  // Score Alliance stake
-  Intake::motor.move_velocity(12000);
+  chassis.setPose(72, 10.25, 0);  // Set up by alliance stake
+
+  //* Score on alliance
+  Intake::motor.move_voltage(12000);
   pros::delay(500);
   Intake::motor.brake();
-  // Grab Mobile Goal
-  chassis.moveToPoint(72, 24, 800);  // Under Shooting Y-Coord works better
-  chassis.turnToPoint(96, 20, 500, {false});
-  Clamp::enableAutoClamp();
-  chassis.moveToPoint(98, 20, 1200, {false, 100}, false);
-  // Grab Rings
-  Intake::motor.move_voltage(12000);
-  chassis.turnToPoint(96, 48, 1000);  // Ring 1
-  chassis.moveToPoint(96, 48, 1000);
-  chassis.turnToPoint(120, 48, 1000);  // Ring 2
-  chassis.moveToPoint(120, 48, 1000);
 
-  chassis.swingToPoint(124, 72, lemlib::DriveSide::LEFT, 800);  // Under Shoot X (Don't hit the wall stake)
-  chassis.moveToPoint(124, 72, 1000, {});                       // Ring 3
+  //? Grab Goal 1
+  chassis.moveToPoint(72, 24, 1000, {}, false);
+  chassis.turnToPoint(48, 24, 800, {false}, false);
+  chassis.moveToPoint(48, 24, 1000, {false, 80});  // Move backwards slowly
 
-  chassis.moveToPoint(118, 100, 1000, {}, false);  // Ring 4
-
-  chassis.turnToPoint(120, 10, 800);  // Ring 5 & 6
-  chassis.moveToPoint(120, 10, 2100, {.maxSpeed = 100}, false);
-
-  // auto currentPose = chassis.getPose();  // Reckon
-  // currentPose.y = 10;
-  // chassis.setPose(currentPose);
-
-  chassis.turnToPoint(135, 6, 1000, {false});  // Score Goal
-  chassis.moveToPoint(135, 6, 1000, {false}, false);
-  Intake::motor.move_voltage(-12000);
-  pros::delay(300);  // Allow rings to go on the goal
-
-  Clamp::disableAutoClamp();
-
-  lemlib::Pose currentPose(132, 10, chassis.getPose().theta);  // Reckon
-  chassis.setPose(currentPose);
-
-  chassis.moveToPoint(72, 22, 1000);  // Move to center, Undershoot y
-  Intake::motor.brake();
-  chassis.turnToPoint(48, 22, 800, {false});
-
-  Clamp::enableAutoClamp();
-  chassis.moveToPoint(48, 20, 1000, {false, 60});  // Goal 2
-
-  chassis.turnToPoint(48, 48, 800);  // Ring 1
+  //* Ring 1
   Intake::motor.move_voltage(12000);
   chassis.moveToPoint(48, 48, 1000);
 
-  chassis.turnToPoint(24, 44, 800);  // Ring 2, Under shoot Y
-  chassis.moveToPoint(24, 44, 1000);
+  //* Ring 2 (Less Y bias)
+  chassis.moveToPoint(12, 68, 1500);
 
-  chassis.swingToPoint(17, 72, lemlib::DriveSide::RIGHT, 1000);  // Ring 3
-  chassis.moveToPoint(17, 72, 1000);                             // Overshoot X Coord to not hit wall stake
+  //* Ring 3
+  chassis.turnToPoint(20, 96, 800, {}, false);
+  chassis.moveToPoint(20, 96, 800, {}, false);
 
-  chassis.moveToPoint(34, 96, 1000);  // Ring 4, Overshoot X Coord (Lots)
+  //* Ring 4, 5, 6
+  chassis.turnToPoint(26, 48, 1000, {}, false);
+  chassis.moveToPoint(26, 48, 2000, {.minSpeed = 100}, false);
+  chassis.moveToPoint(24, 10, 2000, {.maxSpeed = 90}, false);
 
-  chassis.turnToPoint(34, 4, 800);  // Ring 5, 6
-  chassis.moveToPoint(34, 4, 2000, {true, 100}, false);
-
-  // auto currentPose = chassis.getPose();  // Reckon
-  // currentPose.y = 10;
-  // chassis.setPose(currentPose);
-  // pros::delay(500);  // Allow rings to go on the goal
-
-  chassis.turnToPoint(0, 6, 800, {false});  // Corner 2
-  chassis.moveToPoint(0, 6, 500, {false}, false);
+  //? Corner
+  chassis.turnToPoint(12, 12, 1000, {false}, false);
   Intake::motor.move_voltage(-12000);
-  pros::delay(300);  // Allow rings to go on the goal
-  Clamp::disableAutoClamp();
+  chassis.moveToPoint(12, 12, 1000, {false}, false);
+  Clamp::disableAutoClamp();  // Drop the goal
 
-  chassis.swingToPoint(24, 96, lemlib::DriveSide::LEFT, 1000, {}, false);  // Stage to Goal 3 (Swing to not push goal into the wall)
-  chassis.moveToPoint(24, 96, 3000, {}, false);                            // Long movement (needs time)
+  //? Goal 2
+  chassis.moveToPoint(48, 24, 1000);
+  chassis.turnToPoint(72, 24, 400);
+  chassis.moveToPoint(72, 24, 1400);
+
+  chassis.turnToPoint(96, 24, 800, {false});
+  Clamp::enableAutoClamp();
+  chassis.moveToPoint(96, 24, 1000, {false, 90});
+
+  // //! Repeat but flip coords
+  // //* Ring 1
+  Intake::motor.move_voltage(12000);
+  chassis.moveToPoint(144 - 48, 48, 1000);
+
+  // //* Ring 2
+  chassis.moveToPoint(144 - 18, 72, 1500);  // bias -x
+
+  // //* Ring 3
+  chassis.turnToPoint(144 - 26, 96, 800, {}, false);
+  chassis.moveToPoint(144 - 26, 96, 800, {}, false);
+
+  // //* Ring 4, 5, 6
+  chassis.turnToPoint(144 - 26, 48, 1000, {}, false);
+  chassis.moveToPoint(144 - 26, 48, 2000, {.minSpeed = 100}, false);
+  chassis.moveToPoint(144 - 26, 10, 2000, {.maxSpeed = 90}, false);
+
+  // //? Corner
+  chassis.turnToPoint(144 - 12, 12, 1000, {false}, false);
+  Intake::motor.move_voltage(-12000);
+  chassis.moveToPoint(144 - 12, 12, 1000, {false}, false);
+  Clamp::disableAutoClamp();  // Drop the goal
+
+  while (true) { pros::delay(10); }
 }
 void debug(bool isRedTeam) { chassis.setPose({0, 0, 0}); }
 }  // namespace Autonomous

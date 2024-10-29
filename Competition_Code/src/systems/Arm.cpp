@@ -10,8 +10,6 @@ namespace Systems
 namespace Arm
 {
 
-bool debug(0);
-
 /**
  * @brief Positions of Arm at different stages
  *
@@ -46,43 +44,37 @@ void init()
  */
 void teleOp()
 {
-  if (!debug)  // Competition Code
+  if (Buttons::ArmUp.changedToPressed())  // If Arm UP
   {
-    if (Buttons::ArmUp.changedToPressed())  // If Arm UP
-    {
-      index++;                                                // Increase Index by 1
-      index = std::min(index, size_t(positions.size() - 1));  // Keep Index in bounds
-      motor.move_absolute(positions[index], 100);             // Move Arm
-    }
-    else if (Buttons::ArmDown.changedToPressed())
-    {
-      index--;                                     // Decrease Index by 1
-      index = std::max(index, size_t(0));          // Keep index in bounds
-      motor.move_absolute(positions[index], 100);  // Move Arm
-    }
+    index++;                                                // Increase Index by 1
+    index = std::min(index, size_t(positions.size() - 1));  // Keep Index in bounds
+    motor.move_absolute(positions[index], 100);             // Move Arm
   }
-  else  // Debug Code
+  else if (Buttons::ArmDown.changedToPressed())
   {
-    // If Arm Up, Then spin arm at max voltage
-    if (Buttons::ArmUp.isPressing()) { motor.move_voltage(12000); }
-    // If Arm Down, Then spin arm in reverse at max voltage
-    else if (Buttons::ArmDown.isPressing()) { motor.move_voltage(-12000); }
-    // If neither button is pressed then stop (Stop mode is on HOLD)
-    else { motor.brake(); }
+    index--;                                     // Decrease Index by 1
+    index = std::max(index, size_t(0));          // Keep index in bounds
+    motor.move_absolute(positions[index], 100);  // Move Arm
   }
 
   if (Buttons::Doinkler.changedToPressed()) { doinkler.toggle(); }
 }
 
+/**
+ * @brief Set the target Position of the arm
+ *
+ * @param newIndex
+ */
 void setPosition(int newIndex) { index = newIndex; }
 
 pros::Task armThread(
     []() {
       while (true)
       {
+        // Get output from PID (Target - Actual (Accounts for gear ratio))
         double out = armPID.update(positions[index] - motor.get_position() / 4.0);
-        motor.move_voltage(out * 100);
-        pros::delay(10);
+        motor.move_voltage(out * 100);  // Output to motor
+        pros::delay(10);                // Don't take up CPU resources
       }
     },
     "ARM THREAD");
