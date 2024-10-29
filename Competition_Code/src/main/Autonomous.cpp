@@ -64,7 +64,7 @@ void skills(bool isRedTeam)
   //* Score on alliance
   Intake::motor.move_voltage(12000);
   pros::delay(500);
-  Intake::motor.brake();
+  Intake::motor.move_voltage(-12000);
 
   //? Grab Goal 1
   chassis.moveToPoint(72, 24, 1000, {}, false);
@@ -72,8 +72,9 @@ void skills(bool isRedTeam)
   chassis.moveToPoint(48, 24, 1000, {false, 80});  // Move backwards slowly
 
   //* Ring 1
-  Intake::motor.move_voltage(12000);
   chassis.moveToPoint(48, 48, 1000);
+  pros::delay(5000);
+  Intake::motor.move_voltage(12000);
 
   //* Ring 2 (Less Y bias)
   chassis.moveToPoint(12, 68, 1500);
@@ -85,7 +86,7 @@ void skills(bool isRedTeam)
   //* Ring 4, 5, 6
   chassis.turnToPoint(26, 48, 1000, {}, false);
   chassis.moveToPoint(26, 48, 2000, {.minSpeed = 100}, false);
-  chassis.moveToPoint(24, 10, 2000, {.maxSpeed = 90}, false);
+  chassis.moveToPoint(24, 10, 2000, {.maxSpeed = 63.5}, false);
 
   //? Corner
   chassis.turnToPoint(12, 12, 1000, {false}, false);
@@ -104,28 +105,58 @@ void skills(bool isRedTeam)
 
   // //! Repeat but flip coords
   // //* Ring 1
-  Intake::motor.move_voltage(12000);
   chassis.moveToPoint(144 - 48, 48, 1000);
+  pros::delay(500);
+  Intake::motor.move_voltage(12000);
 
   // //* Ring 2
-  chassis.moveToPoint(144 - 18, 72, 1500);  // bias -x
+  chassis.moveToPoint(144 - 20, 72, 1500);  // bias -x
 
   // //* Ring 3
-  chassis.turnToPoint(144 - 26, 96, 800, {}, false);
-  chassis.moveToPoint(144 - 26, 96, 800, {}, false);
+  chassis.turnToPoint(144 - 28, 96, 800, {}, false);
+  chassis.moveToPoint(144 - 28, 96, 800, {}, false);
 
   // //* Ring 4, 5, 6
-  chassis.turnToPoint(144 - 26, 48, 1000, {}, false);
-  chassis.moveToPoint(144 - 26, 48, 2000, {.minSpeed = 100}, false);
-  chassis.moveToPoint(144 - 26, 10, 2000, {.maxSpeed = 90}, false);
+  chassis.turnToPoint(144 - 28, 48, 1000, {}, false);
+  Intake::motor.move_voltage(12000);
+  chassis.moveToPoint(144 - 28, 48, 2000, {.minSpeed = 100}, false);
+  chassis.moveToPoint(144 - 28, 10, 2000, {.maxSpeed = 63.5}, false);
 
   // //? Corner
-  chassis.turnToPoint(144 - 12, 12, 1000, {false}, false);
+  chassis.turnToPoint(144 - 12, 6, 1000, {false}, false);
   Intake::motor.move_voltage(-12000);
-  chassis.moveToPoint(144 - 12, 12, 1000, {false}, false);
-  Clamp::disableAutoClamp();  // Drop the goal
+  chassis.moveToPoint(144 - 12, 6, 1000, {false}, false);
+  Clamp::disableAutoClamp();  // Drop the goa
 
-  while (true) { pros::delay(10); }
+  //? Goal 3
+  chassis.moveToPoint(144 - 28, 96, 3000);
+  chassis.turnToPoint(144 - 48, 120, 800, {false});
+  chassis.moveToPoint(144 - 48, 120, 2000, {false});
+  chassis.turnToPoint(72, 120, 800, {false});
+  Clamp::enableAutoClamp();                           // Enable Auto Clamp
+  chassis.moveToPoint(72, 120, 2000, {false, 62.5});  // Grab Goal
+
+  //* Rings 1, 2
+  chassis.setPose(72, 121.528, 90.4379);
+  Intake::motor.move_voltage(12000);
+  chassis.moveToPoint(144 - 36, 120, 1000, {.minSpeed = 20});  // Approach Fast
+  chassis.moveToPoint(144 - 12, 120, 2000, {.maxSpeed = 30});  // Approach Slow
+
+  //? Corner 3
+  chassis.turnToPoint(144 - 18, 132, 800, {false}, false);  // Turn to Corner
+  Intake::motor.brake();                                    // Stop Intake
+  Clamp::disableAutoClamp();                                // Drop Goal
+  chassis.moveToPoint(144 - 18, 132, 2000, {false, 30});    // Score Corner
+
+  //? Corner 4
+  chassis.moveToPoint(72, 125, 2000);  // Bias -x
+  chassis.turnToPoint(48, 125, 800, {false});
+  chassis.moveToPoint(0, 144, 1300, {false, 127, 100});
+
+  //* Blue Alliance Stake
+  chassis.moveToPoint(72, 120, 4000);
+
+  while (true) { pros::delay(10); }  // Don't let skills exit
 }
 void debug(bool isRedTeam) { chassis.setPose({0, 0, 0}); }
 }  // namespace Autonomous

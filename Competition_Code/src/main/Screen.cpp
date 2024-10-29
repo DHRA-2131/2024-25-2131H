@@ -30,7 +30,7 @@ std::vector<AutonCard> Cards = {
     {"SKILLS", "Skills Description", Autonomous::skills},     // Skills Autonomous
     {"DEBUG", "Debug Description", Autonomous::debug},        // Debug for PID etc
 };
-int index = 1;  // Index of card (Increments by +1 on initial)
+int index = 0;  // Index of card (Increments by +1 on initial)
 
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;
