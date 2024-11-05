@@ -48,7 +48,7 @@ void disableAutoSort()
 void teleOp()
 {
   // Enable Autosort going into driver
-  enableAutoSort();
+  disableAutoSort();
   if (enabled)  // if intake enabled
   {
     // If intake button pressing, intake
@@ -104,7 +104,7 @@ pros::Task autoSortTask(
         if (autoSortEnabled)  // If enabled
         {
           // Check if the ring is detected
-          RingChangeDetector.check(ringDetector.get() < 20);
+          RingChangeDetector.check(ringDetector.get() < 100);
 
           // If ring detection has changed from none, to ring
           if (RingChangeDetector.getChanged() && RingChangeDetector.getValue())
