@@ -1,10 +1,11 @@
+#include "systems/Arm.hpp"
+
 #include <algorithm>
 #include <cstddef>
 
 #include "lemlib/pid.hpp"
 #include "main/ButtonConfig.hpp"
 #include "main/RobotConfig.hpp"
-
 namespace Systems
 {
 namespace Arm
@@ -16,9 +17,12 @@ namespace Arm
  *
  */
 std::vector<double> positions = {
-    0,   // Empty
-    14,  // Loading
-    100  // Score
+    0,    // Empty
+    18,   // Loading 1
+    30,   // Loading 2
+    145,  // Wallstake
+    200   // Down / Wallstake
+
 };
 
 size_t index(0);
@@ -72,7 +76,7 @@ pros::Task armThread(
       while (true)
       {
         // Get output from PID (Target - Actual (Accounts for gear ratio))
-        double out = armPID.update(positions[index] - motor.get_position() / 4.0);
+        double out = armPID.update(positions[index] - motor.get_position() / GEAR_RATIO);
         motor.move_voltage(out * 100);  // Output to motor
         pros::delay(10);                // Don't take up CPU resources
       }

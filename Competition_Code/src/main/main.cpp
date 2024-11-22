@@ -71,6 +71,7 @@ void autonomous()
  */
 void opcontrol()
 {
+  std::cout << "Hello 4" << std::endl;
   while (true)
   {
     // Call Tele-Operation of all systems
@@ -81,7 +82,6 @@ void opcontrol()
 
     // Allow for V5 Sensors to update and tasks to update
     pros::delay(10);
-
     // Update Button Detectors
     Buttons::update();
   }
