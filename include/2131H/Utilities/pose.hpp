@@ -64,13 +64,19 @@ class Pose
    * @return double
    */
   double distance(const Pose B) const { return std::hypot(this->x - B.x, this->y - B.y); }
+
   /**
-   * @brief Calculates Angle from one Pose to another using Atan2
+   * @brief Calculates the angle from one pose to another
    *
-   * @param B Second Pose
-   * @return double
+   * @param B target pose
+   * @param radians Is output in radians? False by default.
+   * @return double Angle in degrees or radians
    */
-  double angle(const Pose B) const { return std::atan2(B.y - this->y, B.x - this->x); }
+  double angle(const Pose B, bool radians = false) const
+  {
+    double rawAngle = std::atan2(B.y - this->y, B.x - this->x);
+    return radians ? rawAngle : rawAngle * 180 / M_PI;
+  }
   /**
    * @brief returns Pose rotated by angle value
    *
@@ -78,7 +84,7 @@ class Pose
    * @param radians Is angle in Radians?
    * @return Pose
    */
-  Pose rotate(float angle, bool radians = true) const
+  Pose rotate(float angle, bool radians = false) const
   {
     if (!radians) { angle = angle * M_PI / 180; }  // Force Radians
     return {this->x * std::cos(angle) - this->y * std::sin(angle),

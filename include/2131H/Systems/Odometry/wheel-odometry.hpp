@@ -18,6 +18,7 @@
 #include "2131H/Systems/Odometry/abstract-odometry.hpp"
 #include "2131H/Systems/Odometry/tracking-wheel.hpp"
 #include "2131H/Utilities/console.hpp"
+#include "2131H/Utilities/pose.hpp"
 #include "pros/imu.hpp"
 
 namespace Systems
@@ -55,6 +56,9 @@ class WheelOdometry : public AbstractOdometry
   const double m_verticalOffset;
   const double m_horizontalOffset;
 
+  Pose debugPose = Pose(0, 0, 0);
+  double debugDouble = 0;
+
  public:  // === Constructors == //
   /**
    * @brief Construct a Odometry Instance
@@ -81,10 +85,10 @@ class WheelOdometry : public AbstractOdometry
    * @param length Arc Length
    * @param offset Offset from arc length
    * @param angle Measure of angle
-   * @param Radians is Measure of angle in Radians? (True by default)
+   * @param radians is Measure of angle in radians? (True by default)
    * @return double chord length
    */
-  double _calculateChordLength(double length, double offset, double angle, bool Radians = true)
+  double _calculateChordLength(double length, double offset, double angle, bool radians = true)
   {
     // Technically when using wheel only odometry this will be calculated eventually
     // However, when using the IMU, the angle change may not be 0.0 when the length is 0.0
@@ -92,7 +96,7 @@ class WheelOdometry : public AbstractOdometry
     if (length == 0) { return 0.0; }
 
     // Convert to radians
-    if (!Radians) { angle = angle * M_PI / 180; }
+    if (!radians) { angle = angle * M_PI / 180.0; }
 
     // If there is no angle change we can just return the length traveled
     if (angle == 0) { return length; }
@@ -134,7 +138,7 @@ class WheelOdometry : public AbstractOdometry
     else
     {
       m_verticalDistance = 0;
-      Console.log(Logger::FG_Red, "NEEDS VERTICAL WHEELS");
+      Console.log(Logger::BG_Red, "NEEDS VERTICAL WHEELS");
     }
 
     // If there is a horizontal wheel, then update horizontal change
@@ -152,6 +156,7 @@ class WheelOdometry : public AbstractOdometry
     }
     else  // Use wheels to calculate heading delta
     {
+      Console.log(Logger::BG_Red, "WHEEL HEADING CHANGE");
       // TODO: WHEEL HEADING CHANGE
     }
 
@@ -162,16 +167,15 @@ class WheelOdometry : public AbstractOdometry
 
     // Average theta change (for rotating, don't want to rotate by start or end theta)
     double avgAngle = m_prevAngle + deltaAngle / 2;
-    // Approximate wheel path as an Arc and calculate chord length to calculate Local Change
-    double localX = this->_calculateChordLength(deltaVertical, m_verticalOffset, avgAngle);
-    double localY = this->_calculateChordLength(deltaHorizontal, m_horizontalOffset, avgAngle);
 
-    // Console.log(deltaVertical, ", ", deltaHorizontal);
+    // Approximate wheel path as an Arc and calculate chord length to calculate Local Change
+    double localX = this->_calculateChordLength(deltaVertical, m_verticalOffset, deltaAngle);
+    double localY = this->_calculateChordLength(deltaHorizontal, m_horizontalOffset, deltaAngle);
 
     // Convert to a local Pose
-    Pose localPose(localX, localY, m_angle, true);
+    Pose localPose(localX, localY, deltaAngle, true);
     // return (Rotate local Pose to global coordinate system and add to current Pose)
-    auto out = currentPose + localPose.rotate(avgAngle, true);
+    auto out = currentPose + (localPose.rotate(avgAngle, true));
     out.setTheta(m_prevAngle + deltaAngle, true);  // Set Angle
 
     return out;

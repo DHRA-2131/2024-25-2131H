@@ -33,7 +33,7 @@ class Logger
   static constexpr const char* FG_Cyan = "\x1B[36m";
   static constexpr const char* FG_Light_Gray = "\x1B[37m";
   static constexpr const char* FG_Dark_Gray = "\x1B[90m";
-  static constexpr const char* FG_Ligh_Red = "\x1B[91m";
+  static constexpr const char* FG_Light_Red = "\x1B[91m";
   static constexpr const char* FG_Light_Green = "\x1B[92m";
   static constexpr const char* FG_Light_Yellow = "\x1B[93m";
   static constexpr const char* FG_Light_Blue = "\x1B[94m";

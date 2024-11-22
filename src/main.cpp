@@ -1,75 +1,94 @@
 #include "main.h"
 
-#include "2131H/Systems/Chassis/Exit-Conditions/settle-exit-condition.hpp"
-#include "2131H/Systems/Chassis/chassis.hpp"
-#include "2131H/Systems/Odometry/wheel-odometry.hpp"
-#include "2131H/Utilities/console.hpp"
-#include "pros/abstract_motor.hpp"
-#include "pros/motor_group.hpp"
-
-pros::MotorGroup leftDrive({-8, -9, -6}, pros::v5::MotorGearset::blue);
-pros::MotorGroup rightDrive({18, 15, 20}, pros::v5::MotorGearset::blue);
-pros::IMU inertial(21);
-
-Systems::ChassisParameters chassisInfo{&leftDrive, &rightDrive, 450, 600, 2.75, 13.5, 17};
-
-Systems::TrackingWheel leftTracker(&leftDrive, -7.75, 2.75, 450);
-Systems::TrackingWheel rightTracker(&rightDrive, 7.75, 2.75, 450);
-Systems::WheelOdometry odometryInfo({&leftTracker, &rightTracker, nullptr, &inertial});
-
-Systems::ExitCondition::Settle lateralExit(1000, 2);
-Systems::PID lateralPID(0, 0, 0, {&lateralExit});
-
-Systems::ExitCondition::Settle angularExit(1000, 3);
-Systems::PID angularPID(0, 0, 0, {&angularExit});
-
-Systems::Chassis chassis(chassisInfo, &odometryInfo, &lateralPID, &angularPID);
-
 /**
- * @brief Runs at start of program
+ * A callback function for LLEMU's center button.
  *
+ * When this callback is fired, it will toggle line 2 of the LCD text between
+ * "I was pressed!" and nothing.
  */
-void initialize()
-{
-  Console.log(Utilities::Logger::BG_Green, "Initial: ");
-  chassis.init();
-  Console.log(Utilities::Logger::FG_Green, "  - Chassis Calibration Completed");
-  Console.newLine();
+void on_center_button() {
+	static bool pressed = false;
+	pressed = !pressed;
+	if (pressed) {
+		pros::lcd::set_text(2, "I was pressed!");
+	} else {
+		pros::lcd::clear_line(2);
+	}
 }
 
 /**
- * @brief Runs during disabled period. AKA Before Auton, Between Auton and Driver, and at the end of
- * a match
+ * Runs initialization code. This occurs as soon as the program is started.
  *
+ * All other competition modes are blocked by initialize; it is recommended
+ * to keep execution time for this mode under a few seconds.
  */
-void disabled() { Console.log("Disabled"); }
+void initialize() {
+	pros::lcd::initialize();
+	pros::lcd::set_text(1, "Hello PROS User!");
 
-/**
- * @brief Runs when plugged into Competition Switch or Field Control
- *
- */
-void competition_initialize()
-{
-  Console.log(Utilities::Logger::BG_Green, Utilities::Logger::Underlined, "Competition Inital");
+	pros::lcd::register_btn1_cb(on_center_button);
 }
 
 /**
- * @brief Runs when Field Control is toggled to (Enable + Autonomous)
- *
+ * Runs while the robot is in the disabled state of Field Management System or
+ * the VEX Competition Switch, following either autonomous or opcontrol. When
+ * the robot is enabled, this task will exit.
  */
-void autonomous() { Console.log(Utilities::Logger::BG_Light_Cyan, "Autonomous"); }
+void disabled() {}
 
 /**
- * @brief Runs when Feild Control is toggled to (Enable + Driver Control)
- * @note The name "opcontrol" is short for Teleoperator Control AKA Driver Control
+ * Runs after initialize(), and before autonomous when connected to the Field
+ * Management System or the VEX Competition Switch. This is intended for
+ * competition-specific initialization routines, such as an autonomous selector
+ * on the LCD.
+ *
+ * This task will exit when the robot is enabled and autonomous or opcontrol
+ * starts.
  */
-void opcontrol()
-{
-  Console.log(Utilities::Logger::BG_Light_Blue, "Operator Control: ");
+void competition_initialize() {}
 
-  while (true)
-  {
-    // chassis.logPosition();
-    pros::delay(10);
-  }
+/**
+ * Runs the user autonomous code. This function will be started in its own task
+ * with the default priority and stack size whenever the robot is enabled via
+ * the Field Management System or the VEX Competition Switch in the autonomous
+ * mode. Alternatively, this function may be called in initialize or opcontrol
+ * for non-competition testing purposes.
+ *
+ * If the robot is disabled or communications is lost, the autonomous task
+ * will be stopped. Re-enabling the robot will restart the task, not re-start it
+ * from where it left off.
+ */
+void autonomous() {}
+
+/**
+ * Runs the operator control code. This function will be started in its own task
+ * with the default priority and stack size whenever the robot is enabled via
+ * the Field Management System or the VEX Competition Switch in the operator
+ * control mode.
+ *
+ * If no competition control is connected, this function will run immediately
+ * following initialize().
+ *
+ * If the robot is disabled or communications is lost, the
+ * operator control task will be stopped. Re-enabling the robot will restart the
+ * task, not resume it from where it left off.
+ */
+void opcontrol() {
+	pros::Controller master(pros::E_CONTROLLER_MASTER);
+	pros::MotorGroup left_mg({1, -2, 3});    // Creates a motor group with forwards ports 1 & 3 and reversed port 2
+	pros::MotorGroup right_mg({-4, 5, -6});  // Creates a motor group with forwards port 5 and reversed ports 4 & 6
+
+
+	while (true) {
+		pros::lcd::print(0, "%d %d %d", (pros::lcd::read_buttons() & LCD_BTN_LEFT) >> 2,
+		                 (pros::lcd::read_buttons() & LCD_BTN_CENTER) >> 1,
+		                 (pros::lcd::read_buttons() & LCD_BTN_RIGHT) >> 0);  // Prints status of the emulated screen LCDs
+
+		// Arcade control scheme
+		int dir = master.get_analog(ANALOG_LEFT_Y);    // Gets amount forward/backward from left joystick
+		int turn = master.get_analog(ANALOG_RIGHT_X);  // Gets the turn left/right from right joystick
+		left_mg.move(dir - turn);                      // Sets left motor voltage
+		right_mg.move(dir + turn);                     // Sets right motor voltage
+		pros::delay(20);                               // Run for 20 ms then update
+	}
 }
