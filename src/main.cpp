@@ -33,8 +33,9 @@ void initialize()
 {
   Console.log(Utilities::Logger::BG_Green, "Initial: ");
   chassis.init();
-  Console.log(Utilities::Logger::FG_Green, "  - Chassis Calibration Completed");
-  Console.newLine();
+  chassis.setPose({72, 72, 0, false});
+  Console.log(Utilities::Logger::FG_Green, "Chassis Calibration Completed");
+  // Console.newLine();
 }
 
 /**
@@ -61,7 +62,7 @@ void autonomous() { Console.log(Utilities::Logger::BG_Light_Cyan, "Autonomous");
 
 /**
  * @brief Runs when Feild Control is toggled to (Enable + Driver Control)
- * @note The name "opcontrol" is short for Teleoperator Control AKA Driver Control
+ * @note The name "opcontrol" is short for Tele-Operator Control AKA Driver Control
  */
 void opcontrol()
 {
@@ -69,7 +70,7 @@ void opcontrol()
 
   while (true)
   {
-    // chassis.logPosition();
+    chassis.logPosition();
     pros::delay(10);
   }
 }

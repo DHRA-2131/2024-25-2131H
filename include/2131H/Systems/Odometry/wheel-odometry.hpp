@@ -118,7 +118,7 @@ class WheelOdometry : public AbstractOdometry
   {
     if (usingIMU && std::isinf(m_sensors.inertial->get_heading()))
     {
-      return currentPose;  // Inertial is DC or Calibrating so don't calculate odom
+      return Pose(0, 0, 0);  // Inertial is DC or Calibrating so don't calculate odom
     }
 
     // Figure out which wheel is going to be used for local change
@@ -165,18 +165,18 @@ class WheelOdometry : public AbstractOdometry
     double deltaHorizontal = m_horizontalDistance - m_prevHorizontal;
     double deltaAngle = m_angle - m_prevAngle;
 
-    // Average theta change (for rotating, don't want to rotate by start or end theta)
-    double avgAngle = m_prevAngle + deltaAngle / 2;
-
     // Approximate wheel path as an Arc and calculate chord length to calculate Local Change
     double localX = this->_calculateChordLength(deltaVertical, m_verticalOffset, deltaAngle);
     double localY = this->_calculateChordLength(deltaHorizontal, m_horizontalOffset, deltaAngle);
 
+    // Average theta change (for rotating, don't want to rotate by start or end theta)
+    double avgAngle = currentPose.getTheta(true) - deltaAngle / 2;
+
     // Convert to a local Pose
     Pose localPose(localX, localY, deltaAngle, true);
     // return (Rotate local Pose to global coordinate system and add to current Pose)
-    auto out = currentPose + (localPose.rotate(avgAngle, true));
-    out.setTheta(m_prevAngle + deltaAngle, true);  // Set Angle
+    auto out = (localPose.rotate(avgAngle, true));
+    out.setTheta(deltaAngle, true);  // Set Angle
 
     return out;
   }

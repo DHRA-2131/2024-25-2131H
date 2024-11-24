@@ -114,7 +114,7 @@ class Chassis
    *
    * @param newPose
    */
-  void setPose(const Pose& newPose) { m_currentPose = newPose; }
+  void setPose(const Pose& newPose) { m_currentPose = std::move(newPose); }
 
   /**
    * @brief Get the Pose of the Chassis
@@ -135,7 +135,6 @@ class Chassis
         angularPID(angularPID),
         ChassisThread(
             [this]() {
-              int count = 0;
               while (true)
               {
                 _update(deltaTime);
@@ -155,8 +154,11 @@ class Chassis
   {
     if (m_odometryEnabled && m_chassisCalibrated)  // Only calculate if Enabled and Calibrated
     {
-      m_prevPose = std::move(m_currentPose);                        // Store previous Positions
-      m_currentPose = m_odometry->updatePose(this->m_currentPose);  // Update Odometry Position
+      m_prevPose = m_currentPose;                              // Store previous Positions
+      Pose deltaPose = m_odometry->updatePose(m_currentPose);  // Update Odometry Position
+      m_currentPose = m_currentPose + deltaPose;
+      m_currentPose.setTheta(fmod(m_prevPose.getTheta(false) + deltaPose.getTheta(false), 360),
+                             false);
     }
 
     if (m_chassisEnabled)  // Allow for Motor Control
@@ -281,13 +283,11 @@ class Chassis
 
   void logPosition(const char* color = Logger::Reset) const
   {
-    Console.log("(", m_currentPose.x, ", ", m_currentPose.y, ", ", m_currentPose.getTheta(false),
-                ")");
+    Console.logPose("position", m_currentPose);
   }
   void logVelocity(const char* color = Logger::Reset)
   {
-    auto velocity = this->getActualVelocities();
-    Console.log("(", velocity.x, ", ", velocity.y, ", ", velocity.getTheta(false), ")");
+    Console.logPose("velocity", this->getActualVelocities());
   }
   /**
    * @brief Suspends motion from the Chassis thread. (Odometry will still calculate)
