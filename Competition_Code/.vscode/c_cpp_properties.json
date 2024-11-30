@@ -4,7 +4,8 @@
       "name": "PROS Project",
       "includePath": [
         "${workspaceFolder}/**",
-        "c:\\Users\\merpl\\Desktop\\2024-25-2131H\\Competition_Code\\include"
+        "c:\\Users\\merpl\\Desktop\\2024-25-2131H\\Competition_Code\\include",
+        "c:\\Users\\merpl\\Desktop\\Ceased To Begin\\Rewrite\\Competition_Code\\include"
       ],
       "defines": [
         "_DEBUG",
@@ -17,7 +18,7 @@
       "intelliSenseMode": "gcc-arm",
       "browse": {
         "path": [
-          "c:\\Users\\merpl\\Desktop\\2024-25-2131H\\Competition_Code"
+          "c:\\Users\\merpl\\Desktop\\Ceased To Begin\\Rewrite\\Competition_Code"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""
