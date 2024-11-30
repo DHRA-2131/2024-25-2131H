@@ -44,6 +44,7 @@ namespace Arm
 {
 // Arm Motor
 extern pros::v5::Motor motor;
+extern pros::v5::Rotation rotational;
 
 // Doinkler (for removing corner rings)
 extern pros::adi::Pneumatics doinkler;

@@ -27,7 +27,7 @@ pros::Task autoClampThread(
       while (true)
       {
         // IF enabled, and goal is detected, then clamp
-        if ((autoClampEnabled && goalDetector.get_distance() < 30) || Clamp::pneumatic.is_extended()) { pneumatic.extend(); }
+        if ((autoClampEnabled && goalDetector.get_distance() < 35) || Clamp::pneumatic.is_extended()) { pneumatic.extend(); }
         // Otherwise, retract
         else if (autoClampEnabled) { pneumatic.retract(); }
         pros::delay(10);  // Don't take up CPU resources

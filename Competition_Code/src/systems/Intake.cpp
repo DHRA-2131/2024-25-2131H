@@ -104,7 +104,7 @@ pros::Task autoSortTask(
         if (autoSortEnabled)  // If enabled
         {
           // Check if the ring is detected
-          RingChangeDetector.check(ringDetector.get() < 100);
+          RingChangeDetector.check(ringDetector.get() < 50);
 
           // If ring detection has changed from none, to ring
           if (RingChangeDetector.getChanged() && RingChangeDetector.getValue())
@@ -116,11 +116,9 @@ pros::Task autoSortTask(
             if (possession[0] != teamColor && possession[0] != ringState::none)
             {
               // Disable the intake (stop if from spinning)
-              enabled = false;
               ringSort.extend();   // Eject the ring
-              pros::delay(300);    // Wait for Pneumatic to extend
+              pros::delay(400);    // Wait for Pneumatic to extend
               ringSort.retract();  // Retract the intake
-              enabled = true;      // Resume spinning
             }
             possession[0] = possession[1];    // Ring 2 is now Ring 1
             possession[1] = ringState::none;  // Remove ring from possession

@@ -18,8 +18,7 @@ namespace Arm
  */
 std::vector<double> positions = {
     0,    // Empty
-    18,   // Loading 1
-    30,   // Loading 2
+    20,   // Loading 1
     145,  // Wallstake
     200   // Down / Wallstake
 
@@ -27,7 +26,7 @@ std::vector<double> positions = {
 
 size_t index(0);
 
-lemlib::PID armPID(15, 0.001, 1);
+lemlib::PID armPID(5, 0, 0);
 
 /**
  * @brief Initialize Arm, Runs code to set up the motor.
@@ -76,7 +75,7 @@ pros::Task armThread(
       while (true)
       {
         // Get output from PID (Target - Actual (Accounts for gear ratio))
-        double out = armPID.update(positions[index] - motor.get_position() / GEAR_RATIO);
+        double out = armPID.update(positions[index] - rotational.get_position() / 100.0);
         motor.move_voltage(out * 100);  // Output to motor
         pros::delay(10);                // Don't take up CPU resources
       }

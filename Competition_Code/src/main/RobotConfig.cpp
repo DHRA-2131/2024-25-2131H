@@ -2,7 +2,7 @@
 
 namespace Screen
 {
-pros::adi::DigitalIn teamColor('A');
+pros::adi::DigitalIn teamColor('C');
 }  // namespace Screen
 namespace Systems
 {
@@ -10,11 +10,11 @@ namespace Systems
 namespace Drivetrain
 {
 // Left Drive
-pros::v5::MotorGroup leftDrive({-18, -19, -20}, pros::v5::MotorGearset::blue);
+pros::v5::MotorGroup leftDrive({-16, -19, -20}, pros::v5::MotorGearset::blue);
 // Right Drive
-pros::v5::MotorGroup rightDrive({6, 9, 10}, pros::v5::MotorGearset::blue);
+pros::v5::MotorGroup rightDrive({8, 9, 10}, pros::v5::MotorGearset::blue);
 // Vex V5 Inertial Sensor
-pros::Imu imu(22);
+pros::Imu imu(21);
 }  // namespace Drivetrain
 
 namespace Clamp
@@ -22,13 +22,14 @@ namespace Clamp
 // Clamp Pneumatic
 pros::adi::Pneumatics pneumatic('G', false, false);
 // Distance sensor to detect goals
-pros::Distance goalDetector(22);
+pros::Distance goalDetector(1);
 }  // namespace Clamp
 
 namespace Arm
 {
 // Arm Motor
-pros::v5::Motor motor(12, pros::MotorGear::red);
+pros::v5::Motor motor(13, pros::MotorGear::red);
+pros::v5::Rotation rotational(-12);
 
 // Doinkler (For removing corner rings)
 pros::adi::Pneumatics doinkler('H', false, false);
@@ -37,13 +38,13 @@ pros::adi::Pneumatics doinkler('H', false, false);
 namespace Intake
 {
 // Intake Motor
-pros::v5::Motor motor(11, pros::v5::MotorGearset::blue);
+pros::v5::Motor motor(14, pros::v5::MotorGearset::blue);
 // Vex V5 Optical Sensor (For detecting ring colors)
-pros::Optical colorDetector(22);
+pros::Optical colorDetector(18);
 // Vex V5 Distance Sensor (For detecting rings as they approach the top of the intake)
 //* Two sensors are being used due to the refresh rate on Vex V5 Optical Sensors.
 //* Optical sensors update at 100 Msec and Distance sensors update at ~50 msec
-pros::Distance ringDetector(22);
+pros::Distance ringDetector(17);
 
 // Pneumatic discard / eject
 pros::adi::Pneumatics ringSort('A', false, false);
@@ -67,35 +68,35 @@ lemlib::Drivetrain drivetrain(&Systems::Drivetrain::leftDrive,   // left motor g
 
 // Odometry
 // horizontal tracking wheel
-lemlib::TrackingWheel leftTrackingWheel(&Systems::Drivetrain::leftDrive, 3.25, -6.625, 450);
+lemlib::TrackingWheel leftTrackingWheel(&Systems::Drivetrain::leftDrive, 2.75, -6.625, 450);
 // vertical tracking wheel
-lemlib::TrackingWheel rightTrackingWheel(&Systems::Drivetrain::rightDrive, 3.25, 6.625, 450);
+lemlib::TrackingWheel rightTrackingWheel(&Systems::Drivetrain::rightDrive, 2.75, 6.625, 450);
 
 lemlib::OdomSensors sensors(&leftTrackingWheel, &rightTrackingWheel, nullptr, nullptr, &Systems::Drivetrain::imu);
 
 // PID Controllers
 // lateral PID controller
-lemlib::ControllerSettings lateral_controller(6.41601563,  // proportional gain (kP)
-                                              0,           // integral gain (kI)
-                                              0.24023438,  // derivative gain (kD)
-                                              3,           // anti windup
-                                              1,           // small error range, in inches
-                                              10000,       // small error range timeout, in milliseconds
-                                              3,           // large error range, in inches
-                                              50000,       // large error range timeout, in milliseconds
-                                              20           // maximum acceleration (slew)
+lemlib::ControllerSettings lateral_controller(8,    // proportional gain (kP)
+                                              0.1,  // integral gain (kI)
+                                              0,    // derivative gain (kD)
+                                              3,    // anti windup
+                                              1,    // small error range, in inches
+                                              100,  // small error range timeout, in milliseconds
+                                              3,    // large error range, in inches
+                                              500,  // large error range timeout, in milliseconds
+                                              30    // maximum acceleration (slew)
 );
 
 // angular PID controller
-lemlib::ControllerSettings angular_controller(1.005,  // proportional gain (kP)
-                                              0,      // integral gain (kI)
-                                              0.5,    // derivative gain (kD)
-                                              3,      // anti windup
-                                              1,      // small error range, in degrees
-                                              100,    // small error range timeout, in milliseconds
-                                              3,      // large error range, in degrees
-                                              500,    // large error range timeout, in milliseconds
-                                              0       // maximum acceleration (slew)
+lemlib::ControllerSettings angular_controller(1.25,  // proportional gain (kP)
+                                              0.01,  // integral gain (kI)
+                                              0,     // derivative gain (kD)
+                                              3,     // anti windup
+                                              1,     // small error range, in degrees
+                                              100,   // small error range timeout, in milliseconds
+                                              3,     // large error range, in degrees
+                                              500,   // large error range timeout, in milliseconds
+                                              0      // maximum acceleration (slew)
 );
 
 // Chassis class

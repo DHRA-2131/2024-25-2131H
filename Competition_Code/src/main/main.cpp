@@ -71,7 +71,7 @@ void autonomous()
  */
 void opcontrol()
 {
-  std::cout << "Hello 4" << std::endl;
+  Systems::Clamp::enableAutoClamp();
   while (true)
   {
     // Call Tele-Operation of all systems
