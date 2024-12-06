@@ -19,8 +19,9 @@ namespace Arm
 std::vector<double> positions = {
     0,    // Empty
     20,   // Loading 1
-    145,  // Wallstake
-    200   // Down / Wallstake
+    160,  // Wallstake
+    210,   // Down / alliance stake
+    275 //lowest un tip
 
 };
 

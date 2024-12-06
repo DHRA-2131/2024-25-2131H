@@ -1,4 +1,5 @@
 #include "main/RobotConfig.hpp"
+#include "pros/adi.hpp"
 
 namespace Screen
 {
@@ -12,7 +13,7 @@ namespace Drivetrain
 // Left Drive
 pros::v5::MotorGroup leftDrive({-16, -19, -20}, pros::v5::MotorGearset::blue);
 // Right Drive
-pros::v5::MotorGroup rightDrive({8, 9, 10}, pros::v5::MotorGearset::blue);
+pros::v5::MotorGroup rightDrive({4, 9, 10}, pros::v5::MotorGearset::blue);
 // Vex V5 Inertial Sensor
 pros::Imu imu(21);
 }  // namespace Drivetrain
@@ -40,11 +41,11 @@ namespace Intake
 // Intake Motor
 pros::v5::Motor motor(14, pros::v5::MotorGearset::blue);
 // Vex V5 Optical Sensor (For detecting ring colors)
-pros::Optical colorDetector(18);
+pros::Optical colorDetector(6);
 // Vex V5 Distance Sensor (For detecting rings as they approach the top of the intake)
 //* Two sensors are being used due to the refresh rate on Vex V5 Optical Sensors.
 //* Optical sensors update at 100 Msec and Distance sensors update at ~50 msec
-pros::Distance ringDetector(17);
+pros::Distance ringDetector(7);
 
 // Pneumatic discard / eject
 pros::adi::Pneumatics ringSort('A', false, false);

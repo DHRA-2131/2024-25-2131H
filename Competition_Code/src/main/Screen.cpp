@@ -27,18 +27,19 @@ void NULL_AUTON() {}
 std::vector<AutonCard> Cards = {
     {"LOW STAKE", "(48, 12, -180)", Autonomous::lowStake},  // lowStake Autonomous
     {"SOLO WP", "(24, 20, -180)", Autonomous::soloWP},      // solo AWP
-    {"HIGH STAKE", "", Autonomous::highStake},              // highStake Autonomous
+    {"HIGH STAKE", "", Autonomous::highStake},
+    {"GOAL RUSH", "", Autonomous::goalRush},               // highStake Autonomous
     {"SKILLS", "Skills Description", Autonomous::skills},   // Skills Autonomous
     {"DEBUG", "Debug Description", Autonomous::debug},      // Debug for PID etc
 
 };
-int index = -1;  // Index of card (Increments by +1 on initial)
+int index = 2;  // Index of card (Increments by +1 on initial)
 
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;
 ChangeDetector<bool> ScreenDetector;  // ChangeDetector for the screen touch status
 ChangeDetector<bool> TeamDetector;    // ChangeDetector for the team color status
-bool redTeam(true);                   // If current team color is red / blue
+bool redTeam(false);                   // If current team color is red / blue
 
 /**
  * @brief Update the brain screen. Must be called for Screen to be drawn.
