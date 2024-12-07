@@ -99,32 +99,31 @@ void goalRush(bool isRedTeam)
   {
     Arm::setPosition(2);
     Clamp::enableAutoClamp();
-    chassis.setPose({11, 21, 0});
-    chassis.moveToPoint(17.25, 48, 1000, {.forwards = true}, true);  // move to goal
-    chassis.moveToPoint(17.5, 59, 1000, {.forwards = true}, false);  // move to goal
+    chassis.setPose({11.75, 20, 0});
+    chassis.moveToPoint(15, 48, 1000, {.forwards = true}, true);   // move to goal
+    chassis.moveToPoint(20, 61, 1000, {.forwards = true}, false);  // move to goal
     // chassis.moveToPoint(19, 56.1, 1000, {.forwards = true}, false); //move to goal
     // chassis.moveToPoint(17.25, 58, 1000, {.forwards = true}, false); //move to goal
     // chassis.turnToPoint(26, 72, 450, {}, false); //turn to goal
     Arm::setPosition(3);  // score preload
     pros::c::delay(250);
-    chassis.turnToPoint(60, 55, 1000, {}, true);  // tip goal
-    pros::c::delay(120);                          // lower, less tip, higher, more tip but getting stuck
-    Arm::setPosition(4);                          // remove 3rd goal
-    // chassis.moveToPoint(8, 58, 1000, {.forwards = false}, false);//move away from line
+    chassis.turnToPoint(60, 55, 1000, {}, true);                    // tip goal
+    pros::c::delay(120);                                            // lower, less tip, higher, more tip but getting stuck
+    Arm::setPosition(4);                                            // remove 3rd goal
     chassis.moveToPoint(18, 38, 1000, {.forwards = false}, false);  // move away from line
     Arm::setPosition(0);                                            // lift arm away from intake
     pros::c::delay(100);
     Intake::motor.move_voltage(12000);
-    chassis.moveToPoint(22, 51, 1000, {.forwards = true}, false);  // intake 1st ring
-    pros::c::delay(300);                                           // intake 1st ring
+    chassis.moveToPoint(23, 53, 1000, {.forwards = true}, false);  // intake 1st ring
+    pros::c::delay(175);                                           // intake 1st ring
     Intake::motor.move_voltage(0);
-    chassis.turnToPoint(55, 0, 1000, {.forwards = false}, false);   // turn to goal
-    chassis.moveToPoint(36, 49, 1000, {.forwards = false}, false);  // move to goal
+    chassis.turnToPoint(55, 0, 1000, {.forwards = false}, false);  // turn to goal
+    chassis.moveToPoint(36, 36, 1000, {.forwards = false});
+    chassis.moveToPoint(47, 48, 1000, {.forwards = false}, false);  // move to goal
     Intake::motor.move_voltage(12000);                              // score ring
     pros::c::delay(1000);                                           // score 1st goal
     chassis.turnToPoint(72, 24, 1000, {}, false);
-    chassis.moveToPoint(58, 35.5, 1000, {.forwards = true}, false);
-    chassis.turnToPoint(100, 24, 1000, {}, false);
+    chassis.moveToPoint(60, 40.8, 1000, {.forwards = true}, false);
     Arm::doinkler.extend();
   }
 }
