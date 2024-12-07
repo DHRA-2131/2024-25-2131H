@@ -3,6 +3,7 @@
 #include "ButtonConfig.hpp"
 #include "RobotConfig.hpp"
 #include "main/Screen.hpp"
+#include "pros/misc.h"
 #include "systems/Arm.hpp"
 #include "systems/Clamp.hpp"
 #include "systems/Drivetrain.hpp"
@@ -25,7 +26,10 @@ void initialize()
  * the VEX Competition Switch, following either autonomous or opcontrol. When
  * the robot is enabled, this task will exit.
  */
-void disabled() { Systems::Clamp::disableAutoClamp(); }
+void disabled()
+{
+  if (pros::c::competition_is_switch()) { Systems::Clamp::disableAutoClamp(); }
+}
 
 /**
  * Runs after initialize(), and before autonomous when connected to the Field
@@ -71,7 +75,6 @@ void autonomous()
  */
 void opcontrol()
 {
-  Systems::Clamp::enableAutoClamp();
   while (true)
   {
     // Call Tele-Operation of all systems

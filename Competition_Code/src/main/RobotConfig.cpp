@@ -1,4 +1,5 @@
 #include "main/RobotConfig.hpp"
+
 #include "pros/adi.hpp"
 
 namespace Screen
@@ -41,11 +42,11 @@ namespace Intake
 // Intake Motor
 pros::v5::Motor motor(14, pros::v5::MotorGearset::blue);
 // Vex V5 Optical Sensor (For detecting ring colors)
-pros::Optical colorDetector(6);
+pros::Optical colorDetector(18);
 // Vex V5 Distance Sensor (For detecting rings as they approach the top of the intake)
 //* Two sensors are being used due to the refresh rate on Vex V5 Optical Sensors.
 //* Optical sensors update at 100 Msec and Distance sensors update at ~50 msec
-pros::Distance ringDetector(7);
+pros::Distance ringDetector(3);
 
 // Pneumatic discard / eject
 pros::adi::Pneumatics ringSort('A', false, false);

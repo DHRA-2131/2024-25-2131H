@@ -20,8 +20,8 @@ std::vector<double> positions = {
     0,    // Empty
     20,   // Loading 1
     160,  // Wallstake
-    210,   // Down / alliance stake
-    275 //lowest un tip
+    210,  // Down / alliance stake
+    275   // lowest un tip
 
 };
 

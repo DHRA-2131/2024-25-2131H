@@ -123,7 +123,6 @@ pros::Task autoSortTask(
             possession[0] = possession[1];    // Ring 2 is now Ring 1
             possession[1] = ringState::none;  // Remove ring from possession
           }
-
           // Don't take up CPU resources
           pros::delay(50);
         }
