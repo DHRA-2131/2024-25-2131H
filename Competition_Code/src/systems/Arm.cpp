@@ -62,6 +62,8 @@ void teleOp()
   }
 
   if (Buttons::Doinkler.changedToPressed()) { doinkler.toggle(); }
+
+  if (Buttons::Rush.changedToPressed()) { rush.toggle(); }
 }
 
 /**

@@ -11,6 +11,7 @@ extern ButtonDetector ArmUp;    // Arm Up
 extern ButtonDetector ArmDown;  // Arm Down
 
 extern ButtonDetector Doinkler;  // Doinkler
+extern ButtonDetector Rush; //Rush
 
 extern ButtonDetector ClampToggle;  // Clamp
 

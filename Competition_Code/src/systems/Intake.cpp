@@ -52,11 +52,11 @@ void teleOp()
   if (enabled)  // if intake enabled
   {
     // If intake button pressing, intake
-    if (Buttons::Intake.isPressing()) { motor.move_voltage(12000); }
+    if (Buttons::Intake.isPressing()) { intake.move_voltage(12000); }
     // If outtake button pressing, outtake
-    else if (Buttons::Outtake.isPressing()) { motor.move_voltage(-12000); }
+    else if (Buttons::Outtake.isPressing()) { intake.move_voltage(-12000); }
     // otherwise, stop intake
-    else { motor.brake(); }
+    else { intake.brake(); }
   }
 }
 
@@ -78,7 +78,7 @@ pros::Task possessionTask(
 
         // If ring color changed, and the ring exists (red or blue), and the intake is spinning forward
         if (PossessionChangeDetector.getChanged() && (ring == ringState::red || ring == ringState::blue) &&
-            motor.get_actual_velocity() > 10)
+            intake.get_actual_velocity() > 10)
         {
           // If there are zero rings in the intake, add ring to first spot
           if (possession[0] == 0) { possession[0] = ring; }

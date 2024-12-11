@@ -12,9 +12,9 @@ namespace Systems
 namespace Drivetrain
 {
 // Left Drive
-pros::v5::MotorGroup leftDrive({-16, -19, -20}, pros::v5::MotorGearset::blue);
+pros::v5::MotorGroup leftDrive({-13, -14, -15}, pros::v5::MotorGearset::blue);
 // Right Drive
-pros::v5::MotorGroup rightDrive({2, 9, 10}, pros::v5::MotorGearset::blue);
+pros::v5::MotorGroup rightDrive({2, 3, 4}, pros::v5::MotorGearset::blue);
 // Vex V5 Inertial Sensor
 pros::Imu imu(21);
 }  // namespace Drivetrain
@@ -22,31 +22,35 @@ pros::Imu imu(21);
 namespace Clamp
 {
 // Clamp Pneumatic
-pros::adi::Pneumatics pneumatic('G', false, false);
+pros::adi::Pneumatics pneumatic('C', false, false);
 // Distance sensor to detect goals
-pros::Distance goalDetector(1);
+pros::Distance goalDetector(12);
 }  // namespace Clamp
 
 namespace Arm
 {
 // Arm Motor
-pros::v5::Motor motor(13, pros::MotorGear::red);
+pros::v5::Motor motor(5, pros::MotorGear::red);
 pros::v5::Rotation rotational(-12);
 
 // Doinkler (For removing corner rings)
-pros::adi::Pneumatics doinkler('H', false, false);
+pros::adi::Pneumatics doinkler('D', false, false);
+
+// Rush (For ring rush and goal rush)
+pros::adi::Pneumatics rush({'E', 'F'},  false, false);
 }  // namespace Arm
 
 namespace Intake
 {
 // Intake Motor
-pros::v5::Motor motor(14, pros::v5::MotorGearset::blue);
+pros::v5::MotorGroup intake({-11, -1}, pros::v5::MotorGearset::blue);
+//pros::v5::Motor motor(11, pros::v5::MotorGearset::blue);
 // Vex V5 Optical Sensor (For detecting ring colors)
-pros::Optical colorDetector(18);
+pros::Optical colorDetector(12);
 // Vex V5 Distance Sensor (For detecting rings as they approach the top of the intake)
 //* Two sensors are being used due to the refresh rate on Vex V5 Optical Sensors.
 //* Optical sensors update at 100 Msec and Distance sensors update at ~50 msec
-pros::Distance ringDetector(2);
+pros::Distance ringDetector(19);
 
 // Pneumatic discard / eject
 pros::adi::Pneumatics ringSort('A', false, false);

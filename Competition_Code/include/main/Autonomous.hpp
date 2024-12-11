@@ -4,10 +4,10 @@
 
 namespace Autonomous
 {
-void lowStake(bool isRedTeam);   // Low stake auton (Side w/o high stake)
+void low4RG(bool isRedTeam);   // Low stake auton, 4 rings on one goal (Side w/o high stake)
 void highStake(bool isRedTeam);// High stake auton (Side w/ high stake )
 void goalRush(bool isRedTeam);  //goal rush auton (grab middle goal first)
-void soloWP(bool isRedTeam);     // Solo AWP auton (Side w/ high stake )
+void lowAlliance(bool isRedTeam);     // Low stake auton, alliance stake & 3 rings on one goal (Side w/ low stake )
 void skills(bool isRedTeam);     // Skills auton
 void debug(bool isRedTeam);      // Debug auton (not for competition use)
 }  // namespace Autonomous
