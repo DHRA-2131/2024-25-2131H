@@ -44,19 +44,20 @@ namespace Arm
 {
 // Arm Motor
 extern pros::v5::Motor motor;
-extern pros::v5::Rotation rotational;
+// extern pros::v5::Rotation rotational;
 
 // Doinkler (for removing corner rings)
 extern pros::adi::Pneumatics doinkler;
 
 // Rush (for rushing rings or goal)
-extern pros::adi::Pneumatics rush;
+extern pros::adi::Pneumatics rush1;
+extern pros::adi::Pneumatics rush2;
+
 };  // namespace Arm
 
 namespace Intake
 {
-extern pros::v5::MotorGroup intake;
-//extern pros::v5::Motor motor;           // Intake Motors
+extern pros::v5::MotorGroup intake;     // Intake Motor
 extern pros::Optical colorDetector;     // Color Detector
 extern pros::Distance ringDetector;     // Vex V5 Distance Sensor (For detecting rings as they approach the top of the intake)
 extern pros::adi::Pneumatics ringSort;  // Pneumatic for ejecting rings from intake
@@ -69,7 +70,7 @@ extern pros::Controller primary;  // Primary Controller
 
 // *** === LEMLIB Utilization === *** //
 // Drivetrain
-extern lemlib::Drivetrain drivetrain;  //
+extern lemlib::Drivetrain drivetrain;  // Drivetrain
 
 // Odometry Config
 extern lemlib::TrackingWheel leftTrackingWheel;   // Tracking wheels for odom

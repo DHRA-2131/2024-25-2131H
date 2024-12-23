@@ -5,6 +5,7 @@
 namespace Autonomous
 {
 void low4RG(bool isRedTeam);   // Low stake auton, 4 rings on one goal (Side w/o high stake)
+//void low6RG(bool isRedTeam); // low stake auton, 6 rings on one goal
 void highStake(bool isRedTeam);// High stake auton (Side w/ high stake )
 void goalRush(bool isRedTeam);  //goal rush auton (grab middle goal first)
 void lowAlliance(bool isRedTeam);     // Low stake auton, alliance stake & 3 rings on one goal (Side w/ low stake )

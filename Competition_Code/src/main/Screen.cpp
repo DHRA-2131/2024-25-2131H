@@ -26,6 +26,7 @@ void NULL_AUTON() {}
 // Each Card can be customized with a name and description.
 std::vector<AutonCard> Cards = {
     {"LOW 4 RING GOAL", "(48, 12, -180)", Autonomous::low4RG},  // lowStake Autonomous
+    //{"LOW 6 RING GOAL", Autonomous::low6RG}, //low side, 6 rings on one goal
     {"LOW W/ALLIANCE", "(24, 20, -180)", Autonomous::lowAlliance},      // low side, alliance stake & 3 ring goal
     {"HIGH STAKE", "", Autonomous::highStake},
     {"GOAL RUSH", "", Autonomous::goalRush},               // highStake Autonomous
@@ -33,7 +34,7 @@ std::vector<AutonCard> Cards = {
     {"DEBUG", "Debug Description", Autonomous::debug},      // Debug for PID etc
 
 };
-int index = 2;  // Index of card (Increments by +1 on initial)
+int index = 0;  // Index of card (Increments by +1 on initial)
 
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;

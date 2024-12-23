@@ -18,7 +18,7 @@ namespace Arm
  */
 std::vector<double> positions = {
     0,    // Empty
-    20,   // Loading 1
+    25,   // Loading 1
     160,  // Wallstake
     210,  // Down / alliance stake
     275   // lowest un tip
@@ -27,7 +27,7 @@ std::vector<double> positions = {
 
 size_t index(0);
 
-lemlib::PID armPID(5, 0, 0);
+lemlib::PID armPID(5, 0, 15.5, 3, true);
 
 /**
  * @brief Initialize Arm, Runs code to set up the motor.
@@ -37,9 +37,6 @@ void init()
 {
   motor.set_brake_mode(pros::MotorBrake::hold);    // Set to hold
   motor.set_encoder_units(pros::MotorUnits::deg);  // Set Motor Units -> Degrees
-  motor.move_relative(-10, 100);                   // Force Motor into stop
-  pros::delay(500);                                // Allow Motor Time to get forced into stop
-  motor.tare_position();                           // Take zero position of motor
 }
 
 /**
@@ -63,7 +60,11 @@ void teleOp()
 
   if (Buttons::Doinkler.changedToPressed()) { doinkler.toggle(); }
 
-  if (Buttons::Rush.changedToPressed()) { rush.toggle(); }
+  if (Buttons::Rush.changedToPressed())
+  {
+    rush1.toggle();
+    rush2.toggle();
+  }
 }
 
 /**
@@ -78,7 +79,7 @@ pros::Task armThread(
       while (true)
       {
         // Get output from PID (Target - Actual (Accounts for gear ratio))
-        double out = armPID.update(positions[index] - rotational.get_position() / 100.0);
+        double out = armPID.update(positions[index] - motor.get_position() / GEAR_RATIO);
         motor.move_voltage(out * 100);  // Output to motor
         pros::delay(10);                // Don't take up CPU resources
       }

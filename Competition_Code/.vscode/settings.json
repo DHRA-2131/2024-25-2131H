@@ -116,12 +116,5 @@
     "cinttypes": "cpp",
     "typeinfo": "cpp"
   },
-  "C_Cpp.clang_format_style": "LLVM",
-  "C_Cpp.clang_format_fallbackStyle": "LLVM",
-  "clang-format.fallbackStyle": "none",
-  "clang-format.executable": "C:\\Program Files\\LLVM\\bin\\clang-format.exe",
-  "editor.defaultFormatter": "xaver.clang-format",
-  "[cpp]": {
-    "editor.defaultFormatter": "xaver.clang-format"
-  },
+  "editor.formatOnSaveMode": "file"
 }

@@ -6,20 +6,21 @@
         "${workspaceFolder}/**",
         "c:\\Users\\merpl\\Desktop\\2024-25-2131H\\Competition_Code\\include",
         "c:\\Users\\merpl\\Desktop\\Ceased To Begin\\Rewrite\\Competition_Code\\include",
-        "c:\\Users\\25EABEL\\OneDrive - Davis School District\\10th Grade\\Robotics\\2024-25-2131H\\Competition_Code\\include"
+        "c:\\Users\\25EABEL\\OneDrive - Davis School District\\10th Grade\\Robotics\\2024-25-2131H\\Competition_Code\\include",
+        "c:\\Users\\corba\\OneDrive\\Desktop\\IDC\\2024-25-2131H\\Competition_Code\\include"
       ],
       "defines": [
         "_DEBUG",
         "UNICODE",
         "_UNICODE"
       ],
-      "compilerPath": "c:\\Users\\25EABEL\\AppData\\Roaming\\Code\\User\\globalStorage\\sigbots.pros\\install\\pros-toolchain-windows\\usr\\bin\\arm-none-eabi-g++",
+      "compilerPath": "c:\\Users\\corba\\AppData\\Roaming\\Code\\User\\globalStorage\\sigbots.pros\\install\\pros-toolchain-windows\\usr\\bin\\arm-none-eabi-g++",
       "cStandard": "gnu11",
       "cppStandard": "gnu++20",
       "intelliSenseMode": "gcc-arm",
       "browse": {
         "path": [
-          "c:\\Users\\25EABEL\\OneDrive - Davis School District\\10th Grade\\Robotics\\2024-25-2131H\\Competition_Code"
+          "c:\\Users\\corba\\OneDrive\\Desktop\\IDC\\2024-25-2131H\\Competition_Code"
         ],
         "limitSymbolsToIncludedHeaders": true,
         "databaseFilename": ""

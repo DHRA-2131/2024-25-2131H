@@ -15,8 +15,8 @@ void lowAlliance(bool isRedTeam)
 {
   if (isRedTeam)
   {
-    //chassis.moveToPoint(0,  0, 12000, {false, 127, 0}, false,);
-    // chassis.turnToPoint(0, 0, 12000, {true, AngularDirection::CCW_COUNTERCLOCKWISE, 127, 0}, false);
+    //chassis.moveToPoint(0,  0, 12000, {false, 127, 0}, false);
+     //chassis.turnToPoint(0, 0, 12000, {true, AngularDirection::CCW_COUNTERCLOCKWISE, 127, 0}, false);
 
     // chassis.swingToPoint(0, 0, DriveSide::LEFT, 1000, {false, }, false)
     // Intake::motor.move_voltage(12000);
@@ -51,7 +51,7 @@ void lowAlliance(bool isRedTeam)
     pros::c::delay(550);  // 3rd ring
     chassis.moveToPoint(22, 40, 1000, {.forwards = false}, false);
     chassis.turnToPoint(72, 72, 1000, {}, false);
-    chassis.moveToPoint(51, 55, 1000, {.forwards = true}, false);
+    chassis.moveToPoint(51.5, 56, 1000, {.forwards = true}, false);
   }
   else
   {
@@ -80,6 +80,7 @@ void lowAlliance(bool isRedTeam)
     chassis.moveToPoint(22, 144 - 40, 1000, {.forwards = false}, false);
     chassis.turnToPoint(72, 144 - 72, 1000, {}, false);
     chassis.moveToPoint(55.5, 87, 2000, {.forwards = true}, false);
+
   }
 }
 void low4RG(bool isRedTeam)
@@ -141,87 +142,128 @@ void low4RG(bool isRedTeam)
   }
 }
 
-void highStake(bool isRedTeam)
+void highStake(bool isRedTeam) //not high stake, actually low stake 5 ring with alliance
 {
-  if (isRedTeam) {}
-  else {}
-}
+  if (isRedTeam) {
+     Arm::setPosition(1); //1 for alliance stake, 0 for no
+    Clamp::pneumatic.retract();
+    Intake::enableAutoSort();
+    Clamp::enableAutoClamp();
+    chassis.setPose({54, 16.5, 90});
+    chassis.turnToPoint(72.3, 0, 500, {}, false); //turn to alliance stake
+    Arm::setPosition(3); //alliance stake
+    chassis.moveToPoint(58.2 , 9.5, 1000, {.forwards = true}, false); //alliance stake
+    pros::c::delay(500);  // gets alliance stake
+    chassis.moveToPoint(49, 39.8, 1000, {.forwards = false}, false); //back up to mogo
+    pros::c::delay(300); //clamp goal
+    Clamp::pneumatic.extend();
+    chassis.turnToPoint(72, 24, 500); //turn to reverse stack
+    chassis.moveToPoint(59.5, 40, 1000, {.forwards = true}, true); //move to reverse stack
+    Arm::setPosition(0); //alliance stake
+    pros::c::delay(550);  //doink ring
+    Arm::doinkler.extend();
+    pros::c::delay(300);  //doink ring
+    chassis.moveToPoint(36, 26, 900, {.forwards = false}); //back ring off reverse stack
+    chassis.turnToPoint(12, 48, 500, {}, false); //turn to ring to single stack
+    Arm::doinkler.retract();
+    Intake::intake.move_voltage(12000);
+    chassis.turnToPoint(24, 72, 300); //turn to 2 rings
+    chassis.moveToPoint(13, 48, 1000, {.forwards = true}, false); //intake 2 rings
+    pros::c::delay(100);  //intake 2 rings
+    chassis.turnToPoint(44, 59, 500, {.forwards = false});
+    chassis.moveToPoint(44, 56, 1000, {.forwards = false}); //back up to line up to to ring pile
+    chassis.turnToPoint(26, 68, 500); //turn to 1st ring in ring pile
+    chassis.moveToPoint(30, 58, 900, {.forwards = true}, false); //move to ring pile
+    chassis.moveToPoint(23, 56, 1000); //move to 2nd ring in pile
+    chassis.moveToPoint(36, 48, 1000, {.forwards = false}); //back away from line
+    chassis.turnToPoint(-42, 0, 500); //turn to corner
+    chassis.moveToPoint(12, 12, 1000); //move to corner fast
+    chassis.moveToPoint(5,  5, 1000, {true, 50, 0}, false);//move to corner slow
+    chassis.moveToPoint(58,  58, 1000, {false, 80, 0}, false); //back out of the corner
+    
+
+    
+  }
+  else {
+
+  }
+
+  }
+
 
 void goalRush(bool isRedTeam)
 {
   if (isRedTeam) {
-    //Intake::enableAutoSort();
-    Arm::setPosition(0);
-    Clamp::enableAutoClamp();
-    chassis.setPose({-11.55, 19, 180});
-    chassis.moveToPoint(-14.5, 48, 1000, {.forwards = false}); // move by ring stakc
-    chassis.turnToPoint(-26, 70, 50, {.forwards = false}); //turn to goal
-    chassis.moveToPoint(-19.6, 63, 1000, {.forwards = false}); //move to goal
-    pros::c::delay(650); //clamp goal
-    Clamp::pneumatic.extend();
+  Intake::enableAutoSort();
+  Arm::setPosition(0);
+  Clamp::enableAutoClamp();
+  chassis.setPose({-12, 19, 180});
+    chassis.moveToPoint(-17.5, 52, 10000, {.forwards = false}); // move by ring stack
+    chassis.turnToPoint(-25, 70, 50, {.forwards = false}); //turn to goal
+    chassis.moveToPoint(-20.5, 64.5, 1000, {.forwards = false}); //move to goal
+    pros::c::delay(600); //grab goal
     chassis.turnToPoint(-25, 48, 500, {.forwards = true}); //turn to ring stack
     Intake::intake.move_voltage(12000);
-    chassis.moveToPoint(-24, 47, 1000); //move to ring stack
-    chassis.turnToPoint(0, 30, 800, {.forwards = false}, true); //turn goal towards corner
-    pros::c::delay(900);
+    chassis.moveToPoint(-30.2, 51, 1000); //move to ring stack
+    chassis.turnToPoint(0, 30, 800, {.forwards = false}, false); //turn goal towards corner
       Clamp::disableAutoClamp(); //drop goal
-    chassis.turnToPoint(-48, 44, 800, {.forwards = false}, false); //turn towards ladder goal
-    Clamp::pneumatic.retract();
+    chassis.turnToPoint(-48, 53, 800, {false, AngularDirection::CCW_COUNTERCLOCKWISE, 127, 0}, false); //turn towards ladder goal
     Intake::intake.move_voltage(0);
-    chassis.moveToPoint(-38, 48, 1000, {.forwards = false}, true); //move to goal
+    chassis.moveToPoint(-42, 48, 1000, {.forwards = false}); //move to goal
     Clamp::enableAutoClamp();
-    pros::c::delay(1000); //clamp goal
-    chassis.turnToPoint(-42, 0, 800); //turn to driver wall
+    pros::c::delay(400); //grab goal
     Clamp::pneumatic.extend();
-    chassis.moveToPoint(-50, 17, 1000); //move towards wall
+    chassis.turnToPoint(-48, 0, 800); //turn to driver wall
+    chassis.moveToPoint(-52, 17, 1000); //move towards wall
     Intake::intake.move_voltage(12000);
     chassis.turnToPoint(0, 6, 800); //turn to preload
-    chassis.moveToPoint(-29, 16, 1000); //move to preload
-    pros::c::delay(1500); //score preload
-    chassis.moveToPoint(-4, 10, 1000); //move to corner
+    chassis.moveToPoint(-14, 17, 1000); //move to preload
+    pros::c::delay(1000); //score preload
+    chassis.turnToPoint(0, 5, 1000); //turn to corner
+    chassis.moveToPoint(-1.5,  6.5, 1000, {true, 50, 0}, false); //move to corner
+     pros::c::delay(500); //score corner ring
+     chassis.moveToPoint(-24,  24, 1000, {false}, false); //back up from corner
+      //chassis.turnToPoint(-72, 72, 1000); // turn to ladder
+      //chassis.moveToPoint(-52, 53.8, 1000); //move to ladder
   }
 
   else
   {
-    Intake::enableAutoSort();
-    Arm::setPosition(2);
+       Intake::enableAutoSort();
+    Arm::setPosition(0);
     Clamp::enableAutoClamp();
-    chassis.setPose({11.75, 20, 0});
-    chassis.moveToPoint(15, 48, 1000, {.forwards = true}, true);   // move to goal
-    chassis.moveToPoint(20.1, 59.25, 1000, {.forwards = true}, false);  // move to goal
-    // chassis.moveToPoint(19, 56.1, 1000, {.forwards = true}, false); //move to goal
-    // chassis.moveToPoint(17.25, 58, 1000, {.forwards = true}, false); //move to goal
-    // chassis.turnToPoint(26, 72, 450, {}, false); //turn to goal
-    Arm::setPosition(3);  // score preload
-    pros::c::delay(250);
-    chassis.turnToPoint(60, 55, 1000, {}, true);                    // tip goal
-    pros::c::delay(80);                                            // lower, less tip, higher, more tip but getting stuck
-    Arm::setPosition(4);                                            // remove 3rd goal
-    chassis.moveToPoint(18, 38, 1000, {.forwards = false}, false);  // move away from line
-    Arm::setPosition(0);                                            // lift arm away from intake
-    pros::c::delay(100);
+    chassis.setPose({-12, 144-19, 0});
+    chassis.moveToPoint(-16.25, 94, 10000, {.forwards = false}); // move by ring stack
+    chassis.turnToPoint(-26, 144-70, 50, {.forwards = false}); //turn to goal
+    chassis.moveToPoint(-21, 81.3, 1000, {.forwards = false}); //move to goal
+    pros::c::delay(700); //grab goal
+    Clamp::pneumatic.extend();
+    pros::c::delay(100); //grab goal
+    chassis.turnToPoint(-25, 95, 500, {.forwards = true}); //turn to ring stack
     Intake::intake.move_voltage(12000);
-    chassis.moveToPoint(23, 53, 1000, {.forwards = true}, false);  // intake 1st ring
-    pros::c::delay(80);                                           // intake 1st ring
+    chassis.moveToPoint(-29.8, 91, 1000); //move to ring stack
+    chassis.turnToPoint(0, 144-30, 800, {.forwards = false}, false); //turn goal towards corner
+      Clamp::disableAutoClamp(); //drop goal
+    chassis.turnToPoint(-48, 85, 800, {false, AngularDirection::CCW_COUNTERCLOCKWISE, 127, 0}, false); //turn towards ladder goal
     Intake::intake.move_voltage(0);
-    chassis.turnToPoint(55, 0, 1000, {.forwards = false}, false);  // turn to goal
-    chassis.moveToPoint(27.5, 40, 1000, {.forwards = false});
-    chassis.turnToPoint(48, 48, 1000, {.forwards = false});
-    chassis.moveToPoint(43, 48, 1000, {.forwards = false}, false);  // move to goal
-    Intake::intake.move_voltage(12000);                              // score ring
-    pros::c::delay(300);                                           // score 1st goal
-    chassis.turnToPoint(72, 24, 1000, {}, false); //turn to inverse stack
-    chassis.moveToPoint(60, 33, 1000, {.forwards = true}, false); //move to inverse stack
-    Clamp::disableAutoClamp();
-    chassis.moveToPoint(100,  0, 1000, {true, 50, 0}, false); //move through both rings
-    chassis.moveToPoint(72, 24, 1000, {.forwards = false}, true); //back up in front of the alliance stake
-    pros::c::delay(100);
-    Arm::setPosition(1);
-    chassis.turnToPoint(72, 0, 1000);
-    pros::c::delay(500);
-    Intake::intake.move_voltage(0);
-    chassis.moveToPoint(68.5, 16.5, 1000);
-    Arm::setPosition(3);
+    chassis.moveToPoint(-42.5, 87, 1000, {.forwards = false}); //move to goal
+    Clamp::enableAutoClamp();
+    pros::c::delay(500); //grab goal
+    Clamp::pneumatic.extend();
+    chassis.turnToPoint(-60, 144-0, 800); //turn to driver wall
+    chassis.moveToPoint(-60, 120, 1000); //move towards wall
+    Intake::intake.move_voltage(12000);
+    chassis.turnToPoint(0, 144-6, 800); //turn to preload
+    chassis.moveToPoint(-27, 128, 1000); //move to preload
+    pros::c::delay(1000); //score preload
+    chassis.turnToPoint(.5, 144, 1000); //turn to corner
+    chassis.moveToPoint(-2,  144-6, 1000, {true, 50, 0}, false); //move to corner
+     pros::c::delay(100); //score corner ring
+     chassis.moveToPoint(-24,  144-24, 1000, {false}, false); //back up from corner
+     //pros::c::delay(500); //score corner ring
+     // chassis.turnToPoint(-72, 144-72, 1000); // turn to ladder
+//Intake::intake.move_voltage(0);
+      //chassis.moveToPoint(-53, 82, 1000); //move to ladder
     //Arm::doinkler.extend();
     //pros::c::delay( 300);
     //chassis.moveToPoint(50, 32, 1000, {.forwards = false}, false);

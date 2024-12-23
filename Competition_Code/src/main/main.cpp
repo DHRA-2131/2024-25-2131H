@@ -75,6 +75,7 @@ void autonomous()
  */
 void opcontrol()
 {
+  Systems::Arm::setPosition(0);
   while (true)
   {
     // Call Tele-Operation of all systems
