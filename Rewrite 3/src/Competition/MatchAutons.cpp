@@ -134,7 +134,59 @@ void goalRush(bool isRedTeam)
 
 void soloWP(bool isRedTeam)
 {
-  if (isRedTeam) {}
+  if (isRedTeam)
+  {  // * Alliance
+    arm.setIndex(1);
+    chassis.setPose({-53.31250, 24 - 13.25 / 2, -90});
+    chassis.turnToPoint(-72 + 2, 1 + 1, 800);
+    chassis.moveToPoint(-60 + 2, 12 + 1, 2000, {.minSpeed = 10});
+    arm.setIndex(3);
+
+    // * Goal 1
+    chassis.moveToPoint(
+        -36.5 + 4, 30 + 3, 800, {.forwards = false, .maxSpeed = 40, .minSpeed = 30}, false);
+    chassis.moveToPoint(-36.5, 30, 2000, {.forwards = false, .maxSpeed = 80}, false);
+    arm.setIndex(0);
+    chassis.turnToPoint(-48 + 4, 48 + 3, 1000, {.forwards = false, .minSpeed = 30});
+    clamp.enableAutoClamp();
+    intake.enableSort(Intake::RingColors::BLUE);
+    chassis.moveToPoint(-46 + 4, 46 + 3, 300, {.forwards = false, .maxSpeed = 100, .minSpeed = 30});
+    chassis.moveToPoint(-46 + 4, 46 + 3, 1000, {.forwards = false, .maxSpeed = 60});
+
+    // ? Ring 1
+    intake.spin();
+    chassis.turnToPoint(-24 + 4, 46 + 3, 900, {.minSpeed = 40});
+    chassis.moveToPoint(-24 + 4, 46 + 3, 2000, {.maxSpeed = 80, .minSpeed = 20}, false);
+    pros::delay(300);
+
+    // ! Store Ring 2
+    chassis.turnToPoint(-60 + 12, 24, 1000, {.maxSpeed = 80, .minSpeed = 20}, false);
+    chassis.moveToPoint(-60 + 12, 24, 2000);
+    chassis.turnToPoint(-72 + 12, 24, 1000, {.minSpeed = 20}, false);
+    clamp.disableAutoClamp(true);
+    pros::delay(300);
+    chassis.moveToPoint(-93 + 8, 24, 250, {.maxSpeed = 60, .minSpeed = 40});
+    chassis.moveToPoint(-93 + 8, 24, 1700, {.maxSpeed = 40, .minSpeed = 10});
+
+    int time = 0;
+    pros::delay(800);
+    intake.stop();
+
+    // * Goal 2
+    chassis.turnToPoint(-99 + 14, 48, 1000, {.forwards = false, .minSpeed = 30});
+    clamp.enableAutoClamp();
+    chassis.moveToPoint(-99 + 14, 48, 1000, {false, 80});
+
+    // ? Ring 3
+    chassis.moveToPoint(-123 + 14, 49.5 - 2, 3000, {.maxSpeed = 80, .minSpeed = 20});
+    pros::delay(300);
+    intake.spin();
+    chassis.waitUntilDone();
+    pros::delay(400);
+
+    // * TOUCH BAR
+    chassis.moveToPoint(-86 + 8, 55 - 2, 3000, {.maxSpeed = 80});
+  }
   else
   {
     // * Alliance
@@ -247,18 +299,18 @@ void ringRush(bool isRedTeam)
     pros::delay(1500);
     intake.stop();
 
-    chassis.moveToPoint(-77, 11, 3000, {.minSpeed = 20});
-    chassis.turnToPoint(-72.5, 1, 1000, {}, false);
+    chassis.moveToPoint(-75, 13, 3000, {.minSpeed = 20});
+    chassis.turnToPoint(-70.5, 1, 1000, {}, false);
 
-    arm.setPosition(200);
+    arm.setPosition(205);
     pros::delay(800);
 
     // * Touch Bar
     chassis.moveToPoint(-96, 48, 2000, {.forwards = false, .minSpeed = 40});
     pros::delay(200);
     arm.setPosition(0);
-    chassis.turnToPoint(-89, 52, 1000, {.minSpeed = 20});
-    chassis.moveToPoint(-89, 52, 2000);
+    chassis.turnToPoint(-88, 52, 1000, {.minSpeed = 20});
+    chassis.moveToPoint(-88, 52, 2000);
   }
   else
   {

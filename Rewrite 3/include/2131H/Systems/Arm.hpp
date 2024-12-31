@@ -35,6 +35,7 @@ class Arm
                                                       //
   bool m_isMotorEncoder;                              // - Using a Rotational or Motor?
   bool m_isMoving;                                    // - Is the arm in motion
+  bool m_enabled;                                     // - Is the arm enabled?
                                                       //
   Utilities::ButtonDetector m_upBtnDetector;          // - State Checker for Controller behavior
   Utilities::ButtonDetector m_downBtnDetector;        // - State CHecker for Controller behavior
@@ -109,4 +110,7 @@ class Arm
    *
    */
   void teleOp();
+
+  void disable();
+  void enable();
 };

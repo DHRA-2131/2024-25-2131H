@@ -15,7 +15,6 @@
 
 #include "2131H/Utilities/Average.hpp"
 
-
 void Arm::setPosition(double newPosition) { m_targetPosition = newPosition; }
 double Arm::getPosition()
 {
@@ -71,14 +70,17 @@ Arm::Arm(
 
 void Arm::_update()
 {
-  // Calculate Error
-  double error = m_targetPosition - this->getPosition();
+  if (m_enabled)
+  {
+    // Calculate Error
+    double error = m_targetPosition - this->getPosition();
 
-  // Enforce Shortest Path
-  if (error < -240) { error += 360; }
+    // Enforce Shortest Path
+    if (error < -270) { error += 360; }
 
-  // Update PID and move by Output
-  m_pMotor->move_voltage(m_pid->update(error) * 100.0);
+    // Update PID and move by Output
+    m_pMotor->move_voltage(m_pid->update(error) * 100.0);
+  }
 }
 
 void Arm::teleOp()
@@ -91,3 +93,6 @@ void Arm::teleOp()
   if (m_upBtnDetector.changedToPressed()) { this->setIndex(this->getIndex() + 1); }
   else if (m_downBtnDetector.changedToPressed()) { this->setIndex(this->getIndex() - 1); }
 }
+
+void Arm::disable() { this->m_enabled = false; }
+void Arm::enable() { this->m_enabled = true; }

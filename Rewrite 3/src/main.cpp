@@ -12,7 +12,7 @@ void initialize()
   Console.useGUI(false);
 }
 
-void disabled() {}
+void disabled() { clamp.disableAutoClamp(true); }
 
 void competition_initialize() {}
 
