@@ -377,6 +377,113 @@ void ringRush(bool isRedTeam)
   chassis.waitUntilDone();
 }
 
+void safeRingSide(bool isRedTeam)
+{
+  if (isRedTeam)
+  {
+    // * Alliance
+    arm.enable();
+    arm.setIndex(1);
+    chassis.setPose({48 + 7.25, 24 - 7.75, 90});
+    chassis.turnToPoint(72 + 2, 1 - 1, 800);
+    chassis.moveToPoint(60, 12 - 1, 2000, {.minSpeed = 10});
+    arm.setIndex(3);
+
+    // * Goal 1
+    chassis.moveToPoint(
+        48, 30 + 3, 800, {.forwards = false, .maxSpeed = 40, .minSpeed = 30}, false);
+    chassis.moveToPoint(48, 30, 2000, {.forwards = false, .maxSpeed = 80}, false);
+    arm.setIndex(0);
+    chassis.turnToPoint(52, 51, 1000, {.forwards = false, .minSpeed = 30});
+    clamp.enableAutoClamp();
+    intake.enableSort(isRedTeam ? Intake::RingColors::RED : Intake::RingColors::BLUE);
+    chassis.moveToPoint(50, 49, 300, {.forwards = false, .maxSpeed = 100, .minSpeed = 30});
+    chassis.moveToPoint(50, 49, 1000, {.forwards = false, .maxSpeed = 60});
+
+    // ? Ring 1
+    chassis.moveToPoint(58, 33, 1200, {.minSpeed = 20});
+    chassis.turnToHeading(89, 1200, {.minSpeed = 20}, false);
+    doinkler.extend();
+    pros::delay(200);
+
+    // ? Ring 2
+    chassis.moveToPoint(49, 44, 2000, {.maxSpeed = 80, .minSpeed = 30});
+    chassis.turnToHeading(-120, 1200, {.minSpeed = 20}, false);
+    doinkler.retract();
+    pros::delay(300);
+    intake.spin();
+    chassis.turnToPoint(24, 44, 900, {.minSpeed = 40});
+    chassis.moveToPoint(24, 44, 2000, {.maxSpeed = 80, .minSpeed = 20});
+    chassis.swingToHeading(-160, lemlib::DriveSide::LEFT, 1200, {.minSpeed = 40});
+
+    // ? Ring 3 (Corner)
+    chassis.moveToPoint(12, 13, 500, {.minSpeed = 60});
+    chassis.moveToPoint(12, 13, 2000, {.maxSpeed = 30, .minSpeed = 20});
+    chassis.swingToHeading(-135, lemlib::DriveSide::RIGHT, 1300);
+
+    // * TOUCH BAR
+    chassis.moveToPoint(15, 15, 2500, {.forwards = false, .maxSpeed = 5});
+    chassis.moveToPoint(36, 48, 2000, {.forwards = false});
+    chassis.turnToPoint(48 + 13.435 + 1, 42 + 13.435, 2000, {.forwards = false});
+    chassis.moveToPoint(48 + 13.435 + 1, 42 + 13.435, 2000, {.forwards = false});
+  }
+  else
+  {  // * Alliance
+    arm.enable();
+    arm.setIndex(1);
+    chassis.setPose({-48 - 7.25, 24 - 7.75, -90});
+    chassis.turnToPoint(-72, 0, 800);
+    chassis.moveToPoint(-60, 12 - 1, 2000, {.minSpeed = 10});
+    arm.setIndex(3);
+    chassis.waitUntilDone();
+
+    // * Goal 1
+    chassis.moveToPoint(
+        -48, 30 + 3, 800, {.forwards = false, .maxSpeed = 40, .minSpeed = 30}, false);
+    chassis.moveToPoint(-48, 30, 2000, {.forwards = false, .maxSpeed = 80}, false);
+    arm.setIndex(0);
+    chassis.turnToPoint(-48, 42, 1000, {.forwards = false, .minSpeed = 30});
+    clamp.enableAutoClamp();
+    intake.enableSort(isRedTeam ? Intake::RingColors::BLUE : Intake::RingColors::RED);
+    chassis.moveToPoint(-48, 42, 300, {.forwards = false, .maxSpeed = 100, .minSpeed = 30});
+    chassis.moveToPoint(-48, 42, 1000, {.forwards = false, .maxSpeed = 60});
+
+    // ? Ring 1
+    chassis.moveToPoint(-56, 20, 1200, {.minSpeed = 20});
+    chassis.turnToHeading(-92, 1200, {.minSpeed = 20}, false);
+    doinkler.extend();
+    pros::delay(200);
+
+    // ? Ring 2
+    chassis.moveToPoint(-49, 44, 2000, {.maxSpeed = 80, .minSpeed = 30});
+    chassis.turnToHeading(60, 1200, {.minSpeed = 20}, false);
+    doinkler.retract();
+    pros::delay(300);
+    intake.spin();
+    chassis.turnToPoint(-24, 46, 900, {.minSpeed = 40});
+    chassis.moveToPoint(-24, 46, 2000, {.maxSpeed = 80, .minSpeed = 20});
+    chassis.swingToHeading(160, lemlib::DriveSide::RIGHT, 1200, {.minSpeed = 40});
+
+    // ? Ring 3 (Corner)
+    chassis.moveToPoint(-9, 13, 500, {.minSpeed = 60});
+    chassis.moveToPoint(-9, 13, 1000, {.maxSpeed = 30, .minSpeed = 20});
+    chassis.swingToHeading(125, lemlib::DriveSide::LEFT, 500, {}, false);
+
+    // * TOUCH BAR
+    pros::delay(500);
+    chassis.moveToPoint(-36, 48, 2500, {.forwards = false, .maxSpeed = 15});
+    chassis.moveToPoint(-36, 48, 2000, {.forwards = false});
+    chassis.turnToPoint(-48 - 13.435 - 1, 46 + 13.435, 2000, {.forwards = false});
+    chassis.moveToPoint(-48 - 13.435 - 1, 46 + 13.435, 2000, {.forwards = false});
+  }
+}
+
+void safeGoalSide(bool isRedTeam)
+{
+  if (isRedTeam) { safeRingSide(false); }
+  else { safeRingSide(true); }
+}
+
 void debug(bool isRedTeam) { chassis.setPose({72, 24, 0}); }
 
 }  // namespace Autonomous

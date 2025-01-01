@@ -28,18 +28,20 @@ std::vector<AutonCard> Cards = {
     {"Goal Rush", "", Autonomous::goalRush},
     {"Ring Rush", "", Autonomous::ringRush},
     {"Solo Win Point", "", Autonomous::soloWP},
+    {"Safe Goal Side", "", Autonomous::safeGoalSide},
+    {"Safe Ring Side", "", Autonomous::safeRingSide},
     {"(Finals) Goal Rush", "", Autonomous::goalRushFinals},
     {"(Finals) Ring Rush", "", Autonomous::ringRushFinals},
     {"Skills", "Skills Description", Autonomous::skills},
     {"Debug", "Debug Description", Autonomous::debug},
     {"No Auto", "WARNING: THIS WILL NOT RUN A AUTO", NULL_AUTON}};
-int index = 4;  // Index of card (Increments by +1 on initial)
+int index = 3;  // Index of card (Increments by +1 on initial)
 
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;
 ChangeDetector<bool> ScreenDetector;  // ChangeDetector for the screen touch status
 ChangeDetector<bool> TeamDetector;    // ChangeDetector for the team color status
-bool redTeam(true);                   // If current team color is red / blue
+bool redTeam(false);                  // If current team color is red / blue
 
 /**
  * @brief Update the brain screen. Must be called for Screen to be drawn.
