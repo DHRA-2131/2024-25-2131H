@@ -55,6 +55,7 @@ Arm::Arm(
       m_upBtnDetector(upButton, pController),
       m_downBtnDetector(downButton, pController),
       m_pid(armPID),
+      m_enabled(true),
       m_thread(
           [this]() {
             while (true)
@@ -79,7 +80,7 @@ void Arm::_update()
     if (error < -270) { error += 360; }
 
     // Update PID and move by Output
-    m_pMotor->move_voltage(m_pid->update(error) * 100.0);
+    m_pMotor->move_voltage(m_pid->update(error));
   }
 }
 
