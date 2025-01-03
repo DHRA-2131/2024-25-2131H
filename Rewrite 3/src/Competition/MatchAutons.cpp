@@ -219,7 +219,6 @@ void soloWP(bool isRedTeam)
     chassis.turnToPoint(72, 24, 1000, {.minSpeed = 20}, false);
     clamp.disableAutoClamp(true);
     pros::delay(300);
-    chassis.moveToPoint(93, 24, 250, {.maxSpeed = 70, .minSpeed = 60});
     chassis.moveToPoint(93, 24, 1700, {.maxSpeed = 40, .minSpeed = 10});
 
     int time = 0;
@@ -287,6 +286,7 @@ void ringRush(bool isRedTeam)
     chassis.moveToPoint(-91, 50, 1000, {.forwards = false, .maxSpeed = 60});
 
     // ? Rings 1, 2, 3
+    chassis.turnToPoint(-130, 46, 2200, {.minSpeed = 40});  // ! Changed
     chassis.moveToPoint(-130, 46, 2200, {.maxSpeed = 40});
     intake.enableSort(Intake::RingColors::BLUE);
     intake.spin();
@@ -298,14 +298,15 @@ void ringRush(bool isRedTeam)
     chassis.turnToPoint(-84, 20, 1000, {.maxSpeed = 80, .minSpeed = 10});
     chassis.moveToPoint(-84, 20, 3000, {.maxSpeed = 90});
     arm.setIndex(1);
-    pros::delay(1500);
-    intake.stop();
 
-    chassis.moveToPoint(-75, 13, 3000, {.minSpeed = 20});
-    chassis.turnToPoint(-70.5, 1, 1000, {}, false);
+    chassis.moveToPoint(-70, 13.9, 3000, {.minSpeed = 20});  // ! Changed
+    chassis.turnToHeading(-180, 1000, {});                   // ! Changed
+    pros::delay(800);
+    intake.stop();
+    chassis.waitUntilDone();
 
     arm.setPosition(205);
-    pros::delay(800);
+    pros::delay(1000);
 
     // * Touch Bar
     chassis.moveToPoint(-96, 48, 2000, {.forwards = false, .minSpeed = 40});
@@ -319,8 +320,8 @@ void ringRush(bool isRedTeam)
     chassis.setPose({97.8, 21.67, 22});  // Set the robot's position
     rush.extend();                       // Extend the rush mechanism
     chassis.moveToPoint(
-        chassis.getPose().x + std::sin(chassis.getPose(true).theta) * 41.5,
-        chassis.getPose().y + std::cos(chassis.getPose(true).theta) * 41.5,
+        chassis.getPose().x + std::sin(chassis.getPose(true).theta) * 42,
+        chassis.getPose().y + std::cos(chassis.getPose(true).theta) * 42,
         2000,
         {},
         false);  // Move to the ring stack
@@ -364,7 +365,7 @@ void ringRush(bool isRedTeam)
     intake.stop();
 
     chassis.moveToPoint(83.3, 16.5, 3000, {.minSpeed = 10});
-    chassis.turnToPoint(76.3, 1, 1000, {.minSpeed = 5}, false);
+    chassis.turnToPoint(75.3, 1, 1000, {.minSpeed = 5}, false);
 
     arm.setPosition(200);
     pros::delay(800);
@@ -398,12 +399,12 @@ void safeRingSide(bool isRedTeam)
     arm.setIndex(0);
     chassis.turnToPoint(52, 51, 1000, {.forwards = false, .minSpeed = 30});
     clamp.enableAutoClamp();
-    intake.enableSort(isRedTeam ? Intake::RingColors::RED : Intake::RingColors::BLUE);
+    // intake.enableSort(isRedTeam ? Intake::RingColors::BLUE : Intake::RingColors::RED);
     chassis.moveToPoint(50, 49, 300, {.forwards = false, .maxSpeed = 100, .minSpeed = 30});
     chassis.moveToPoint(50, 49, 1000, {.forwards = false, .maxSpeed = 60});
 
     // ? Ring 1
-    chassis.moveToPoint(58, 33, 1200, {.minSpeed = 20});
+    chassis.moveToPoint(59, 33, 1200, {.minSpeed = 20});
     chassis.turnToHeading(89, 1200, {.minSpeed = 20}, false);
     doinkler.extend();
     pros::delay(200);
@@ -415,18 +416,18 @@ void safeRingSide(bool isRedTeam)
     pros::delay(300);
     intake.spin();
     chassis.turnToPoint(24, 44, 900, {.minSpeed = 40});
-    chassis.moveToPoint(24, 44, 2000, {.maxSpeed = 80, .minSpeed = 20});
+    chassis.moveToPoint(24, 44, 2000, {.maxSpeed = 75, .minSpeed = 20});
     chassis.swingToHeading(-160, lemlib::DriveSide::LEFT, 1200, {.minSpeed = 40});
 
-    // ? Ring 3 (Corner)
-    chassis.moveToPoint(12, 13, 500, {.minSpeed = 60});
-    chassis.moveToPoint(12, 13, 2000, {.maxSpeed = 30, .minSpeed = 20});
-    chassis.swingToHeading(-135, lemlib::DriveSide::RIGHT, 1300);
+    // // ? Ring 3 (Corner)
+    // chassis.moveToPoint(12, 13, 500, {.minSpeed = 60});
+    // chassis.moveToPoint(12, 13, 2000, {.maxSpeed = 30, .minSpeed = 20});
+    // chassis.swingToHeading(-125, lemlib::DriveSide::RIGHT, 1300);
 
     // * TOUCH BAR
-    chassis.moveToPoint(15, 15, 2500, {.forwards = false, .maxSpeed = 5});
-    chassis.moveToPoint(36, 48, 2000, {.forwards = false});
-    chassis.turnToPoint(48 + 13.435 + 1, 42 + 13.435, 2000, {.forwards = false});
+    // chassis.moveToPoint(15, 15, 2500, {.forwards = false, .maxSpeed = 5});
+    // chassis.moveToPoint(36, 48, 2000, {.forwards = false});
+    chassis.turnToPoint(48 + 13.435 + 1, 42 + 13.435, 2000, {.forwards = false, .minSpeed = 20});
     chassis.moveToPoint(48 + 13.435 + 1, 42 + 13.435, 2000, {.forwards = false});
   }
   else
@@ -441,14 +442,14 @@ void safeRingSide(bool isRedTeam)
 
     // * Goal 1
     chassis.moveToPoint(
-        -48, 30 + 3, 800, {.forwards = false, .maxSpeed = 40, .minSpeed = 30}, false);
-    chassis.moveToPoint(-48, 30, 2000, {.forwards = false, .maxSpeed = 80}, false);
+        -46, 30 + 3, 800, {.forwards = false, .maxSpeed = 40, .minSpeed = 30}, false);
+    chassis.moveToPoint(-46, 30, 2000, {.forwards = false, .maxSpeed = 80}, false);
     arm.setIndex(0);
-    chassis.turnToPoint(-48, 42, 1000, {.forwards = false, .minSpeed = 30});
+    chassis.turnToPoint(-46, 42, 1000, {.forwards = false, .minSpeed = 30});
     clamp.enableAutoClamp();
-    intake.enableSort(isRedTeam ? Intake::RingColors::BLUE : Intake::RingColors::RED);
-    chassis.moveToPoint(-48, 42, 300, {.forwards = false, .maxSpeed = 100, .minSpeed = 30});
-    chassis.moveToPoint(-48, 42, 1000, {.forwards = false, .maxSpeed = 60});
+    // intake.enableSort(isRedTeam ? Intake::RingColors::BLUE : Intake::RingColors::RED);
+    chassis.moveToPoint(-46, 42, 300, {.forwards = false, .maxSpeed = 100, .minSpeed = 30});
+    chassis.moveToPoint(-46, 42, 1000, {.forwards = false, .maxSpeed = 60});
 
     // ? Ring 1
     chassis.moveToPoint(-56, 20, 1200, {.minSpeed = 20});
@@ -466,16 +467,16 @@ void safeRingSide(bool isRedTeam)
     chassis.moveToPoint(-24, 46, 2000, {.maxSpeed = 80, .minSpeed = 20});
     chassis.swingToHeading(160, lemlib::DriveSide::RIGHT, 1200, {.minSpeed = 40});
 
-    // ? Ring 3 (Corner)
-    chassis.moveToPoint(-9, 13, 500, {.minSpeed = 60});
-    chassis.moveToPoint(-9, 13, 1000, {.maxSpeed = 30, .minSpeed = 20});
-    chassis.swingToHeading(125, lemlib::DriveSide::LEFT, 500, {}, false);
+    // // ? Ring 3 (Corner)
+    // chassis.moveToPoint(-9, 13, 500, {.minSpeed = 60});
+    // chassis.moveToPoint(-9, 13, 1000, {.maxSpeed = 30, .minSpeed = 20});
+    // chassis.swingToHeading(125, lemlib::DriveSide::LEFT, 500, {}, false);
 
     // * TOUCH BAR
-    pros::delay(500);
-    chassis.moveToPoint(-36, 48, 2500, {.forwards = false, .maxSpeed = 15});
-    chassis.moveToPoint(-36, 48, 2000, {.forwards = false});
-    chassis.turnToPoint(-48 - 13.435 - 1, 46 + 13.435, 2000, {.forwards = false});
+    // pros::delay(500);
+    // chassis.moveToPoint(-36, 48, 2500, {.forwards = false, .maxSpeed = 15});
+    // chassis.moveToPoint(-36, 48, 2000, {.forwards = false});
+    chassis.turnToPoint(-48 - 13.435 - 1, 46 + 13.435, 2000, {.forwards = false, .minSpeed = 20});
     chassis.moveToPoint(-48 - 13.435 - 1, 46 + 13.435, 2000, {.forwards = false});
   }
 }
