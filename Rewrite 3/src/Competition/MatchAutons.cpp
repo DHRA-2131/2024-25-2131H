@@ -169,8 +169,8 @@ void soloWP(bool isRedTeam)
     chassis.moveToPoint(-93 + 8, 24, 1700, {.maxSpeed = 40, .minSpeed = 10});
 
     int time = 0;
-    pros::delay(800);
-    intake.stop();
+    pros::delay(900);
+    intake.spin(2000);
 
     // * Goal 2
     chassis.turnToPoint(-99 + 14, 48, 1000, {.forwards = false, .minSpeed = 30});
@@ -178,13 +178,14 @@ void soloWP(bool isRedTeam)
     chassis.moveToPoint(-99 + 14, 48, 1000, {false, 80});
 
     // ? Ring 3
-    chassis.moveToPoint(-123 + 14, 49.5 - 2, 3000, {.maxSpeed = 80, .minSpeed = 20});
+    chassis.moveToPoint(-123 + 14, 49.5 - 2, 3000, {.minSpeed = 20});
     pros::delay(300);
     intake.spin();
     chassis.waitUntilDone();
     pros::delay(400);
 
     // * TOUCH BAR
+    chassis.turnToPoint(-86 + 8, 55 - 2, 3000, {.minSpeed = 20});
     chassis.moveToPoint(-86 + 8, 55 - 2, 3000, {.maxSpeed = 80});
   }
   else
@@ -227,7 +228,7 @@ void soloWP(bool isRedTeam)
       time += 10;
       pros::delay(10);
     }
-    intake.stop();
+    intake.spin(2000);
 
     // * Goal 2
     chassis.turnToPoint(99, 48, 1000, {false});
@@ -235,13 +236,14 @@ void soloWP(bool isRedTeam)
     chassis.moveToPoint(99, 48, 1000, {false, 80});
 
     // ? Ring 3
-    chassis.moveToPoint(123, 49.5, 3000, {.maxSpeed = 80, .minSpeed = 20});
+    chassis.moveToPoint(123, 49.5, 3000, {.minSpeed = 20});
     pros::delay(300);
     intake.spin();
     chassis.waitUntilDone();
     pros::delay(400);
 
     // * TOUCH BAR
+    chassis.turnToPoint(86, 55, 3000, {.minSpeed = 20});
     chassis.moveToPoint(86, 55, 3000, {.maxSpeed = 80});
   }
   chassis.waitUntilDone();

@@ -91,8 +91,14 @@ void Arm::teleOp()
   m_downBtnDetector.update();
 
   // Update macro indexes
-  if (m_upBtnDetector.changedToPressed()) { this->setIndex(this->getIndex() + 1); }
+  if (m_upBtnDetector.changedToPressed())
+  {
+    this->setIndex(this->getIndex() + 1);
+    if (m_macroIndex == 1) { this->enable(); }
+  }
   else if (m_downBtnDetector.changedToPressed()) { this->setIndex(this->getIndex() - 1); }
+
+  if (this->getPosition() < 2 && m_macroIndex == 0) { this->disable(); }
 }
 
 void Arm::disable() { this->m_enabled = false; }

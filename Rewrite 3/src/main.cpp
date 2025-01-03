@@ -1,5 +1,6 @@
 #include "main.h"
 
+#include "2131H/Systems/Arm.hpp"
 #include "2131H/Systems/Intake.hpp"
 #include "2131H/Systems/Screen.hpp"
 #include "Competition/RobotConfig.hpp"
@@ -21,6 +22,7 @@ void autonomous() { Screen::getAuton()->getAutonCB()(Screen::isRedTeam()); }
 void opcontrol()
 {
   intake.disableSort();
+  arm.enable();
 
   while (true)
   {
