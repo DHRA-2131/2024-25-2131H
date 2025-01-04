@@ -23,14 +23,14 @@ void goalRush(bool isRedTeam)
         144 - 11.5,
         50,
         2000,              //
-        {true, 100, 40});  // Go next to the ring stack
+        {true, 100, 80});  // Go next to the ring stack
 
     chassis.swingToPoint(
         144 - 25.5,
         72,
         lemlib::DriveSide::LEFT,
         2000,               //
-        {.minSpeed = 30});  // Point towards the goal
+        {.minSpeed = 60});  // Point towards the goal
 
     chassis.moveToPoint(144 - 17, 57.5, 1000);  // Move to the goal
     arm.setPosition(200);                       // Score preload
@@ -43,7 +43,7 @@ void goalRush(bool isRedTeam)
     pros::delay(400);
     arm.setPosition(250);  // Fully score the arm
     pros::delay(800);
-    arm.setPosition(55);  // Reset Arm
+    arm.setPosition(90);  // Reset Arm
     rush.retract();       // Reset Rush
     pros::delay(400);
 
@@ -59,19 +59,19 @@ void goalRush(bool isRedTeam)
     chassis.turnToPoint(144 - 24, 43, 1000, {.minSpeed = 20});  // Grab Ring
     chassis.moveToPoint(144 - 24, 43, 1000, {.maxSpeed = 110, .minSpeed = 20});
 
-    chassis.moveToPoint(144 - 48, 48, 1000, {false, 60});
-    chassis.turnToPoint(144 - 0, 0, 800);
-    chassis.moveToPoint(144 - 9.369, 9.369 - 1.2, 800, {.minSpeed = 40}, false);
-    chassis.moveToPoint(144 - 9.369, 9.369 - 1.2, 1000, {.maxSpeed = 40}, false);
-    chassis.swingToHeading(90, lemlib::DriveSide::LEFT, 700, {.minSpeed = 80});
-    pros::delay(700);
+    // chassis.moveToPoint(144 - 48, 48, 1000, {false, 60});
+    // chassis.turnToPoint(144 - 0, 0, 800);
+    // chassis.moveToPoint(144 - 9.369, 9.369 - 1.2, 800, {.minSpeed = 40}, false);
+    // chassis.moveToPoint(144 - 9.369, 9.369 - 1.2, 1000, {.maxSpeed = 40}, false);
+    // chassis.swingToHeading(90, lemlib::DriveSide::LEFT, 700, {.minSpeed = 80});
+    // pros::delay(700);
 
-    chassis.setPose(144 - 10, 12, chassis.getPose().theta);
-    chassis.moveToPoint(144 - 24, 24, 800, {.forwards = false, .maxSpeed = 40}, false);
-    arm.setPosition(0);  // Reset Arm
-    chassis.turnToPoint(144 - 57, 59, 2000, {.maxSpeed = 50, .minSpeed = 30});
-    chassis.moveToPoint(144 - 57, 59, 2000, {}, false);
-    chassis.waitUntilDone();
+    // chassis.setPose(144 - 10, 12, chassis.getPose().theta);
+    // chassis.moveToPoint(144 - 24, 24, 800, {.forwards = false, .maxSpeed = 40}, false);
+    // arm.setPosition(0);  // Reset Arm
+    // chassis.turnToPoint(144 - 57, 59, 2000, {.maxSpeed = 50, .minSpeed = 30});
+    // chassis.moveToPoint(144 - 57, 59, 2000, {}, false);
+    // chassis.waitUntilDone();
   }
   else
   {
@@ -117,19 +117,19 @@ void goalRush(bool isRedTeam)
     chassis.turnToPoint(24, 46, 1000, {.minSpeed = 20});  // Grab Ring
     chassis.moveToPoint(24, 46, 1000, {.maxSpeed = 110});
 
-    chassis.moveToPoint(48, 48, 1000, {false, 80});
-    chassis.turnToPoint(0, 0, 800);
-    chassis.moveToPoint(9.369, 9.369, 800, {.minSpeed = 40}, false);
-    chassis.moveToPoint(9.369, 9.369, 1000, {.maxSpeed = 40}, false);
-    chassis.swingToHeading(270, lemlib::DriveSide::RIGHT, 700, {.minSpeed = 80});
-    pros::delay(700);
+    // chassis.moveToPoint(48, 48, 1000, {false, 80});
+    // chassis.turnToPoint(0, 0, 800);
+    // chassis.moveToPoint(9.369, 9.369, 800, {.minSpeed = 40}, false);
+    // chassis.moveToPoint(9.369, 9.369, 1000, {.maxSpeed = 40}, false);
+    // chassis.swingToHeading(270, lemlib::DriveSide::RIGHT, 700, {.minSpeed = 80});
+    // pros::delay(700);
 
-    chassis.setPose(12, 12, chassis.getPose().theta);
-    chassis.moveToPoint(24, 24, 800, {.forwards = false, .maxSpeed = 50});
-    arm.setPosition(0);  // Reset Arm
-    chassis.turnToPoint(60, 60, 2000, {.maxSpeed = 80, .minSpeed = 30});
-    chassis.moveToPoint(60, 60, 2000, {}, false);
-    chassis.waitUntilDone();
+    // chassis.setPose(12, 12, chassis.getPose().theta);
+    // chassis.moveToPoint(24, 24, 800, {.forwards = false, .maxSpeed = 50});
+    // arm.setPosition(0);  // Reset Arm
+    // chassis.turnToPoint(60, 60, 2000, {.maxSpeed = 80, .minSpeed = 30});
+    // chassis.moveToPoint(60, 60, 2000, {}, false);
+    // chassis.waitUntilDone();
   }
 }
 
