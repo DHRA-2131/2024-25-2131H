@@ -13,6 +13,7 @@ namespace Autonomous
 
 void goalRush(bool isRedTeam)
 {
+  arm.enable();
   if (isRedTeam)
   {
     arm.setIndex(1);                         // Set the arm to the load position
