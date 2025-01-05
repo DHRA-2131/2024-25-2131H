@@ -39,7 +39,7 @@ void skills(bool isRedTeam)
   chassis.moveToPoint(120, 48, 1000, {.minSpeed = 60});
 
   // ? Ring 4 & 5
-  chassis.moveToPoint(120, 14.5, 1000, {.maxSpeed = 60});
+  chassis.moveToPoint(120, 12, 1000, {.maxSpeed = 60});
 
   // ? Ring 6 & CORNER (Shimmy shimmy)
   chassis.swingToHeading(135, lemlib::DriveSide::RIGHT, 2000, {.minSpeed = 60});
