@@ -39,17 +39,20 @@ Intake::Intake(
     pros::MotorGroup* pMotors,
     pros::Optical* pOptical,
     pros::Distance* pDistance,
-    pros::adi::Pneumatics* pPneumatics,
+    pros::adi::Pneumatics* pSort,
+    pros::adi::Pneumatics* pLift,
     std::int32_t sortDistance,
     pros::controller_digital_e_t intakeBtn,
     pros::controller_digital_e_t outtakeBtn,
+    pros::controller_digital_e_t liftBtn,
     pros::Controller* pController,
     double redBound,
     double blueBound)
     : m_pMotors(pMotors),
       m_pOptical(pOptical),
       m_pDistance(pDistance),
-      m_pPneumatics(pPneumatics),
+      m_pSort(pSort),
+      m_pLift(pLift),
       m_sortDistance(sortDistance),
       m_redBound(redBound),
       m_blueBound(blueBound),
@@ -59,6 +62,7 @@ Intake::Intake(
       m_ringStateDetector(),
       intakeButton(intakeBtn, pController),
       outtakeButton(outtakeBtn, pController),
+      liftButton(liftBtn, pController),
       m_thread(
           [this]() {
             while (true)
@@ -103,7 +107,7 @@ void Intake::_update()
     if (m_ringStateDetector.getChanged() && m_ringStateDetector.getValue())
     {
       // If sort is active and color is wrong, remove ring
-      if (m_sortEnabled && this->getCurrentRingColor() == m_sortColor) { m_pPneumatics->extend(); }
+      if (m_sortEnabled && this->getCurrentRingColor() == m_sortColor) { m_pSort->extend(); }
       if (m_possession.size() > 0)
       {
         m_possession.erase(m_possession.begin());  // Remove ring from count
@@ -113,10 +117,10 @@ void Intake::_update()
     else if (m_ringStateDetector.getChanged() && !m_ringStateDetector.getValue())
     {
       // if the pneumatic is extened, retract it
-      if (m_pPneumatics->is_extended())
+      if (m_pSort->is_extended())
       {
         pros::delay(100);
-        m_pPneumatics->retract();
+        m_pSort->retract();
       }
     }
   }
@@ -142,6 +146,7 @@ void Intake::teleOp()
 {
   intakeButton.update();
   outtakeButton.update();
+  liftButton.update();
 
   // If intake button is pressed, intake
   if (intakeButton.isPressing()) { this->spin(12000); }
@@ -149,6 +154,16 @@ void Intake::teleOp()
   else if (outtakeButton.isPressing()) { this->spin(-12000); }
   // Else, stop the intake
   else { this->stop(); }
+
+  if (liftButton.changedToPressed())
+  {
+    std::cout << "TOGGLE" << std::endl;
+    this->toggleLift();
+  }
 }
 
 void Intake::init() { m_initialized = true; }
+void Intake::lift() { m_pLift->extend(); }
+void Intake::drop() { m_pLift->retract(); }
+void Intake::toggleLift() { m_pLift->toggle(); }
+bool Intake::isLifted() { return m_pLift->is_extended(); }

@@ -37,7 +37,8 @@ class Intake
   std::shared_ptr<pros::v5::MotorGroup> m_pMotors;
   std::shared_ptr<pros::v5::Optical> m_pOptical;
   std::shared_ptr<pros::v5::Distance> m_pDistance;
-  std::shared_ptr<pros::adi::Pneumatics> m_pPneumatics;
+  std::shared_ptr<pros::adi::Pneumatics> m_pSort;
+  std::shared_ptr<pros::adi::Pneumatics> m_pLift;
 
   std::int32_t m_sortDistance;
   double m_redBound;
@@ -52,6 +53,8 @@ class Intake
 
   Utilities::ButtonDetector intakeButton;
   Utilities::ButtonDetector outtakeButton;
+  Utilities::ButtonDetector liftButton;
+
   pros::Task m_thread;
   bool m_initialized = false;
 
@@ -69,10 +72,12 @@ class Intake
       pros::MotorGroup* pMotors,
       pros::Optical* pOptical,
       pros::Distance* pDistance,
-      pros::adi::Pneumatics* pPneumatics,
+      pros::adi::Pneumatics* pSort,
+      pros::adi::Pneumatics* pLift,
       std::int32_t sortDistance,
       pros::controller_digital_e_t intakeBtn,
       pros::controller_digital_e_t outtakeBtn,
+      pros::controller_digital_e_t liftBtn,
       pros::Controller* pController,
       double redBound = 30,
       double blueBound = 120);
@@ -82,9 +87,11 @@ class Intake
 
  public:  // *** ==== Public Methods ==== *** //
   void spin(double voltage = 12000.0);
-
   void stop();
-
   void teleOp();
   void init();
+  void lift();
+  void drop();
+  void toggleLift();
+  bool isLifted();
 };

@@ -52,7 +52,9 @@ namespace IntakeConfig
 pros::MotorGroup motors({1, 4}, pros::MotorGears::blue, pros::v5::MotorEncoderUnits::deg);
 pros::Optical optical(11);
 pros::Distance distance(13);
-pros::adi::Pneumatics pneumatic('G', false, false);
+pros::adi::Pneumatics sort('G', false, false);
+pros::adi::Pneumatics lift('F', false, false);
+
 }  // namespace IntakeConfig
 
 namespace ArmConfig
@@ -109,10 +111,12 @@ Intake intake(
     &IntakeConfig::motors,
     &IntakeConfig::optical,
     &IntakeConfig::distance,
-    &IntakeConfig::pneumatic,
+    &IntakeConfig::sort,
+    &IntakeConfig::lift,
     30,
     pros::E_CONTROLLER_DIGITAL_L1,
     pros::E_CONTROLLER_DIGITAL_L2,
+    pros::E_CONTROLLER_DIGITAL_RIGHT,
     &primary,
     35,
     160);
