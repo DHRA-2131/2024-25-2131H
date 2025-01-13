@@ -22,11 +22,12 @@ void autonomous() { Screen::getAuton()->getAutonCB()(Screen::isRedTeam()); }
 void opcontrol()
 {
   intake.disableSort();
+  intake.drop();
   arm.enable();
 
   while (true)
   {
-    if (Screen::getAuton()->getName() == "Skills" && arm.getIndex() == 2) { intake.lift(); }
+    if (/*Screen::getAuton()->getName() == "Skills" && */ arm.getIndex() == 2) { intake.lift(); }
     else if (intake.isLifted()) { intake.drop(); }
 
     // System TeleOps

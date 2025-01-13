@@ -11,7 +11,7 @@ namespace Autonomous
 {
 void skills(bool isRedTeam)
 {
-  arm.disable();
+  arm.setPosition(-10);  
   // * Alliance stake
   intake.spin();
   chassis.setPose({72, 14.25, 0});

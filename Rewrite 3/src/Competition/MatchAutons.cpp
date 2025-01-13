@@ -20,7 +20,7 @@ void goalRush(bool isRedTeam)
     chassis.setPose({116 - 13.25 / 2, 19.5, 0});
     doinkler.extend();
     chassis.moveToPoint(chassis.getPose().x + 2, chassis.getPose().y + 33, 1020, {});
-    pros::delay(800);
+    pros::delay(810);
     doinkler.retract();
     chassis.waitUntilDone();
 
@@ -57,15 +57,19 @@ void goalRush(bool isRedTeam)
 
     // ? Ring 1
     chassis.swingToHeading(
-        25,
+        90,                       // * Changed
         lemlib::DriveSide::LEFT,  //
         2000,
         {lemlib::AngularDirection::CCW_COUNTERCLOCKWISE});
 
     // * Corner
-    chassis.moveToPoint(128, 27, 2000, {.forwards = false, .minSpeed = 40});
-    chassis.swingToHeading(110, lemlib::DriveSide::LEFT, 2000, {.minSpeed = 30});
+    chassis.moveToPoint(128, 24, 2000, {.forwards = false, .minSpeed = 40});
+    chassis.swingToHeading(135, lemlib::DriveSide::LEFT, 2000, {.minSpeed = 30});
+    chassis.waitUntilDone();
     chassis.moveToPoint(144, 0, 2000, {.maxSpeed = 50});
+    intake.spin(-4000);
+    pros::delay(800);
+    intake.spin();
     chassis.moveToPoint(
         chassis.getPose().x, chassis.getPose().y + 24, 1000, {.forwards = false, .maxSpeed = 70});
   }

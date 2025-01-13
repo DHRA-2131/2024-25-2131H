@@ -30,12 +30,11 @@ std::vector<AutonCard> Cards = {
     {"Solo Win Point", "", Autonomous::soloWP},
     {"Safe Goal Side", "", Autonomous::safeGoalSide},
     {"Safe Ring Side", "", Autonomous::safeRingSide},
-    {"(Finals) Goal Rush", "", Autonomous::goalRushFinals},
-    {"(Finals) Ring Rush", "", Autonomous::ringRushFinals},
+    {"Ring Side (Finals)", "", Autonomous::ringSideFinals},
     {"Skills", "Skills Description", Autonomous::skills},
     {"Debug", "Debug Description", Autonomous::debug},
     {"No Auto", "WARNING: THIS WILL NOT RUN A AUTO", NULL_AUTON}};
-int index = 2;  // Index of card (Increments by +1 on initial)
+int index = -1;  // Index of card (Increments by +1 on initial)
 
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;
