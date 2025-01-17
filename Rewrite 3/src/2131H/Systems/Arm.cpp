@@ -24,7 +24,7 @@ double Arm::getPosition()
     return Utilities::avg(m_pMotor->get_position_all()) * m_ratio;
   }
   // Using a rotational sensor for position
-  else { return std::fmod(m_pRotational->get_position() / 100.0 * m_ratio, 360); }
+  else { return std::fmod((m_pRotational->get_position() / 100.0) * m_ratio, 360); }
 }
 
 void Arm::setIndex(size_t newIndex)
@@ -74,13 +74,14 @@ void Arm::_update()
   if (m_enabled)
   {
     // Calculate Error
-    double error = m_targetPosition - this->getPosition();
+    double error = (m_targetPosition - this->getPosition());
 
     // Enforce Shortest Path
     if (error < -270) { error += 360; }
+    std::cout << error << std::endl;
 
     // Update PID and move by Output
-    m_pMotor->move_voltage(m_pid->update(error));
+    m_pMotor->move_voltage(m_pid->update(error * 100.0));
   }
 }
 
@@ -98,7 +99,7 @@ void Arm::teleOp()
   }
   else if (m_downBtnDetector.changedToPressed()) { this->setIndex(this->getIndex() - 1); }
 
-  if (this->getPosition() < 2 && m_macroIndex == 0) { this->disable(); }
+  // if (m_macroIndex == 0) { this->setPosition(-10); }
 }
 
 void Arm::disable() { this->m_enabled = false; }

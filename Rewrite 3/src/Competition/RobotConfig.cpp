@@ -95,13 +95,13 @@ pros::adi::DigitalIn cycleAuton('E');
  * ------------------------------------------------------------------------------------------
  */
 
-lemlib::PID armPID(150, 0.005, 0, 6, false);
+lemlib::PID armPID(3., 0.0, 2, 0, false);
 
 Arm arm(
     &ArmConfig::motors,
     &ArmConfig::rotation,
-    1,
-    {0, 17, 145, 190, 225},
+    1.0,
+    {0, 27, 150, 190, 225},
     pros::E_CONTROLLER_DIGITAL_R1,
     pros::E_CONTROLLER_DIGITAL_R2,
     &primary,
