@@ -32,6 +32,7 @@ class Clamp
   pros ::Controller* m_pController;                     // - Pointer to Controller
                                                         //
   pros::Task m_thread;                                  // - Runs _update() in a thread
+  float const m_indentDistance;
 
  public:  // *** ==== Getters / Setters ==== *** //
   /**
@@ -89,6 +90,7 @@ class Clamp
    *
    * @param clampPort Clamp port 'a' - 'h'
    * @param distancePort Distance port 0 - 21
+   * @param goalIndent Sensor distance from edge of robot in inches
    * @param triggerDistance Distance measured by distance sensor before clamping
    * @param button Button for toggling the clamp
    * @param pController Controller for clamp Ex: &primary
@@ -98,6 +100,7 @@ class Clamp
       pros::adi::Pneumatics* pPneumatic,
       pros::Distance* pDistance,
       int triggerDistance,
+      float goalIndent,
       pros::controller_digital_e_t button,
       pros::Controller* pController,
       bool autoClampEnabled = false);
@@ -115,4 +118,5 @@ class Clamp
    *
    */
   void teleOp();
+  const float getGoalIndent();
 };

@@ -33,6 +33,7 @@ Clamp::Clamp(
     pros::adi::Pneumatics* pPneumatic,
     pros::Distance* pDistance,
     int triggerDistance,
+    float goalIndent,
     pros::controller_digital_e_t button,
     pros::Controller* pController,
     bool autoClampEnabled)
@@ -43,6 +44,7 @@ Clamp::Clamp(
       m_pController(pController),
       m_triggerDistance(triggerDistance),
       toggleBtnDetector(button, pController),
+      m_indentDistance(goalIndent),
       m_thread(
           [this]() {
             while (true)
@@ -78,3 +80,5 @@ void Clamp::teleOp()
     if (this->isClamped()) { m_pController->rumble("."); }
   }
 }
+
+const float Clamp::getGoalIndent() { return m_indentDistance; }

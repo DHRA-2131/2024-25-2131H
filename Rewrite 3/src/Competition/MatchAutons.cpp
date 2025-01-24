@@ -480,6 +480,9 @@ void safeGoalSide(bool isRedTeam)
   else { safeRingSide(true); }
 }
 
-void debug(bool isRedTeam) { chassis.setPose({72, 24, 0}); }
+void debug(bool isRedTeam)
+{
+  chassis.setPose({0, 0, 0});
+}
 
 }  // namespace Autonomous

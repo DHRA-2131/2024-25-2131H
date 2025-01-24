@@ -4,8 +4,10 @@
 #include "2131H/Systems/Intake.hpp"
 #include "2131H/Systems/Other.hpp"
 #include "2131H/Utilities/Console.hpp"
-#include "lemlib/chassis/chassis.hpp"
+// #include "lemlib/chassis/chassis.hpp"
+#include "2131H/Systems/Chassis.hpp"
 #include "pros/adi.hpp"
+
 
 extern Arm arm;
 extern Intake intake;
@@ -18,4 +20,4 @@ extern pros::adi::DigitalIn teamColor;
 extern pros::adi::DigitalIn cycleAuton;
 
 extern pros::Controller primary;
-extern lemlib::Chassis chassis;
+extern Chassis chassis;

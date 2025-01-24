@@ -40,39 +40,55 @@
  * -------------------------------------------------------------------------------------------
  */
 
+/** // ROBOT 6 Ports
+    // LD -5 -6 -7
+    // RD 8 9 10
+    // Inertial 21
+    // Intake 1 4
+    // In Op 11
+    // In Dist 13
+    // In Sort G
+    // In Lift F
+    // Arm 2
+    // Arm Rot -3
+    // Clamp Pneu H
+    // Clamp Dist 19
+    // Team Cycle D
+    // Cycle Auto E
+*/
+
 pros::MotorGroup leftDrive(
-    {-5, -6, -7}, pros::v5::MotorGears::blue, pros::v5::MotorEncoderUnits::degrees);
+    {-15, -16, -20}, pros::v5::MotorGears::blue, pros::v5::MotorEncoderUnits::degrees);
 pros::MotorGroup rightDrive(
-    {8, 9, 10}, pros::v5::MotorGears::blue, pros::v5::MotorEncoderUnits::degrees);
+    {17, 18, 19}, pros::v5::MotorGears::blue, pros::v5::MotorEncoderUnits::degrees);
 
 pros::Imu inertial(21);
 
 namespace IntakeConfig
 {
-pros::MotorGroup motors({1, 4}, pros::MotorGears::blue, pros::v5::MotorEncoderUnits::deg);
-pros::Optical optical(11);
-pros::Distance distance(13);
-pros::adi::Pneumatics sort('G', false, false);
+pros::MotorGroup motors({-9, -14}, pros::MotorGears::blue, pros::v5::MotorEncoderUnits::deg);
+pros::Optical optical(2);
+pros::Distance distance(1);
+pros::adi::Pneumatics sort('B', false, false);
 pros::adi::Pneumatics lift('F', false, false);
-
 }  // namespace IntakeConfig
 
 namespace ArmConfig
 {
-pros::MotorGroup motors({2}, pros::MotorGears::green, pros::v5::MotorEncoderUnits::deg);
-pros::Rotation rotation(-3);
+pros::MotorGroup motors({12}, pros::MotorGears::green, pros::v5::MotorEncoderUnits::deg);
+pros::Rotation rotation(-11);
 }  // namespace ArmConfig
 
 namespace ClampConfig
 {
-pros::adi::Pneumatics pneumatic('H', false, false);
-pros::Distance distance(19);
+pros::adi::Pneumatics pneumatic('A', false, false);
+pros::Distance distance(10);
 }  // namespace ClampConfig
 
 pros::Controller primary(pros::E_CONTROLLER_MASTER);
 
-pros::adi::DigitalIn teamColor('D');
-pros::adi::DigitalIn cycleAuton('E');
+pros::adi::DigitalIn teamColor('G');
+pros::adi::DigitalIn cycleAuton('H');
 
 /**
  * ------------------------------------------------------------------------------------------
@@ -113,7 +129,7 @@ Intake intake(
     &IntakeConfig::distance,
     &IntakeConfig::sort,
     &IntakeConfig::lift,
-    30,
+    100,
     pros::E_CONTROLLER_DIGITAL_L1,
     pros::E_CONTROLLER_DIGITAL_L2,
     pros::E_CONTROLLER_DIGITAL_RIGHT,
@@ -125,12 +141,13 @@ Clamp clamp(
     &ClampConfig::pneumatic,
     &ClampConfig::distance,
     100,
+    1.0,
     pros::E_CONTROLLER_DIGITAL_X,
     &primary,
     false);
 
-Doinkler doinkler('B', false, pros::E_CONTROLLER_DIGITAL_B, &primary);
-RingRush rush('C', 'A', pros::E_CONTROLLER_DIGITAL_Y, &primary, false);
+Doinkler doinkler('E', false, pros::E_CONTROLLER_DIGITAL_B, &primary);
+RingRush rush('C', 'D', pros::E_CONTROLLER_DIGITAL_Y, &primary, false);
 
 Terminal Console(15);
 
@@ -162,13 +179,13 @@ lemlib::OdomSensors sensors(&verticalWheel, nullptr, nullptr, nullptr, &inertial
 lemlib::ControllerSettings lateralPID(
     11,
     0,
-    6,
+    8,
     3,
     1,    // IN INCHES
     100,  // IN MSEC
     2,    // In INCHES
     800,  // IN MSEC
-    20);
+    40);
 lemlib::ControllerSettings angularPID(
     2,
     0,
@@ -181,4 +198,4 @@ lemlib::ControllerSettings angularPID(
     0);
 
 // Chassis Definition
-lemlib::Chassis chassis(drivetrain, lateralPID, angularPID, sensors);
+Chassis chassis({drivetrain, lateralPID, angularPID, sensors});

@@ -78,7 +78,6 @@ void Arm::_update()
 
     // Enforce Shortest Path
     if (error < -270) { error += 360; }
-    std::cout << error << std::endl;
 
     // Update PID and move by Output
     m_pMotor->move_voltage(m_pid->update(error * 100.0));

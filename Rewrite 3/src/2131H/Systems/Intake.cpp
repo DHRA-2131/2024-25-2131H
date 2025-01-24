@@ -13,7 +13,7 @@
 
 void Intake::enableSort(RingColors sortColor)
 {
-  m_pOptical->set_integration_time(10);  // Decrease Update time
+  m_pOptical->set_integration_time(20);  // Decrease Update time
 
   m_sortEnabled = true;     // Enable Sort
   m_sortColor = sortColor;  // Set Sort Color
@@ -155,11 +155,7 @@ void Intake::teleOp()
   // Else, stop the intake
   else { this->stop(); }
 
-  if (liftButton.changedToPressed())
-  {
-    std::cout << "TOGGLE" << std::endl;
-    this->toggleLift();
-  }
+  if (liftButton.changedToPressed()) { this->toggleLift(); }
 }
 
 void Intake::init() { m_initialized = true; }
