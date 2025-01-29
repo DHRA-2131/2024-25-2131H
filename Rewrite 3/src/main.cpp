@@ -21,7 +21,7 @@ void autonomous() { Screen::getAuton()->getAutonCB()(Screen::isRedTeam()); }
 
 void opcontrol()
 {
-  intake.enableSort(Screen::isRedTeam() ? Intake::RingColors::BLUE : Intake::RingColors::RED);
+  intake.disableSort();
   intake.drop();
   arm.enable();
 

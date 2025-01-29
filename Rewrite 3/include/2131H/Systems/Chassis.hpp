@@ -11,7 +11,11 @@ class Chassis : public lemlib::Chassis
  public:
   void moveLinear(double dist, int timeout, lemlib::MoveToPointParams p = {}, bool async = true)
   {
-    lemlib::Pose pose = this->getPose();
+    this->waitUntilDone();
+    lemlib::Pose pose = this->getPose(true);
+
+    dist < 0 ? p.forwards = false : p.forwards = true;
+
     this->moveToPoint(
         pose.x + std::sin(pose.theta) * dist,
         pose.y + std::cos(pose.theta) * dist,
@@ -20,6 +24,24 @@ class Chassis : public lemlib::Chassis
         async);
   }
 
+  void movePolar(
+      double dist,
+      double angle,
+      int timeout,
+      lemlib::MoveToPointParams p = {},
+      bool radians = false,
+      bool async = true)
+  {
+    this->waitUntilDone();
+    lemlib::Pose pose = this->getPose(true);
+
+    dist < 0 ? p.forwards = false : p.forwards = true;
+    angle = radians ? angle : angle / 180.0 * M_PI;
+
+    this->moveToPoint(
+        pose.x + std::sin(angle) * dist, pose.y + std::cos(angle) * dist, timeout, p, async);
+  }
+  
   void attemptReckonToGoal(lemlib::Pose goalPose, Clamp *c, int timeout, float goalSize = 10.0)
   {
     auto start = pros::millis();
@@ -29,10 +51,10 @@ class Chassis : public lemlib::Chassis
       auto pose = this->getPose(true);
 
       this->setPose(
-          pose.x + (goalSize - c->getGoalIndent()) * sin(pose.theta) +
+          goalPose.x + (goalSize - c->getGoalIndent()) * sin(pose.theta) +
               sin(pose.theta) * this->drivetrain.trackWidth / 2.0,  //
-          pose.y + (goalSize - c->getGoalIndent()) * cos(pose.theta) +
-              cos(pose.theta) * this->drivetrain.trackWidth / 2.0,
+          goalPose.y + (goalSize - c->getGoalIndent()) * cos(-pose.theta) +
+              cos(-pose.theta) * this->drivetrain.trackWidth / 2.0,
           pose.theta,
           true);
     }

@@ -117,7 +117,7 @@ Arm arm(
     &ArmConfig::motors,
     &ArmConfig::rotation,
     1.0,
-    {0, 27, 150, 190, 225},
+    {0, 29, 150, 190, 225},
     pros::E_CONTROLLER_DIGITAL_R1,
     pros::E_CONTROLLER_DIGITAL_R2,
     &primary,
@@ -141,7 +141,7 @@ Clamp clamp(
     &ClampConfig::pneumatic,
     &ClampConfig::distance,
     100,
-    1.0,
+    2.0,
     pros::E_CONTROLLER_DIGITAL_X,
     &primary,
     false);
