@@ -41,7 +41,7 @@ class Chassis : public lemlib::Chassis
     this->moveToPoint(
         pose.x + std::sin(angle) * dist, pose.y + std::cos(angle) * dist, timeout, p, async);
   }
-  
+
   void attemptReckonToGoal(lemlib::Pose goalPose, Clamp *c, int timeout, float goalSize = 10.0)
   {
     auto start = pros::millis();
@@ -51,16 +51,35 @@ class Chassis : public lemlib::Chassis
       auto pose = this->getPose(true);
 
       this->setPose(
-          goalPose.x + (goalSize - c->getGoalIndent()) * sin(pose.theta) +
-              sin(pose.theta) * this->drivetrain.trackWidth / 2.0,  //
-          goalPose.y + (goalSize - c->getGoalIndent()) * cos(-pose.theta) +
-              cos(-pose.theta) * this->drivetrain.trackWidth / 2.0,
+          goalPose.x + (goalSize)*sin(pose.theta) +
+              sin(pose.theta) * (14 / 2.0 - c->getGoalIndent()),  //
+          goalPose.y + (goalSize)*cos(-pose.theta) +
+              cos(-pose.theta) * (14 / 2.0 - c->getGoalIndent()),
           pose.theta,
           true);
+
+      auto pose2 = this->getPose();
+
+      std::cout << "RECKONED TO GOAL" << std::endl;
+
+      this->cancelAllMotions();
     }
     else
     {
       // NO GOAL DETECTED
+    }
+  }
+  void shimmy(int timeout, int delay = 100)
+  {
+    auto start = pros::millis();
+    while (pros::millis() < start + timeout)
+    {
+      this->drivetrain.leftMotors->move_voltage(-12000);
+      this->drivetrain.rightMotors->move_voltage(12000);
+      pros::delay(delay);
+      this->drivetrain.leftMotors->move_voltage(12000);
+      this->drivetrain.rightMotors->move_voltage(-12000);
+      pros::delay(delay);
     }
   }
 
