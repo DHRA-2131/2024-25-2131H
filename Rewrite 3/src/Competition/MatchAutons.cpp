@@ -146,6 +146,7 @@ void fourRingGoal(bool isRedTeam)
   arm.enable();
   if (isRedTeam)
   {
+    // pros::delay(2000);
     intake.enableSort(Intake::RingColors::BLUE);
     chassis.setPose({-48 - 7.00, 24 - 7.75, -90});
     chassis.turnToPoint(-72.0, 0, 1000, {.minSpeed = 30}, false);
@@ -199,7 +200,7 @@ void fourRingGoal(bool isRedTeam)
     // * Ladder
     chassis.turnToHeading(-50 + 2.5, 1000, {.minSpeed = 20}, false);
     intake.stop();
-    chassis.moveToPoint(-55, 46, 2000, {.maxSpeed = 75}, false);
+    chassis.moveToPoint(-56, 46, 2000, {.maxSpeed = 75}, false);
     // hassis.moveLinear(48, 2000, {});
   }
   else
@@ -265,6 +266,7 @@ void fourRingRing(bool isRedTeam)
   arm.enable();
   if (isRedTeam)
   {
+    //  pros::delay(2000);
     intake.enableSort(Intake::RingColors::BLUE);
     chassis.setPose({48 + 7.00, 24 - 7.75, 90});
     chassis.turnToPoint(72, 1.5, 1000, {.minSpeed = 30}, false);
