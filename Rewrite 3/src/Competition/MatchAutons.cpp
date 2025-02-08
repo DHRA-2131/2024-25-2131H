@@ -17,41 +17,43 @@ void soloAWP(bool isRedTeam)
   if (isRedTeam)
   {
     intake.enableSort(Intake::RingColors::BLUE);
-    chassis.setPose({48 + 7.00, 24 - 7.75, 90});
-    chassis.turnToPoint(72, 1.5, 1000, {.minSpeed = 30}, false);
-    chassis.moveLinear(8.5, 1000, {});
+    chassis.setPose({48 + 7.00, 24 - 7.75 - 2, 90});
+    chassis.turnToPoint(71.5, 0.2, 1000, {.minSpeed = 30}, false);
+    chassis.moveLinear(8, 1000, {});
     arm.setPosition(200);
 
     // * Goal 1
     chassis.moveLinear(-17, 2000, {.minSpeed = 30});
-    chassis.turnToPoint(48, 48, 1000, {.forwards = false, .minSpeed = 30});
+    chassis.turnToPoint(48, 44 - 2, 1000, {.forwards = false, .minSpeed = 30});
     clamp.enableAutoClamp();
-    chassis.moveToPoint(48, 48, 2000, {.forwards = false, .maxSpeed = 60}, false);
+    chassis.moveToPoint(48, 44 - 2, 2000, {.forwards = false, .maxSpeed = 60}, false);
     pros::delay(200);
 
     // ? Ring 1
     intake.spin();
-    chassis.turnToPoint(27, 46, 1000, {.minSpeed = 30});
-    chassis.moveToPoint(27, 46, 2000, {.minSpeed = 20}, false);
+    chassis.turnToPoint(32, 42, 1000, {.minSpeed = 50});
+    chassis.moveToPoint(32, 42, 2000, {.minSpeed = 30}, false);
     pros::delay(200);
 
     // ? Ring 2
-    chassis.moveToPoint(45.3, 24, 2000, {.forwards = false, .minSpeed = 20});
-    chassis.turnToPoint(64, 26, 1000, {.minSpeed = 30});
+    chassis.moveToPoint(45.3, 24 - 3, 2000, {.forwards = false, .minSpeed = 20});
+    chassis.turnToPoint(60.5, 24 - 3, 1000, {.minSpeed = 30});
     intake.lift();
-    chassis.moveToPoint(64, 26, 2000, {.maxSpeed = 80}, false);
-    pros::delay(1800);
+    chassis.moveToPoint(60.5, 24 - 3, 2000, {.maxSpeed = 80}, false);
+    intake.drop();
+    chassis.moveLinear(-9, 2000, {}, false);
+    pros::delay(500);
+
     clamp.disableAutoClamp();
 
     // * Goal 2
-    chassis.moveToPoint(86, 26, 1000);
-    intake.drop();
+    chassis.moveToPoint(96, 26, 1000);
     intake.stop();
-    chassis.turnToPoint(90, 50, 1000, {.forwards = false}, false);
+    chassis.turnToPoint(96, 46, 1000, {.forwards = false, .minSpeed = 20}, false);
     clamp.enableAutoClamp();
     intake.spin(-12000);
     arm.setIndex(0);
-    chassis.moveToPoint(90, 50, 2000, {.forwards = false, .maxSpeed = 60, .minSpeed = 20}, false);
+    chassis.moveToPoint(90, 46, 2000, {.forwards = false, .maxSpeed = 60, .minSpeed = 20}, false);
 
     // ? Ring 1
     intake.disableSort();
@@ -59,10 +61,17 @@ void soloAWP(bool isRedTeam)
     chassis.turnToHeading(90, 1000, {.minSpeed = 30}, false);
     chassis.moveLinear(19, 2000, {.minSpeed = 10}, false);
     pros::delay(200);
-    chassis.turnToHeading(100, 2000, {.minSpeed = 30}, false);
-    chassis.moveLinear(-40, 2000, {});
+
+    // ? Ring 2
+    chassis.moveToPoint(120 - 7.75 - 3.5 - 3, 20, 1000, {.forwards = false, .minSpeed = 20});
+    chassis.swingToHeading(90, lemlib::DriveSide::LEFT, 2000, {.minSpeed = 30});
+    chassis.moveLinear(12, 2000, {.minSpeed = 20});
 
     // * Ladder
+    chassis.turnToHeading(140, 2000, {.minSpeed = 30}, false);
+    chassis.moveLinear(-65, 2000, {});
+    pros::delay(600);
+    arm.setPosition(40);
     pros::delay(600);
     intake.stop();
   }
@@ -147,10 +156,9 @@ void fourRingGoal(bool isRedTeam)
   if (isRedTeam)
   {
     // pros::delay(2000);
-    intake.enableSort(Intake::RingColors::BLUE);
     chassis.setPose({-48 - 7.00, 24 - 7.75, -90});
-    chassis.turnToPoint(-72.0, 0, 1000, {.minSpeed = 30}, false);
-    chassis.moveLinear(8, 1000, {});
+    chassis.turnToPoint(-71.5, 1, 1000, {.minSpeed = 30}, false);
+    chassis.moveLinear(7.5, 1000, {});
     arm.setPosition(200);
 
     // * Goal 1
@@ -173,92 +181,34 @@ void fourRingGoal(bool isRedTeam)
     pros::delay(200);
 
     //* Corner
-    chassis.turnToPoint(-13, 0, 1000, {.maxSpeed = 60, .minSpeed = 20}, false);
+    chassis.turnToPoint(-14.5, 0, 1000, {.minSpeed = 20}, false);
     pros::delay(200);
     arm.setIndex(0);
     intake.spin(-6000);
-    chassis.moveToPoint(-13, 19 - 2.5, 2000, {.maxSpeed = 80, .minSpeed = 40});
+    chassis.moveToPoint(-14.5, 20, 2000, {.maxSpeed = 80, .minSpeed = 40});
 
     // ? Ring 3
-    chassis.swingToHeading(130, lemlib::DriveSide::LEFT, 1000, {.minSpeed = 30}, false);
-    chassis.moveLinear(5 + 2.00, 500, {.maxSpeed = 50}, false);
-    intake.spin();
-    // ros::delay(4000);
-    chassis.moveLinear(-3.3 + 1, 1000, {.maxSpeed = 20}, false);
-    pros::delay(1300);
-
-    // ? Ring 4
-    // intake.lift();
-    // intake.spin(-6000);
-    // chassis.moveLinear(6, 500, {.maxSpeed = 60}, false);
-    // intake.spin();
-    // pros::delay(800);
-    // chassis.moveLinear(-15, 1000, {.maxSpeed = 30});
-    // pros::delay(300);
-    // intake.drop();
-
-    // * Ladder
-    chassis.turnToHeading(-50 + 2.5, 1000, {.minSpeed = 20}, false);
-    intake.stop();
-    chassis.moveToPoint(-56, 46, 2000, {.maxSpeed = 75}, false);
-    // hassis.moveLinear(48, 2000, {});
-  }
-  else
-  {
-    intake.enableSort(Intake::RingColors::RED);
-    chassis.setPose({48 + 7.00, 24 - 7.75, 90});
-    chassis.turnToPoint(72, 1.5 + 1.2, 1000, {.minSpeed = 30}, false);
-    chassis.moveLinear(8.5, 1000, {});
-    arm.setPosition(200);
-
-    // * Goal 1
-    chassis.moveLinear(-17, 2000, {.minSpeed = 30});
-    chassis.turnToPoint(48, 48, 1000, {.forwards = false, .minSpeed = 30});
-    clamp.enableAutoClamp();
-    chassis.moveToPoint(48, 48, 2000, {.forwards = false, .maxSpeed = 60}, false);
-    pros::delay(200);
-
-    // ? Ring 1
-    intake.lift();
-    intake.spin();
-    chassis.moveToPoint(68 - 1.5, 28, 2500, {.minSpeed = 10}, false);
-    intake.drop();
-    chassis.moveLinear(-12, 1000, {.forwards = false, .minSpeed = 30});
-
-    // ? Ring 2
-    // chassis.turnToPoint(24, 52, 1000, {.minSpeed = 20}, false);
-    chassis.moveToPoint(24 - 6.5, 52 - 2, 2000, {}, false);
-
-    //* Corner
-    chassis.turnToPoint(12 - 8.5, 0, 1000, {.minSpeed = 20}, false);
-    pros::delay(200);
-    arm.setIndex(0);
-    intake.spin(-6000);
-    chassis.moveToPoint(15 - 3, 17 - 3.2, 2000, {.maxSpeed = 80, .minSpeed = 40});
-
-    // ? Ring 3
-    chassis.swingToHeading(-135, lemlib::DriveSide::RIGHT, 1000, {.minSpeed = 30}, false);
-    chassis.moveLinear(5, 500, {.maxSpeed = 60}, false);
+    chassis.swingToHeading(135, lemlib::DriveSide::LEFT, 1000, {.minSpeed = 30}, false);
+    chassis.moveLinear(6, 300, {.maxSpeed = 60}, false);
     intake.spin();
     pros::delay(400);
-    chassis.moveLinear(-3.0, 1000, {.maxSpeed = 30}, false);
-    pros::delay(800);
+    chassis.moveLinear(-2.5, 1000, {.maxSpeed = 30}, false);
+    pros::delay(400);
 
     // ? Ring 4
     intake.lift();
-    intake.spin(-6000);
-    chassis.moveLinear(6, 500, {.maxSpeed = 60}, false);
+    chassis.moveLinear(8, 1000, {.maxSpeed = 60});
+    pros::delay(200);
     intake.spin();
-    pros::delay(800);
-    chassis.moveLinear(-15, 1000, {.maxSpeed = 30});
-    pros::delay(300);
+    chassis.movePolar(-25, 135, 1000);
     intake.drop();
 
     // * Ladder
-    chassis.turnToHeading(48 - 2, 1000, {.minSpeed = 20}, false);
+    chassis.turnToHeading(-45, 1000, {.minSpeed = 20}, false);
     intake.stop();
-    chassis.moveLinear(47, 2000, {});
+    chassis.movePolar(40, -45, 2000, {.maxSpeed = 80}, false);
   }
+  else { fourRingRing(true); }
 }
 
 void fourRingRing(bool isRedTeam)
@@ -267,10 +217,9 @@ void fourRingRing(bool isRedTeam)
   if (isRedTeam)
   {
     //  pros::delay(2000);
-    intake.enableSort(Intake::RingColors::BLUE);
     chassis.setPose({48 + 7.00, 24 - 7.75, 90});
-    chassis.turnToPoint(72, 1.5, 1000, {.minSpeed = 30}, false);
-    chassis.moveLinear(8.5, 1000, {});
+    chassis.turnToPoint(72, 3, 1000, {.minSpeed = 30}, false);
+    chassis.moveLinear(8.25, 1000, {});
     arm.setPosition(200);
 
     // * Goal 1
@@ -292,92 +241,33 @@ void fourRingRing(bool isRedTeam)
     chassis.moveToPoint(23, 50, 2000, {}, false);
 
     //* Corner
-    chassis.turnToPoint(10, 0, 1000, {.minSpeed = 20}, false);
+    chassis.turnToPoint(14, 0, 1000, {.minSpeed = 20}, false);
     pros::delay(200);
     arm.setIndex(0);
     intake.spin(-6000);
-    chassis.moveToPoint(13, 17, 2000, {.maxSpeed = 80, .minSpeed = 40});
+    chassis.moveToPoint(14, 15, 2000, {.maxSpeed = 80, .minSpeed = 40});
 
     // ? Ring 3
     chassis.swingToHeading(-135, lemlib::DriveSide::RIGHT, 1000, {.minSpeed = 30}, false);
-    chassis.moveLinear(5, 500, {.maxSpeed = 60}, false);
+    chassis.moveLinear(6, 300, {.maxSpeed = 60}, false);
     intake.spin();
     pros::delay(400);
-    chassis.moveLinear(-3.0, 1000, {.maxSpeed = 30}, false);
-    pros::delay(900);
-
-    // ? Ring 4
-    // intake.lift();
-    // intake.spin(-6000);
-    // chassis.moveLinear(6, 500, {.maxSpeed = 60}, false);
-    // intake.spin();
-    // pros::delay(800);
-    // chassis.moveLinear(-15, 1000, {.maxSpeed = 30});
-    // pros::delay(300);
-    // intake.drop();
-
-    // * Ladder
-    chassis.turnToHeading(48, 1000, {.minSpeed = 20}, false);
-    intake.stop();
-    chassis.moveToPoint(55, 49, 2000, {.maxSpeed = 90}, false);
-  }
-  else
-  {
-    intake.enableSort(Intake::RingColors::RED);
-    chassis.setPose({-48 - 7.00, 24 - 7.75, -90});
-    chassis.turnToPoint(-72.0, 0, 1000, {.minSpeed = 30}, false);
-    chassis.moveLinear(8, 1000, {});
-    arm.setPosition(200);
-
-    // * Goal 1
-    chassis.moveLinear(-18, 2000, {.minSpeed = 30});
-    chassis.turnToPoint(-48, 48, 1000, {.forwards = false, .minSpeed = 30});
-    clamp.enableAutoClamp();
-    chassis.moveToPoint(-48, 48, 2000, {.forwards = false, .maxSpeed = 60}, false);
-    pros::delay(200);
-
-    // ? Ring 1
-    intake.lift();
-    intake.spin();
-    chassis.moveToPoint(-63, 27, 2500, {.minSpeed = 10}, false);
-    intake.drop();
-    chassis.moveLinear(-12, 1000, {.forwards = false, .minSpeed = 30});
-
-    // ? Ring 2
-    // chassis.turnToPoint(24, 52, 1000, {.minSpeed = 20}, false);
-    chassis.moveToPoint(-24, 52, 2000, {}, false);
-    pros::delay(200);
-
-    //* Corner
-    chassis.turnToPoint(-13, 0, 1000, {.maxSpeed = 60, .minSpeed = 20}, false);
-    pros::delay(200);
-    arm.setIndex(0);
-    intake.spin(-6000);
-    chassis.moveToPoint(-13, 19, 2000, {.maxSpeed = 80, .minSpeed = 40});
-
-    // ? Ring 3
-    chassis.swingToHeading(135, lemlib::DriveSide::LEFT, 1000, {.minSpeed = 30}, false);
-    chassis.moveLinear(5, 500, {.maxSpeed = 60}, false);
-    intake.spin();
-    pros::delay(400);
-    chassis.moveLinear(-3.0, 1000, {.maxSpeed = 30}, false);
+    chassis.moveLinear(-2.5, 1000, {.maxSpeed = 30}, false);
     pros::delay(400);
 
     // ? Ring 4
     intake.lift();
-    intake.spin(-6000);
-    chassis.moveLinear(6, 500, {.maxSpeed = 60}, false);
     intake.spin();
-    pros::delay(800);
-    chassis.moveLinear(-15, 1000, {.maxSpeed = 30});
-    pros::delay(300);
+    chassis.moveLinear(8, 1000, {.maxSpeed = 60}, false);
+    chassis.movePolar(-25, -135, 1000);
     intake.drop();
 
     // * Ladder
-    chassis.turnToHeading(-50, 1000, {.minSpeed = 20}, false);
+    chassis.turnToHeading(45, 1000, {.minSpeed = 20}, false);
     intake.stop();
-    chassis.moveLinear(48, 2000, {});
+    chassis.movePolar(40, 45, 2000, {.maxSpeed = 80}, false);
   }
+  else { fourRingGoal(true); }
 }
 
 void debug(bool isRedTeam) { chassis.attemptReckonToGoal({72, 120, 0}, &clamp, 1000000); }
