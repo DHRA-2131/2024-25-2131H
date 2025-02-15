@@ -20,6 +20,7 @@
 #include "pros/adi.hpp"
 #include "pros/distance.hpp"
 #include "pros/imu.hpp"
+#include "pros/misc.h"
 #include "pros/motor_group.hpp"
 #include "pros/rotation.hpp"
 
@@ -117,7 +118,7 @@ Arm arm(
     &ArmConfig::motors,
     &ArmConfig::rotation,
     1.0,
-    {0, 29, 150, 190, 225},
+    {0, 29, 150, 200, 225},
     pros::E_CONTROLLER_DIGITAL_R1,
     pros::E_CONTROLLER_DIGITAL_R2,
     &primary,
@@ -146,8 +147,8 @@ Clamp clamp(
     &primary,
     false);
 
-Doinkler doinkler('E', false, pros::E_CONTROLLER_DIGITAL_B, &primary);
-RingRush rush('C', 'D', pros::E_CONTROLLER_DIGITAL_Y, &primary, false);
+Doinkler doinklerLeft('D', false, pros::E_CONTROLLER_DIGITAL_DOWN, &primary);
+Doinkler doinklerRight('E', false, pros::E_CONTROLLER_DIGITAL_B, &primary);
 
 Terminal Console(15);
 

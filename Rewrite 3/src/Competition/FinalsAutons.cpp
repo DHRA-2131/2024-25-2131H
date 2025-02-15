@@ -13,10 +13,131 @@ void sixRingFinals(bool isRedTeam)
   arm.enable();
   if (isRedTeam)
   {
-    intake.enableSort(Intake::RingColors::BLUE);
-    chassis.setPose({-34.25, 17.5, 90});
+    chassis.setPose({48 + 7.00, 24 - 7.75, 90});
+    chassis.turnToPoint(72, 3.25, 1000, {.minSpeed = 30}, false);
+    chassis.moveLinear(7.75, 1000, {});
+    arm.setPosition(200);
+
+    // * Goal 1
+    chassis.moveLinear(-17, 2000, {.minSpeed = 30}, false);
+    arm.setPosition(0);
+    chassis.turnToPoint(48.5, 46, 1000, {.forwards = false, .minSpeed = 30});
+    clamp.enableAutoClamp();
+    chassis.moveToPoint(48.5, 46, 2000, {.forwards = false, .maxSpeed = 60}, false);
+    pros::delay(200);
+
+    // ? Ring 1 (Lader)
+    chassis.turnToPoint(72 - 3.25 - 7.5 + 2, 72 - 3.25 - 7.25, 2000, {.minSpeed = 1});
+    chassis.moveToPoint(72 - 3.25 - 7.5 + 2, 72 - 3.25 - 7.25, 2000, {}, false);
+    doinklerLeft.extend();
+
+    // ? Ring 2
+    chassis.movePolar(-14, 45, 1000, {.minSpeed = 30}, false);
+    chassis.turnToHeading(
+        -80, 1000, {.direction = lemlib::AngularDirection::CW_CLOCKWISE, .minSpeed = 20}, false);
+    doinklerLeft.retract();
+    chassis.turnToHeading(-95, 1000, {.minSpeed = 10}, false);
+    intake.spin();
+    chassis.moveToPoint(32, 50, 2000, {.minSpeed = 10}, false);
+    pros::Motor firstStage(-14);
+
+    // * To Corner
+    chassis.turnToHeading(0, 1000, {.minSpeed = 40});
+    pros::delay(200);
+    intake.stop();
+    chassis.waitUntilDone();
+    intake.spin();
+    chassis.movePolar(-28, 0, 2000, {}, false);
+    chassis.turnToHeading(-135, 2000, {.minSpeed = 20}, false);
+    firstStage.move_voltage(-12000);
+    chassis.movePolar(25.5, -138, 1000, {.maxSpeed = 50}, false, false);
+    intake.spin();
+    pros::delay(350);
+
+    // ? Ring 4
+    chassis.moveLinear(-4.5, 2000, {}, false);
+    intake.lift();
+    intake.spin();
+    chassis.moveLinear(5, 1000, {.minSpeed = 20});
+    firstStage.move_voltage(-12000);
+    pros::delay(200);
+    intake.spin();
+    pros::delay(300);
+    chassis.movePolar(-12, -135, 1000, {.minSpeed = 20}, false, false);
+    intake.drop();
+
+    chassis.turnToHeading(90, 2000, {.minSpeed = 1});
+
+    // ? Ring 5
+    chassis.movePolar(40, 87, 2000, {}, false);
+    intake.lift();
+    intake.spin();
   }
-  else {}
+  else
+  {
+    chassis.setPose({-48 - 7.00 - 2, 24 - 7.75 + 1, -90});
+    chassis.turnToPoint(-72, 3.25, 1000, {.minSpeed = 30}, false);
+    chassis.moveLinear(7.6, 1000, {});
+    arm.setPosition(210);
+
+    // * Goal 1
+    chassis.moveLinear(-17, 2000, {.minSpeed = 30}, false);
+    arm.setPosition(0);
+    chassis.turnToPoint(-48.5, 46, 1000, {.forwards = false, .minSpeed = 30});
+    clamp.enableAutoClamp();
+    chassis.moveToPoint(-48.5, 46, 2000, {.forwards = false, .maxSpeed = 60}, false);
+    pros::delay(200);
+
+    // ? Ring 1 (Lader)
+    chassis.turnToPoint(-72 + 3.25 + 7.5 - 2, 72 - 3.25 - 7.25, 2000, {.minSpeed = 1});
+    chassis.moveToPoint(-72 + 3.25 + 7.5 - 2, 72 - 3.25 - 7.25, 2000, {}, false);
+    doinklerRight.extend();
+
+    // ? Ring 2
+    chassis.movePolar(-14, -45, 1000, {.minSpeed = 30}, false);
+    chassis.turnToHeading(
+        80,
+        1000,
+        {.direction = lemlib::AngularDirection::CCW_COUNTERCLOCKWISE, .minSpeed = 20},
+        false);
+    doinklerRight.retract();
+    chassis.turnToHeading(95, 1000, {.minSpeed = 10}, false);
+    intake.spin();
+    chassis.moveToPoint(-32, 50, 2000, {.minSpeed = 10}, false);
+    pros::Motor firstStage(-14);
+
+    // * To Corner
+    chassis.turnToHeading(0, 1000, {.minSpeed = 40});
+    pros::delay(200);
+    intake.stop();
+    chassis.waitUntilDone();
+    intake.spin();
+    chassis.movePolar(-28, 0, 2000, {}, false);
+    chassis.turnToHeading(135, 2000, {.minSpeed = 20}, false);
+    firstStage.move_voltage(-12000);
+    chassis.movePolar(25.5, 138, 1000, {.maxSpeed = 50}, false, false);
+    intake.spin();
+    pros::delay(350);
+
+    // ? Ring 4
+    chassis.moveLinear(-4.5, 2000, {}, false);
+    intake.lift();
+    intake.spin();
+    chassis.moveLinear(5, 1000, {.minSpeed = 20});
+    firstStage.move_voltage(-12000);
+    pros::delay(200);
+    intake.spin();
+    pros::delay(300);
+    chassis.movePolar(-12, 135, 1000, {.minSpeed = 20}, false, false);
+    intake.drop();
+
+    chassis.turnToHeading(-90, 2000, {.minSpeed = 1});
+
+    // ? Ring 5
+    chassis.movePolar(40, -87, 2000, {}, false);
+    intake.lift();
+    intake.spin();
+  }
 }
 
 void goalRush(bool isRedTeam)
@@ -28,16 +149,16 @@ void goalRush(bool isRedTeam)
     // Goal Rush
     chassis.setPose({-34.25, 17.5, 0});
     chassis.moveToPoint(-33, 52, 1000, {.minSpeed = 10}, true);
-    doinkler.extend();
+    doinklerRight.extend();
     chassis.moveToPoint(-32, 38 + 4.75, 900, {.forwards = false}, true);
-    doinkler.retract();
+    doinklerRight.retract();
 
     // 1st goal
     chassis.turnToPoint(-72, 72, 1000, {}, true);
-    doinkler.extend();
+    doinklerRight.extend();
     chassis.turnToPoint(-48, 48, 1000, {.forwards = false}, true);
     clamp.enableAutoClamp();
-    doinkler.retract();
+    doinklerRight.retract();
     chassis.moveToPoint(-50, 50, 1000, {.forwards = false, .maxSpeed = 60}, true);
     chassis.moveLinear(5, 1000);
     pros::delay(100);
@@ -74,16 +195,16 @@ void goalRush(bool isRedTeam)
     // Goal Rush
     chassis.setPose({-34.25, 144 - 17.5, 180});
     chassis.moveToPoint(-33.2, 144 - 52, 1000, {.minSpeed = 10}, true);
-    doinkler.extend();
+    doinklerRight.extend();
     chassis.moveToPoint(-32, 144 - 38, 900, {.forwards = false}, true);
-    doinkler.retract();
+    doinklerRight.retract();
 
     // 1st goal
     chassis.turnToPoint(-72, 144 - 72, 1000, {}, true);
-    doinkler.extend();
+    doinklerRight.extend();
     chassis.turnToPoint(-48, 144 - 48, 1000, {.forwards = false}, true);
     clamp.enableAutoClamp();
-    doinkler.retract();
+    doinklerRight.retract();
     chassis.moveToPoint(-47, 144 - 47, 1000, {.forwards = false, .maxSpeed = 60}, true);
     chassis.moveLinear(5, 1000);
     pros::delay(500);

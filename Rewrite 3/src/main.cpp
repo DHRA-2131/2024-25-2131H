@@ -1,7 +1,5 @@
 #include "main.h"
 
-#include "2131H/Systems/Arm.hpp"
-#include "2131H/Systems/Intake.hpp"
 #include "2131H/Systems/Screen.hpp"
 #include "Competition/RobotConfig.hpp"
 #include "pros/misc.h"
@@ -27,15 +25,15 @@ void opcontrol()
 
   while (true)
   {
-    if (/*Screen::getAuton()->getName() == "Skills" && */ arm.getIndex() == 2) { intake.lift(); }
-    else if (intake.isLifted()) { intake.drop(); }
+    // if (/*Screen::getAuton()->getName() == "Skills" && */ arm.getIndex() == 2) { intake.lift(); }
+    // else if (intake.isLifted()) { intake.drop(); }
 
     // System TeleOps
     arm.teleOp();
     intake.teleOp();
     clamp.teleOp();
-    doinkler.teleOp();
-    rush.teleOp();
+    doinklerRight.teleOp();
+    doinklerLeft.teleOp();
 
     // Chassis TeleOps
     chassis.tank(primary.get_analog(ANALOG_LEFT_Y), primary.get_analog(ANALOG_RIGHT_Y));

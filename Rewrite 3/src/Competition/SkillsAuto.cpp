@@ -45,9 +45,10 @@ void skills(bool isRedTeam)
 
   pros::delay(400);
   intake.spin(100);
-  arm.setIndex(3);
+  arm.setIndex(2);
   chassis.waitUntilDone();
-  chassis.shimmy(300, 150);
+  pros::delay(300);
+  // chassis.shimmy(300, 150);
 
   // ? Ring 2 (Goal)
   intake.drop();
@@ -98,14 +99,15 @@ void skills(bool isRedTeam)
   intake.lift();
   chassis.movePolar(8, 90, 1500, {});
   intake.stop();
-  arm.setIndex(3);
+  arm.setIndex(2);
   chassis.waitUntilDone();
-  chassis.shimmy(300, 150);
+  pros::delay(300);
+  // chassis.shimmy(300, 150);
 
   // ? Ring 2 (Goal)
   intake.drop();
   chassis.moveLinear(-11, 1000, {.minSpeed = 1}, false);
-  arm.enable();
+  arm.disable();
 
   chassis.turnToHeading(0, 2000, {.minSpeed = 1}, false);
   intake.spin();

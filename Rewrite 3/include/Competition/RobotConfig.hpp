@@ -8,12 +8,11 @@
 #include "2131H/Systems/Chassis.hpp"
 #include "pros/adi.hpp"
 
-
 extern Arm arm;
 extern Intake intake;
 extern Clamp clamp;
-extern Doinkler doinkler;
-extern RingRush rush;
+extern Doinkler doinklerLeft;
+extern Doinkler doinklerRight;
 extern Terminal Console;
 
 extern pros::adi::DigitalIn teamColor;

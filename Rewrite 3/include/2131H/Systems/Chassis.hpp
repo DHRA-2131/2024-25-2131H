@@ -71,6 +71,7 @@ class Chassis : public lemlib::Chassis
   }
   void shimmy(int timeout, int delay = 100)
   {
+    this->cancelAllMotions();
     auto start = pros::millis();
     while (pros::millis() < start + timeout)
     {
@@ -81,6 +82,9 @@ class Chassis : public lemlib::Chassis
       this->drivetrain.rightMotors->move_voltage(-12000);
       pros::delay(delay);
     }
+
+    this->drivetrain.leftMotors->move_voltage(0);
+    this->drivetrain.rightMotors->move_voltage(0);
   }
 
  protected:
