@@ -47,8 +47,8 @@ void skills(bool isRedTeam)
   intake.spin(100);
   arm.setIndex(2);
   chassis.waitUntilDone();
-  pros::delay(300);
-  // chassis.shimmy(300, 150);
+  // pros::delay(300);
+  chassis.shimmy(300, 150);
 
   // ? Ring 2 (Goal)
   intake.drop();
@@ -101,8 +101,8 @@ void skills(bool isRedTeam)
   intake.stop();
   arm.setIndex(2);
   chassis.waitUntilDone();
-  pros::delay(300);
-  // chassis.shimmy(300, 150);
+  // pros::delay(300);
+  chassis.shimmy(300, 150);
 
   // ? Ring 2 (Goal)
   intake.drop();

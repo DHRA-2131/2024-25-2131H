@@ -17,7 +17,6 @@
 #include "2131H/Utilities/ButtonDetector.hpp"
 #include "2131H/Utilities/ChangeDetector.hpp"
 #include "pros/adi.hpp"
-#include "pros/distance.hpp"
 #include "pros/misc.hpp"
 #include "pros/motor_group.hpp"
 #include "pros/optical.hpp"
@@ -34,10 +33,9 @@ class Intake
   };
 
  private:  // *** ==== Member Variables ==== *** //
-  std::shared_ptr<pros::v5::MotorGroup> m_pMotors;
+  std::shared_ptr<pros::v5::Motor> m_pFirstMotor;
+  std::shared_ptr<pros::v5::Motor> m_pSecondMotor;
   std::shared_ptr<pros::v5::Optical> m_pOptical;
-  std::shared_ptr<pros::v5::Distance> m_pDistance;
-  std::shared_ptr<pros::adi::Pneumatics> m_pSort;
   std::shared_ptr<pros::adi::Pneumatics> m_pLift;
 
   std::int32_t m_sortDistance;
@@ -46,10 +44,13 @@ class Intake
 
   bool m_sortEnabled;
   RingColors m_sortColor;
+  bool m_sorted = true;
+
   std::vector<RingColors> m_possession = {};
+  double m_position = 0;
+  double m_sortPosition = 0;
 
   ChangeDetector<RingColors> m_colorStateDetector;
-  ChangeDetector<bool> m_ringStateDetector;
 
   Utilities::ButtonDetector intakeButton;
   Utilities::ButtonDetector outtakeButton;
@@ -69,12 +70,11 @@ class Intake
 
  public:  // *** ==== Constructors / Deconstructors ==== *** //
   Intake(
-      pros::MotorGroup* pMotors,
+      pros::Motor* pFirstMotor,
+      pros::Motor* pSecondMotor,
       pros::Optical* pOptical,
-      pros::Distance* pDistance,
-      pros::adi::Pneumatics* pSort,
       pros::adi::Pneumatics* pLift,
-      std::int32_t sortDistance,
+      double sortDistance,
       pros::controller_digital_e_t intakeBtn,
       pros::controller_digital_e_t outtakeBtn,
       pros::controller_digital_e_t liftBtn,

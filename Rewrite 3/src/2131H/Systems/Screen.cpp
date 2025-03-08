@@ -41,7 +41,7 @@ bool debug(true);                     // Enable / Disable Debug Output on the sc
 bool initial(true);                   // Whether the screen has been initialized;
 ChangeDetector<bool> ScreenDetector;  // ChangeDetector for the screen touch status
 ChangeDetector<bool> TeamDetector;    // ChangeDetector for the team color status
-bool redTeam(false);                  // If current team color is red / blue
+bool redTeam(true);                   // If current team color is red / blue
 
 /**
  * @brief Update the brain screen. Must be called for Screen to be drawn.

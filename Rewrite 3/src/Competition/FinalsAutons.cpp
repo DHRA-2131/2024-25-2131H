@@ -34,20 +34,18 @@ void sixRingFinals(bool isRedTeam)
     // ? Ring 2
     chassis.movePolar(-14, 45, 1000, {.minSpeed = 30}, false);
     chassis.turnToHeading(
-        -80, 1000, {.direction = lemlib::AngularDirection::CW_CLOCKWISE, .minSpeed = 20}, false);
+        -75, 1000, {.direction = lemlib::AngularDirection::CW_CLOCKWISE, .minSpeed = 20}, false);
     doinklerLeft.retract();
-    chassis.turnToHeading(-95, 1000, {.minSpeed = 10}, false);
+    chassis.turnToHeading(-90, 1000, {.minSpeed = 10}, false);
     intake.spin();
     chassis.moveToPoint(32, 50, 2000, {.minSpeed = 10}, false);
     pros::Motor firstStage(-14);
 
     // * To Corner
-    chassis.turnToHeading(0, 1000, {.minSpeed = 40});
-    pros::delay(200);
-    intake.stop();
+    chassis.turnToHeading(5, 1000, {.minSpeed = 40});
     chassis.waitUntilDone();
     intake.spin();
-    chassis.movePolar(-28, 0, 2000, {}, false);
+    chassis.movePolar(-29, 5, 2000, {}, false);
     chassis.turnToHeading(-135, 2000, {.minSpeed = 20}, false);
     firstStage.move_voltage(-12000);
     chassis.movePolar(25.5, -138, 1000, {.maxSpeed = 50}, false, false);
@@ -137,6 +135,8 @@ void sixRingFinals(bool isRedTeam)
     chassis.movePolar(40, -87, 2000, {}, false);
     intake.lift();
     intake.spin();
+    pros::delay(200);
+    intake.drop();
   }
 }
 

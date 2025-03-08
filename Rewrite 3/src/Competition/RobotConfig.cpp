@@ -67,10 +67,10 @@ pros::Imu inertial(21);
 
 namespace IntakeConfig
 {
-pros::MotorGroup motors({-9, -14}, pros::MotorGears::blue, pros::v5::MotorEncoderUnits::deg);
-pros::Optical optical(2);
-pros::Distance distance(1);
-pros::adi::Pneumatics sort('B', false, false);
+pros::Motor first(-14, pros::MotorGears::green, pros::v5::MotorEncoderUnits::deg);
+pros::Motor second(-9, pros::MotorGears::blue, pros::v5::MotorEncoderUnits::deg);
+
+pros::Optical optical(1);
 pros::adi::Pneumatics lift('F', false, false);
 }  // namespace IntakeConfig
 
@@ -118,19 +118,18 @@ Arm arm(
     &ArmConfig::motors,
     &ArmConfig::rotation,
     1.0,
-    {0, 29, 150, 200, 225},
+    {0, 29, 155, 200, 225},
     pros::E_CONTROLLER_DIGITAL_R1,
     pros::E_CONTROLLER_DIGITAL_R2,
     &primary,
     &armPID);
 
 Intake intake(
-    &IntakeConfig::motors,
+    &IntakeConfig::first,
+    &IntakeConfig::second,
     &IntakeConfig::optical,
-    &IntakeConfig::distance,
-    &IntakeConfig::sort,
     &IntakeConfig::lift,
-    100,
+    307,
     pros::E_CONTROLLER_DIGITAL_L1,
     pros::E_CONTROLLER_DIGITAL_L2,
     pros::E_CONTROLLER_DIGITAL_RIGHT,

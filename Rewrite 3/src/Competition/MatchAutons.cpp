@@ -108,7 +108,7 @@ void fourRingGoal(bool isRedTeam)
     // ? Ring 1
     intake.lift();
     intake.spin();
-    chassis.moveToPoint(-63, 27, 2500, {.minSpeed = 10}, false);
+    chassis.moveToPoint(-65, 24, 2500, {.minSpeed = 10}, false);
     intake.drop();
     chassis.moveLinear(-12, 1000, {.forwards = false, .minSpeed = 30});
 
@@ -123,9 +123,9 @@ void fourRingGoal(bool isRedTeam)
     firstStage.move_voltage(12000);
 
     // * To Corner
-    chassis.turnToHeading(-5, 1000, {.minSpeed = 40}, false);
+    chassis.turnToHeading(-10, 1000, {.minSpeed = 40}, false);
     intake.spin();
-    chassis.movePolar(-30, -5, 2000, {}, false);
+    chassis.movePolar(-31, -10, 2000, {}, false);
     pros::delay(500);
     arm.setIndex(0);
     chassis.turnToHeading(135, 2000, {.minSpeed = 20}, false);
@@ -138,17 +138,17 @@ void fourRingGoal(bool isRedTeam)
     chassis.moveLinear(-4, 2000, {}, false);
     intake.lift();
     intake.spin();
-    chassis.moveLinear(5, 1000, {.minSpeed = 20});
+    chassis.moveLinear(5, 1500, {.minSpeed = 20});
     firstStage.move_voltage(-12000);
     pros::delay(200);
     intake.spin();
-    pros::delay(200);
+    pros::delay(800);
     chassis.movePolar(-12, 135, 1000, {.minSpeed = 20}, false, false);
     intake.drop();
 
     // * Ladder
     chassis.turnToHeading(-45, 1000, {.minSpeed = 20}, false);
-    chassis.movePolar(45, -45, 2000, {.maxSpeed = 127}, false);
+    chassis.movePolar(47, -45, 2000, {.maxSpeed = 127}, false);
   }
   else { fourRingRing(true); }
 }
@@ -174,7 +174,7 @@ void fourRingRing(bool isRedTeam)
     // ? Ring 1
     intake.lift();
     intake.spin();
-    chassis.moveToPoint(67, 28, 2500, {.minSpeed = 10}, false);
+    chassis.moveToPoint(65, 28, 2500, {.minSpeed = 10}, false);
     intake.drop();
     chassis.moveLinear(-12, 1000, {.forwards = false, .minSpeed = 30});
 
@@ -189,9 +189,9 @@ void fourRingRing(bool isRedTeam)
     firstStage.move_voltage(12000);
 
     // * To Corner
-    chassis.turnToHeading(2, 1000, {.minSpeed = 40}, false);
+    chassis.turnToHeading(5, 1000, {.minSpeed = 40}, false);
     intake.spin();
-    chassis.movePolar(-33, 2, 2000, {}, false);
+    chassis.movePolar(-33, 5, 2000, {}, false);
     pros::delay(500);
     arm.setIndex(0);
     chassis.turnToHeading(-135, 2000, {.minSpeed = 20}, false);
@@ -204,17 +204,17 @@ void fourRingRing(bool isRedTeam)
     chassis.moveLinear(-4, 2000, {}, false);
     intake.lift();
     intake.spin();
-    chassis.moveLinear(5, 1000, {.minSpeed = 20});
+    chassis.moveLinear(5, 1500, {.minSpeed = 20});
     firstStage.move_voltage(-12000);
     pros::delay(200);
     intake.spin();
-    pros::delay(200);
+    pros::delay(500);
     chassis.movePolar(-12, -135, 1000, {.minSpeed = 20}, false, false);
     intake.drop();
 
     // * Ladder
     chassis.turnToHeading(45, 1000, {.minSpeed = 20}, false);
-    chassis.movePolar(45, 45, 2000, {.maxSpeed = 127}, false);
+    chassis.movePolar(47, 45, 2000, {.maxSpeed = 127}, false);
   }
   else { fourRingGoal(true); }
 }
