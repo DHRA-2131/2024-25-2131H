@@ -8,7 +8,7 @@
 void initialize()
 {
   chassis.calibrate(true);
-  intake.init();
+  intake.init(); 
   Console.useGUI(false);
 }
 
@@ -27,9 +27,6 @@ void opcontrol()
 
   while (true)
   {
-    // if (/*Screen::getAuton()->getName() == "Skills" && */ arm.getIndex() == 2) { intake.lift(); }
-    // else if (intake.isLifted()) { intake.drop(); }
-
     // System TeleOps
     arm.teleOp();
     intake.teleOp();

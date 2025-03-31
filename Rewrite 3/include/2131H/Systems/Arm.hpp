@@ -15,7 +15,7 @@
 #include <memory>
 
 #include "2131H/Utilities/ButtonDetector.hpp"
-#include "lemlib/pid.hpp"
+#include "2131H/Utilities/ArmPID.hpp"
 #include "pros/misc.h"
 #include "pros/misc.hpp"
 #include "pros/motor_group.hpp"
@@ -28,6 +28,7 @@ class Arm
   std::shared_ptr<pros::v5::Rotation> m_pRotational;  // - Pointer to Rotational
                                                       //
   std::vector<double> m_macroPositions;               // - Target Positions for Driver Macro
+  const double m_upRightPosition;                     // - When the arm is perfectly fucking vertical
   int m_macroIndex;                                   // - Current Index for macro'd positions
                                                       //
   double m_ratio;                                     // - Ratio from positional sensor to arm
@@ -40,7 +41,7 @@ class Arm
   Utilities::ButtonDetector m_upBtnDetector;          // - State Checker for Controller behavior
   Utilities::ButtonDetector m_downBtnDetector;        // - State CHecker for Controller behavior
                                                       //
-  lemlib::PID* m_pid;                                 // - Pointer to PID Controller for the arm
+  Utilities::ArmPID* m_pid;                           // - Pointer to PID Controller for the arm
                                                       //
   pros::Task m_thread;                                // - Runs _update() in a thread
 
@@ -83,6 +84,7 @@ class Arm
    * @param reversed Is Rotational reversed
    * @param ratio Ratio from Rotational to Arm
    * @param armPositions Target Positions for the Driver Macro in a {}
+   * @param upRightPosition Angle when the arm joint is no longer being effected by gravity
    * @param upButton Ex: pros::E_CONTROLLER_DIGITAL_L1
    * @param downButton Ex: pros::E_CONTROLLER_DIGITAL_L2
    * @param controller Pointer to controller. Ex: &primary
@@ -92,10 +94,11 @@ class Arm
       pros::Rotation* pRotation,
       double ratio,
       std::vector<double> armPositions,
+      const double upRightPosition,
       pros::controller_digital_e_t upButton,
       pros::controller_digital_e_t downButton,
       pros::Controller* pController,
-      lemlib::PID* armPID);
+      Utilities::ArmPID* armPID);
 
  private:  // *** ==== Private Methods ==== *** //
   /**

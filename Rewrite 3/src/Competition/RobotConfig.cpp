@@ -13,6 +13,7 @@
 
 #include "2131H/Systems/Clamp.hpp"
 #include "2131H/Systems/Intake.hpp"
+#include "2131H/Utilities/ArmPID.hpp"
 #include "2131H/Utilities/Console.hpp"
 #include "lemlib/chassis/trackingWheel.hpp"
 #include "lemlib/pid.hpp"
@@ -41,53 +42,51 @@
  * -------------------------------------------------------------------------------------------
  */
 
-/** // ROBOT 6 Ports
-    // LD -5 -6 -7
-    // RD 8 9 10
-    // Inertial 21
-    // Intake 1 4
-    // In Op 11
-    // In Dist 13
-    // In Sort G
-    // In Lift F
-    // Arm 2
-    // Arm Rot -3
-    // Clamp Pneu H
-    // Clamp Dist 19
-    // Team Cycle D
-    // Cycle Auto E
-*/
-
+// LEFT {PORTS (NOT ORDERED) "-" To reverse}, Cart, Encoder Unit
 pros::MotorGroup leftDrive(
     {-15, -16, -20}, pros::v5::MotorGears::blue, pros::v5::MotorEncoderUnits::degrees);
+
+// RIGHT {PORTS (NOT ORDERED) "-" To reverse}, Cart, Encoder Unit
 pros::MotorGroup rightDrive(
     {17, 18, 19}, pros::v5::MotorGears::blue, pros::v5::MotorEncoderUnits::degrees);
 
+// Inertial Port
 pros::Imu inertial(21);
 
 namespace IntakeConfig
 {
+// First Stage (5.5W) Port, Cart, Encoder Unit
 pros::Motor first(-14, pros::MotorGears::green, pros::v5::MotorEncoderUnits::deg);
+
+// Second Stage (11W) Port, Cart, Encoder Unit
 pros::Motor second(-9, pros::MotorGears::blue, pros::v5::MotorEncoderUnits::deg);
 
+// Color Sort Optical
 pros::Optical optical(1);
+// Intake Lift Port
 pros::adi::Pneumatics lift('F', false, false);
 }  // namespace IntakeConfig
 
 namespace ArmConfig
 {
+// Arm {PORTS (NOT ORDERED) "-" To reverse}, Cart, Encoder Unit
 pros::MotorGroup motors({12}, pros::MotorGears::green, pros::v5::MotorEncoderUnits::deg);
+// Rotational Port
 pros::Rotation rotation(-11);
 }  // namespace ArmConfig
 
 namespace ClampConfig
 {
+// Clamp Pneumatic Port
 pros::adi::Pneumatics pneumatic('A', false, false);
+// AutoClamp (Tm) distance sensor
 pros::Distance distance(10);
 }  // namespace ClampConfig
 
+// Controller (Primary)
 pros::Controller primary(pros::E_CONTROLLER_MASTER);
 
+// Screen Selector Buttons
 pros::adi::DigitalIn teamColor('G');
 pros::adi::DigitalIn cycleAuton('H');
 
@@ -112,43 +111,52 @@ pros::adi::DigitalIn cycleAuton('H');
  * ------------------------------------------------------------------------------------------
  */
 
-lemlib::PID armPID(3., 0.0, 2, 0, false);
+// Proportional, Integral, Derivative, Gravity, Windup, Sign Flip //* Tune kG to add anti-gravity
+// term
+Utilities::ArmPID armPID(3., 0.0, 2, 0, 0, false);
 
 Arm arm(
-    &ArmConfig::motors,
-    &ArmConfig::rotation,
-    1.0,
-    {0, 29, 155, 200, 225},
-    pros::E_CONTROLLER_DIGITAL_R1,
-    pros::E_CONTROLLER_DIGITAL_R2,
-    &primary,
-    &armPID);
+    &ArmConfig::motors,      // Pointer to motors
+    &ArmConfig::rotation,    // Pointer to rotational
+    1.0,                     // Ratio from motor to arm //* Not Used if rotational
+    {0, 29, 155, 200, 225},  // Macro'd Arm Positions //*This will need tuning
+    0,  // Reading when arm is completely vertical //* If kG != 0 then this needs tuning
+    pros::E_CONTROLLER_DIGITAL_R1,  // Button for up
+    pros::E_CONTROLLER_DIGITAL_R2,  // Button for down
+    &primary,                       // Controller Pointer
+    &armPID                         // PID Pointer
+);
 
 Intake intake(
-    &IntakeConfig::first,
-    &IntakeConfig::second,
-    &IntakeConfig::optical,
-    &IntakeConfig::lift,
-    307,
-    pros::E_CONTROLLER_DIGITAL_L1,
-    pros::E_CONTROLLER_DIGITAL_L2,
-    pros::E_CONTROLLER_DIGITAL_RIGHT,
-    &primary,
-    35,
-    160);
+    &IntakeConfig::first,    // Pointer to first motor
+    &IntakeConfig::second,   // Pointer to second motor
+    &IntakeConfig::optical,  // Pointer to color sort optical
+    &IntakeConfig::lift,     // Pointer to intake lift
+    307,  // Sort distance from detection in deg on motor //* Tune this for color sort
+    pros::E_CONTROLLER_DIGITAL_L1,     // Button for intake
+    pros::E_CONTROLLER_DIGITAL_L2,     // Button for outtake
+    pros::E_CONTROLLER_DIGITAL_RIGHT,  // Button for lift
+    &primary,                          // Controller Pointer
+    35,                                // Anything Less than this value is a red ring
+    160                                // Anything Greater than this value is a blue ring
+);
 
 Clamp clamp(
-    &ClampConfig::pneumatic,
-    &ClampConfig::distance,
-    100,
-    2.0,
-    pros::E_CONTROLLER_DIGITAL_X,
-    &primary,
-    false);
+    &ClampConfig::pneumatic,       // Pneumatic Pointer
+    &ClampConfig::distance,        // Auto Clamp Pointer
+    100,                           // Trigger Distance //* Tune this for auto clamp
+    2.0,                           //* Can be ignored
+    pros::E_CONTROLLER_DIGITAL_X,  // Clamp button
+    &primary,                      // Controller Pointer
+    false                          // Auto Clamp Enabled by default?
+);
 
+// Left Doinkler Port, Start Extended, Button, Controller Pointer
 Doinkler doinklerLeft('D', false, pros::E_CONTROLLER_DIGITAL_DOWN, &primary);
+// Right Doinkler Port, Start Extended, Button, Controller Pointer
 Doinkler doinklerRight('E', false, pros::E_CONTROLLER_DIGITAL_B, &primary);
 
+//* Can ignore
 Terminal Console(15);
 
 /**
@@ -167,20 +175,38 @@ Terminal Console(15);
  */
 
 // Drivetrain Configuration
-lemlib::Drivetrain drivetrain(&leftDrive, &rightDrive, 13.25, 2.75, 450, 8);
+lemlib::Drivetrain drivetrain(
+    &leftDrive,   // Left MotorGroup Pointer
+    &rightDrive,  // Right MotorGroup Pointer
+    13.25,        // TrackWidth (Distance to center of wheels) //* Check this
+    2.75,         // Wheel diameter //* Measure wheels and avg
+    450,          // RPM of drive
+    8             // * Can ignore for now
+);
 
 // tracking wheel Configuration
-lemlib::TrackingWheel verticalWheel(&leftDrive, 2.75, -13.25 / 2.0, 450);
+lemlib::TrackingWheel verticalWheel(
+    &leftDrive,    // Left MotorGroup Pointer
+    2.75,          // Wheel Diameter //* use value you found above
+    -13.25 / 2.0,  // Distance from wheel to tracking center
+    450            // RPM of tracking wheel
+);
 
 // Pass sensors to lemlib
-lemlib::OdomSensors sensors(&verticalWheel, nullptr, nullptr, nullptr, &inertial);
+lemlib::OdomSensors sensors(
+    &verticalWheel,  // Vertical Tracking Wheel Pointer 1
+    nullptr,         // Vertical Tracking Wheel Pointer 2
+    nullptr,         // Horizontal Tracking Wheel Pointer 1
+    nullptr,         // Horizontal Tracking Wheel Pointer 2
+    &inertial        // Inertial Pointer
+);
 
-// PID Configuration
+// PID Configuration //* These need to be tuned before autos
 lemlib::ControllerSettings lateralPID(
-    11,
-    0,
-    8,
-    3,
+    11,   // Lateral kP
+    0,    // Lateral kI
+    8,    // Lateral kD
+    3,    // Windup Range
     1,    // IN INCHES
     100,  // IN MSEC
     2,    // In INCHES
@@ -198,4 +224,9 @@ lemlib::ControllerSettings angularPID(
     0);
 
 // Chassis Definition
-Chassis chassis({drivetrain, lateralPID, angularPID, sensors});
+Chassis chassis({
+    drivetrain,  // Drivetrain Struct
+    lateralPID,  // lateral PID struct
+    angularPID,  // angular PID struct
+    sensors      // Odometry sensors struct
+});

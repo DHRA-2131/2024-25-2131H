@@ -129,12 +129,15 @@ void Intake::_update()
   }
 }
 
-void Intake::spin(double voltage)
+void Intake::spin(double voltage, uint stage)
 {
   if (m_sorted)
   {
-    m_pFirstMotor->move_voltage(voltage);  // Spin intake at specified voltage
-    m_pSecondMotor->move_voltage(voltage);
+    if (stage > 1) {
+      m_pFirstMotor->move_voltage(voltage);  // Spin intake at specified voltage
+    } else if (stage > 2) {
+      m_pSecondMotor->move_voltage(voltage);
+    }
   }
 }
 

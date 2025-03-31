@@ -13,6 +13,7 @@
 
 #include <cmath>
 
+#include "2131H/Utilities/ArmPID.hpp"
 #include "2131H/Utilities/Average.hpp"
 
 void Arm::setPosition(double newPosition) { m_targetPosition = newPosition; }
@@ -43,15 +44,17 @@ Arm::Arm(
     pros::Rotation* pRotation,
     double ratio,
     std::vector<double> armPositions,
+    const double upRightPosition,
     pros::controller_digital_e_t upButton,
     pros::controller_digital_e_t downButton,
     pros::Controller* pController,
-    lemlib::PID* armPID)
+    Utilities::ArmPID* armPID)
     : m_pMotor(pMotors),
       m_pRotational(pRotation),
       m_isMotorEncoder(pRotation == nullptr),
       m_ratio(ratio),
       m_macroPositions(std::move(armPositions)),
+      m_upRightPosition(upRightPosition),
       m_upBtnDetector(upButton, pController),
       m_downBtnDetector(downButton, pController),
       m_pid(armPID),
@@ -80,7 +83,7 @@ void Arm::_update()
     if (error < -270) { error += 360; }
 
     // Update PID and move by Output
-    m_pMotor->move_voltage(m_pid->update(error * 100.0));
+    m_pMotor->move_voltage(m_pid->update(error * 100.0, m_upRightPosition - this->getPosition()));
   }
 }
 
