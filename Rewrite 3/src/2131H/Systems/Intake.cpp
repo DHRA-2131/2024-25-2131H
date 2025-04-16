@@ -11,6 +11,7 @@
 
 #include "2131H/Systems/Intake.hpp"
 
+#include "pros/adi.hpp"
 #include "pros/motors.h"
 #include "pros/rtos.hpp"
 
@@ -44,7 +45,7 @@ Intake::Intake(
     pros::Motor* pSecondMotor,
     pros::Optical* pOptical,
     pros::adi::Pneumatics* pLift,
-    double sortDistance,
+    pros::adi::DigitalIn* pEject,
     pros::controller_digital_e_t intakeBtn,
     pros::controller_digital_e_t outtakeBtn,
     pros::controller_digital_e_t liftBtn,
@@ -55,7 +56,7 @@ Intake::Intake(
       m_pSecondMotor(pSecondMotor),
       m_pOptical(pOptical),
       m_pLift(pLift),
-      m_sortDistance(sortDistance),
+      m_pEject(pEject),
       m_redBound(redBound),
       m_blueBound(blueBound),
       m_sortEnabled(false),
@@ -106,19 +107,17 @@ void Intake::_update()
     if (m_sortEnabled && this->getCurrentRingColor() == m_sortColor && m_sorted == true)
     {
       m_sorted = false;
-      m_sortPosition = m_position + m_sortDistance;
     }
 
-    if (m_possession.size() > 0 && m_position > m_sortPosition && m_sorted == false)
+    if (m_possession.size() > 0 && m_pEject->get_value() && m_sorted == false)
     {
+      double voltage = m_pSecondMotor->get_voltage();
       m_possession.erase(m_possession.begin());  // Remove ring from count
-      m_pSecondMotor->move_voltage(-500);
+      pros::delay(100);
+      m_pSecondMotor->move_voltage(-1000);
       pros::delay(750);
+      m_pSecondMotor->move_voltage(voltage);
       m_sorted = true;
-    }
-    else if (m_position < m_sortPosition && m_sorted == false)
-    {
-      m_pSecondMotor->move_voltage(12000);
     }
   }
   else if (!m_sortEnabled)

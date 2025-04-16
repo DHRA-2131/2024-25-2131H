@@ -37,8 +37,8 @@ class Intake
   std::shared_ptr<pros::v5::Motor> m_pSecondMotor;
   std::shared_ptr<pros::v5::Optical> m_pOptical;
   std::shared_ptr<pros::adi::Pneumatics> m_pLift;
+  std::shared_ptr<pros::adi::DigitalIn> m_pEject;
 
-  std::int32_t m_sortDistance;
   double m_redBound;
   double m_blueBound;
 
@@ -74,7 +74,7 @@ class Intake
       pros::Motor* pSecondMotor,
       pros::Optical* pOptical,
       pros::adi::Pneumatics* pLift,
-      double sortDistance,
+      pros::adi::DigitalIn* pEject,
       pros::controller_digital_e_t intakeBtn,
       pros::controller_digital_e_t outtakeBtn,
       pros::controller_digital_e_t liftBtn,

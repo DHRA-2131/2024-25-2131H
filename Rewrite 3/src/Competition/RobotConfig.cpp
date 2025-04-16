@@ -64,6 +64,8 @@ pros::Motor second(7, pros::MotorGears::blue, pros::v5::MotorEncoderUnits::deg);
 pros::Optical optical(14);
 // Intake Lift Port
 pros::adi::Pneumatics lift('D', false, false);
+// Eject
+pros::adi::DigitalIn eject('B');
 }  // namespace IntakeConfig
 
 namespace ArmConfig
@@ -131,7 +133,7 @@ Intake intake(
     &IntakeConfig::second,   // Pointer to second motor
     &IntakeConfig::optical,  // Pointer to color sort optical
     &IntakeConfig::lift,     // Pointer to intake lift
-    510,  // Sort distance from detection in deg on motor //* Tune this for color sort
+    &IntakeConfig::eject,
     pros::E_CONTROLLER_DIGITAL_L1,     // Button for intake
     pros::E_CONTROLLER_DIGITAL_L2,     // Button for outtake
     pros::E_CONTROLLER_DIGITAL_RIGHT,  // Button for lift
