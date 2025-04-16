@@ -88,8 +88,8 @@ void Intake::_update()
     m_position = m_pSecondMotor->get_position();
 
     // Calculate Current Ring Color
-    if (color < m_redBound && proximity > 180) { ringColor = RingColors::RED; }
-    else if (color > m_blueBound && proximity > 180) { ringColor = RingColors::BLUE; }
+    if (color < m_redBound && proximity > 120) { ringColor = RingColors::RED; }
+    else if (color > m_blueBound && proximity > 120) { ringColor = RingColors::BLUE; }
     else { ringColor = RingColors::NONE; }
 
     // Check if color changed
@@ -99,7 +99,6 @@ void Intake::_update()
       if (m_colorStateDetector.getValue() == m_sortColor)  // If color is not none
       {
         m_possession.push_back(m_colorStateDetector.getValue());  // Add new ring to possession
-        std::cout << "RING COLOR DETECTED" << std::endl;
       }
     }
 
@@ -113,9 +112,8 @@ void Intake::_update()
     if (m_possession.size() > 0 && m_position > m_sortPosition && m_sorted == false)
     {
       m_possession.erase(m_possession.begin());  // Remove ring from count
-      m_pSecondMotor->move_voltage(-12000);
+      m_pSecondMotor->move_voltage(-500);
       pros::delay(750);
-      std::cout << "RING COLOR SORTED" << std::endl;
       m_sorted = true;
     }
     else if (m_position < m_sortPosition && m_sorted == false)
@@ -133,11 +131,11 @@ void Intake::spin(double voltage, uint stage)
 {
   if (m_sorted)
   {
-    if (stage > 1) {
+    if (stage >= 1)
+    {
       m_pFirstMotor->move_voltage(voltage);  // Spin intake at specified voltage
-    } else if (stage > 2) {
-      m_pSecondMotor->move_voltage(voltage);
     }
+    if (stage >= 2) { m_pSecondMotor->move_voltage(voltage); }
   }
 }
 

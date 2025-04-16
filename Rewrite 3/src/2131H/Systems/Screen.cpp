@@ -24,18 +24,9 @@ void NULL_AUTON(bool) {}
 
 // Initialization of a list Containing AutonCards.
 // Each Card can be customized with a name and description.
-std::vector<AutonCard> Cards = {
-    // {"Safe Ring Side", "", Autonomous::safeRing},
-    // {"Safe Goal Side", "", Autonomous::safeGoal},
-    {"Solo Win Point", "", Autonomous::soloAWP},
-    {"4-Ring Ring Side", "", Autonomous::fourRingRing},
-    {"4-Ring Goal Side", "", Autonomous::fourRingGoal},
-    {"6-Ring (Finals)", "", Autonomous::sixRingFinals},
-    {"Le Goal Rush", "", Autonomous::goalRush},
-    {"Skills", "Skills Description", Autonomous::skills},
-    {"Debug", "Debug Description", Autonomous::debug},
-    {"No Auto", "WARNING: THIS WILL NOT RUN A AUTO", NULL_AUTON}};
-int index = 2;  // Index of card (Increments by +1 on initial)
+std::vector<AutonCard> Cards = {{"NO AUTO", "", NULL_AUTON}};
+
+int index = -1;  // Index of card (Increments by +1 on initial)
 
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;

@@ -15,6 +15,7 @@ INCDIR=$(ROOT)/include
 WARNFLAGS+=
 EXTRA_CFLAGS=
 EXTRA_CXXFLAGS=
+MAKEFLAGS=-j8
 
 # Set to 1 to enable hot/cold linking
 USE_PACKAGE:=1

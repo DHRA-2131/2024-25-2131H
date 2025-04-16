@@ -86,7 +86,7 @@ class Intake
   void _update();
 
  public:  // *** ==== Public Methods ==== *** //
-  void spin(double voltage = 12000.0, uint stage = 2);
+  void spin(double voltage = 12000.0, uint stage = 3);
   void stop();
   void teleOp();
   void init();

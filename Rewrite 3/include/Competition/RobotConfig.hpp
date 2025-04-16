@@ -13,6 +13,7 @@ extern Intake intake;
 extern Clamp clamp;
 extern Doinkler doinklerLeft;
 extern Doinkler doinklerRight;
+extern Doinkler hang;
 extern Terminal Console;
 
 extern pros::adi::DigitalIn teamColor;

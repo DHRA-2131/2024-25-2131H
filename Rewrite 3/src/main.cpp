@@ -8,7 +8,7 @@
 void initialize()
 {
   chassis.calibrate(true);
-  intake.init(); 
+  intake.init();
   Console.useGUI(false);
 }
 
@@ -20,8 +20,8 @@ void autonomous() { Screen::getAuton()->getAutonCB()(Screen::isRedTeam()); }
 
 void opcontrol()
 {
-  intake.disableSort();
-  
+  intake.enableSort(Intake::RingColors::RED);
+
   intake.drop();
   arm.enable();
 
