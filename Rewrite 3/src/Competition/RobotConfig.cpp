@@ -65,7 +65,7 @@ pros::Optical optical(14);
 // Intake Lift Port
 pros::adi::Pneumatics lift('D', false, false);
 // Eject
-pros::adi::DigitalIn eject('B');
+pros::adi::DigitalIn eject('A');
 }  // namespace IntakeConfig
 
 namespace ArmConfig
@@ -79,7 +79,7 @@ pros::Rotation rotation(-12);
 namespace ClampConfig
 {
 // Clamp Pneumatic Port
-pros::adi::Pneumatics pneumatic('A', false, false);
+pros::adi::Pneumatics pneumatic('B', false, false);
 // AutoClamp (Tm) distance sensor
 pros::Distance distance(19);
 }  // namespace ClampConfig
@@ -120,7 +120,7 @@ Arm arm(
     &ArmConfig::motors,      // Pointer to motors
     &ArmConfig::rotation,    // Pointer to rotational
     1.0,                     // Ratio from motor to arm //* Not Used if rotational
-    {0, 29, 155, 200, 225},  // Macro'd Arm Positions //*This will need tuning
+    {0, 27, 155, 200, 225},  // Macro'd Arm Positions //*This will need tuning
     0,  // Reading when arm is completely vertical //* If kG != 0 then this needs tuning
     pros::E_CONTROLLER_DIGITAL_R1,  // Button for up
     pros::E_CONTROLLER_DIGITAL_R2,  // Button for down
@@ -157,7 +157,7 @@ Doinkler doinklerLeft('F', false, pros::E_CONTROLLER_DIGITAL_DOWN, &primary);
 // Right Doinkler Port, Start Extended, Button, Controller Pointer
 Doinkler doinklerRight('C', false, pros::E_CONTROLLER_DIGITAL_B, &primary);
 
-Doinkler hang('E', false, pros::E_CONTROLLER_DIGITAL_RIGHT, &primary);
+Doinkler hang('E', false, pros::E_CONTROLLER_DIGITAL_UP, &primary);
 
 //* Can ignore
 Terminal Console(15);
@@ -184,13 +184,13 @@ lemlib::Drivetrain drivetrain(
     13.25,        // TrackWidth (Distance to center of wheels) //* Check this
     2.75,         // Wheel diameter //* Measure wheels and avg
     450,          // RPM of drive
-    8             // * Can ignore for now
+    15            // * Can ignore for now
 );
 
 // tracking wheel Configuration
 lemlib::TrackingWheel verticalWheel(
     &leftDrive,    // Left MotorGroup Pointer
-    2.75,          // Wheel Diameter //* use value you found above
+    2.72,          // Wheel Diameter //* use value you found above
     -13.25 / 2.0,  // Distance from wheel to tracking center
     450            // RPM of tracking wheel
 );
@@ -214,16 +214,17 @@ lemlib::ControllerSettings lateralPID(
     100,  // IN MSEC
     2,    // In INCHES
     800,  // IN MSEC
-    40);
+    0);
+
 lemlib::ControllerSettings angularPID(
     2,
     0,
-    10,
+    15,
     3,
     1,    // IN DEGREES
-    100,  // IN MSEC
+    200,  // IN MSEC
     3,    // IN DEGREES
-    500,  // IN MSEC
+    400,  // IN MSEC
     0);
 
 // Chassis Definition

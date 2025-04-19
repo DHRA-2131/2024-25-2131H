@@ -16,11 +16,15 @@ void disabled() {}
 
 void competition_initialize() {}
 
-void autonomous() { Screen::getAuton()->getAutonCB()(Screen::isRedTeam()); }
+void autonomous()
+{
+  // intake.enableSort(Screen::isRedTeam() ? Intake::RingColors::BLUE : Intake::RingColors::RED);
+  Screen::getAuton()->getAutonCB()(Screen::isRedTeam());
+}
 
 void opcontrol()
 {
-  intake.enableSort(Intake::RingColors::RED);
+  intake.disableSort();
 
   intake.drop();
   arm.enable();
@@ -33,6 +37,7 @@ void opcontrol()
     clamp.teleOp();
     doinklerRight.teleOp();
     doinklerLeft.teleOp();
+    hang.teleOp();
 
     // Chassis TeleOps
     chassis.tank(primary.get_analog(ANALOG_LEFT_Y), primary.get_analog(ANALOG_RIGHT_Y));

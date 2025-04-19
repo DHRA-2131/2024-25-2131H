@@ -1,24 +1,13 @@
 #pragma once
 
+#define TILE 23.75
+#define DOVE_TAIL 13.0 / 16.0
+#define DRIVE_LENGTH_OFFSET 13.5 / 2.0
+#define DRIVE_WIDTH_OFFSET 15.5 / 2.0
+#define RING 7
+
 namespace Autonomous
 {
-void skills(bool isRedTeam);
-
-// Solo Autonomous Win Point (AWP)
-void soloAWP(bool isRedTeam);
-
-// Safe Autonomous
-void safeRing(bool isRedTeam);
-void safeGoal(bool isRedTeam);
-
-// Four Ring Autos
-void fourRingGoal(bool isRedTeam);
-void fourRingRing(bool isRedTeam);
-
-// Finals
-void sixRingFinals(bool isRedTeam);
-void goalRush(bool isRedTeam);
-
-// Debug Auto
-void debug(bool isRedTeam);
+void debug(bool redTeam);
+void goalSide(bool redTeam);
 }  // namespace Autonomous
