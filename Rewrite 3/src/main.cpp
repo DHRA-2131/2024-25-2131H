@@ -24,10 +24,13 @@ void autonomous()
 
 void opcontrol()
 {
+  auto startTime = pros::millis();
+
   intake.disableSort();
 
   intake.drop();
   arm.enable();
+  arm.setIndex(0);
 
   while (true)
   {
@@ -40,7 +43,18 @@ void opcontrol()
     hang.teleOp();
 
     // Chassis TeleOps
-    chassis.tank(primary.get_analog(ANALOG_LEFT_Y), primary.get_analog(ANALOG_RIGHT_Y));
+    chassis.tank(
+        primary.get_analog(ANALOG_LEFT_Y),  //
+        primary.get_analog(ANALOG_RIGHT_Y),
+        false);
+
+    if (pros::millis() - startTime > (105000 - 1) && pros::millis() - startTime < (105000 + 100))
+    {
+      hang.retract();
+      clamp.deactivate();
+    }
+
+    if (inertial.get_roll() < -25.0) { hang.retract(); }
 
     pros::delay(10);
   }

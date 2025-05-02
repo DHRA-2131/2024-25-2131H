@@ -27,9 +27,15 @@ void NULL_AUTON(bool) {}
 std::vector<AutonCard> Cards = {
     {"NO AUTO", "", NULL_AUTON},  //
     {"DEBUG", "", Autonomous::debug},
-    {"GOAL SIDE (QUAL)", "", Autonomous::goalSide}};
+    {"GOAL SIDE (QUAL)", "", Autonomous::goalSide},
+    {"RING SIDE (QUAL)", "", Autonomous::ringSide},
+    {"SOLO AWP (QUAL)", "F*CK", Autonomous::soloAWP},
+    {"5 Ring Side (ELIMS)", "I Quit", Autonomous::ringSideFive},
+    {"5 Goal Side (ELIMS)", "I'm Done", Autonomous::goalSideFive},
+    {"GOAL RUSH (ELIMS)", "<WASTED>", Autonomous::goalRush}
+};
 
-int index = 1;  // Index of card (Increments by +1 on initial)
+int index = 6;  // Index of card (Increments by +1 on initial)
 
 bool debug(true);                     // Enable / Disable Debug Output on the screen
 bool initial(true);                   // Whether the screen has been initialized;

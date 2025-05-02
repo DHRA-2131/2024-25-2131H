@@ -16,6 +16,8 @@ extern Doinkler doinklerRight;
 extern Doinkler hang;
 extern Terminal Console;
 
+extern pros::IMU inertial;
+
 extern pros::adi::DigitalIn teamColor;
 extern pros::adi::DigitalIn cycleAuton;
 

@@ -41,9 +41,12 @@
  * -------------------------------------------------------------------------------------------
  */
 
+
+
+ 
 // LEFT {PORTS (NOT ORDERED) "-" To reverse}, Cart, Encoder Unit
 pros::MotorGroup leftDrive(
-    {-16, -17, -18}, pros::v5::MotorGears::blue, pros::v5::MotorEncoderUnits::degrees);
+    {-16, -17, -21}, pros::v5::MotorGears::blue, pros::v5::MotorEncoderUnits::degrees);
 
 // RIGHT {PORTS (NOT ORDERED) "-" To reverse}, Cart, Encoder Unit
 pros::MotorGroup rightDrive(
@@ -221,9 +224,9 @@ lemlib::ControllerSettings angularPID(
     0,
     15,
     3,
-    1,    // IN DEGREES
+    2,    // IN DEGREES
     200,  // IN MSEC
-    3,    // IN DEGREES
+    4,    // IN DEGREES
     400,  // IN MSEC
     0);
 

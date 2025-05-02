@@ -18,14 +18,15 @@ class Chassis : public lemlib::Chassis
       bool async = true);
 
   void movePolarAbsolute(
-        lemlib::Pose pose,
-        double dist,
-        double angle,
-        int timeout,
-        lemlib::MoveToPointParams p,
-        bool radians,
-        bool async);
+      lemlib::Pose pose,
+      double dist,
+      double angle,
+      int timeout,
+      lemlib::MoveToPointParams p,
+      bool radians,
+      bool async);
 
   void shimmy(int timeout, int delay = 100);
 
+  void brake();
 };
